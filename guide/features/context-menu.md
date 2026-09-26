@@ -52,3 +52,9 @@ grid.runContextMenuItem(id);                     // 실행 후 자동으로 닫�
 - `openContextMenu`가 `false`를 반환하면(옵션 없음·행 없음·모든 항목 숨김)
   어댑터는 `preventDefault`를 하지 않아 브라우저 기본 메뉴가 열린다.
 - 오버레이 클릭/우클릭 시 `closeContextMenu`로 닫힌다.
+
+## 헤더 우클릭 메뉴
+
+`headerContextMenu` 옵션으로 헤더 전용 메뉴를 정의할 수 있다 — `ctx.row`는
+`null`, `ctx.rowIndex`는 `-1`이다. 숨기기/정렬/너비 자동조정 같은 컬럼
+조작 메뉴에 적합하다. 자세한 예시는 [events.md](./events.md) 참고.
