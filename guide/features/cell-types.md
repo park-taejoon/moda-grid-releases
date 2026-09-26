@@ -22,6 +22,9 @@ const columns: ColumnDef<Product>[] = [
   // 프로그레스 — 숫자 값을 진행 바로 렌더링 (role=progressbar)
   { field: "progress", header: "진척", cellType: "progress",
     cellOptions: { max: 100 } },   // 기본값 100
+
+  // HTML — 셀 값을 innerHTML로 렌더링 (아래 XSS 주의 참고)
+  { field: "desc", header: "설명", cellType: "html" },
 ];
 ```
 
@@ -32,6 +35,13 @@ const columns: ColumnDef<Product>[] = [
 | `button` | `<button>` | `onClick(row)` |
 | `link` | `<a href>` | `href(row)`, `target` |
 | `progress` | 진행 바 + % 텍스트 | `max` (기본값 100) |
+| `html` | `innerHTML` (raw HTML) | — |
+
+> **⚠️ `html` 셀 타입은 XSS 주의**: 셀 값을 이스케이프 없이
+> `innerHTML`로 주입한다. `<script>`/인라인 이벤트가 그대로 실행되므로
+> **신뢰할 수 있는 데이터(서버에서 sanitize된 HTML 등)에만** 사용하고,
+> 사용자 입력값을 담는 컬럼에는 쓰지 않는다. 단순 강조 정도면 `cellClass`
+> 또는 어댑터 커스텀 셀이 안전한 대안이다.
 
 - 버튼/링크 클릭은 행 선택 토글을 막지 않도록 `stopPropagation`된다.
 - 프로그레스는 `aria-valuenow`/`aria-valuemax`를 포함한다.

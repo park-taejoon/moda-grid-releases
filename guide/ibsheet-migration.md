@@ -95,12 +95,14 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | -------------- | --------------------- |
 | `Text` | 기본값 (`cellEditor` 생략) |
 | `Int`/`Float` | `{ type: "number" }` 또는 `cellEditor: "number"` + `format: {kind:"number"}` |
-| `Combo` | `{ cellEditor: "select", cellEditorParams: { options } }` |
-| `MultiCombo` | `{ cellEditor: "multiselect", cellEditorParams: { options } }` |
+| `Combo` | `{ cellEditor: "select", editorOptions: [...] }` |
+| `MultiCombo` | `{ cellEditor: "multiselect", editorOptions: [...] }` |
 | `CheckBox` | `{ cellEditor: "checkbox", headerCheckbox: true }` |
+| `Radio` | `{ cellEditor: "radio", editorOptions: [...] }` |
+| `Text`(MultiLine) | `{ cellEditor: "textarea", multiLine: true }` |
 | `Date` | `{ cellEditor: "date" }` + `format: {kind:"date"}` |
 | `Image`/`Button`/`Link`/`Progress` | `{ cellType: "image"\|"button"\|"link"\|"progress" }` |
-| `Radio` | `cellEditor: "custom"` + `renderEditor` |
+| `Html` | `{ cellType: "html" }` — raw HTML, XSS 주의 |
 | `AutoSum`/`Formula` | `{ formula: "price * qty" }` / `{ cumulative: "amount" }` |
 | 읽기 전용 | `{ editable: false }` — `mg-cell-readonly` 스타일 자동 |
 | `SaveName` | `field` (행 객체의 키) |
@@ -124,6 +126,8 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 컨텍스트 메뉴 | `contextMenu` / `headerContextMenu` props |
 | 다국어 | `locale` prop (`enLocale` 프리셋) |
 | 채우기 핸들 | 활성 셀 우하단 드래그 (자동, `fillRange` API) |
+| 붙여넣기 행 확장 (EditExtend) | `pasteExtend: true` 옵션 |
+| 찾기/바꾸기 | `grid.findCells()` / `grid.replaceAll()` |
 
 ## 주요 API 메서드 매핑
 

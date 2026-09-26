@@ -32,6 +32,21 @@ grid.pasteTsv(tsv, { rowIndex: 0, columnIndex: 0 }); // 시작 위치 지정
 - 쓰기는 `valueSetter` 또는 `row[field] = value` — 편집 커밋과 동일 경로.
 - 적용된 붙여넣기는 **1회 `notify`** + Undo 이력에 1개 단위로 기록.
 
+## 붙여넣기 행 확장 (`pasteExtend`)
+
+`GridOptions.pasteExtend: true`면 붙여넣은 줄 수가 표시 데이터를 넘을 때
+부족한 만큼 **빈 행을 자동 추가**하고 붙여넣는다 (IBSheet `EditExtend` 대응).
+
+```ts
+new GridCore({ columns, data, pasteExtend: true });
+```
+
+- 추가된 행은 **입력(I) 상태**로 마킹 — `getChanges().inserted`에 잡혀
+  저장 대상이 된다.
+- 기존 행 수정분과 새 행의 셀 쓰기는 하나의 붙여넣기로 Undo 1단위다.
+- 서버 모드(`serverSide`)와 페이징(`pageSize > 0`)에서는 확장하지 않는다
+  — 표시 범위 밖 행에 쓸 수 없기 때문. 넘어가는 줄은 `skipped`로 집계.
+
 ## 복사 규칙
 
 - 숨김 컬럼 제외, 셀 내부 탭/줄바꿈은 공백으로 치환.

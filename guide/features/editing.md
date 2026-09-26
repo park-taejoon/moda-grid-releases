@@ -25,7 +25,7 @@ Undo/Redo로 되돌릴 수 있다.
 {
   field: "age",
   editable: true,                                // 기본값 true
-  cellEditor: "number",                          // text|number|select|date|checkbox|multiselect|custom
+  cellEditor: "number",                          // text|number|select|date|checkbox|multiselect|radio|textarea|custom
   editorOptions: ["admin", "editor"],            // select/multiselect 편집기 옵션
   // checkbox 편집기 전용:
   checkedValue: "Y", uncheckedValue: "N",        // 체크/해제 시 저장값 (기본 true/false)
@@ -90,6 +90,27 @@ CSV/xlsx보내기는 `;` 구분 문자열로 직렬화되어 왕복이 보장된
 // row.tags = ["긴급", "버그"]
 ```
 
+## 라디오 편집기 (`cellEditor: "radio"`)
+
+`editorOptions`를 라디오 버튼 그룹으로 렌더링한다 — 옵션이 적을 때
+select보다 한 클릭 빠르다 (IBSheet `Type:"Radio"` 대응). 선택 즉시
+커밋되며, 이미 선택된 옵션을 다시 눌러도 행 상태가 `U`로 변하지 않는다.
+
+```ts
+{ field: "status", cellEditor: "radio", editorOptions: ["대기", "진행", "완료"] }
+```
+
+## 텍스트에어리어 + 멀티라인 (`cellEditor: "textarea"`)
+
+여러 줄 텍스트 편집 — `multiLine: true`를 함께 주면 저장된 `\n`이 셀에도
+줄바꿈으로 표시된다 (`white-space: pre-line`).
+
+```ts
+{ field: "memo", cellEditor: "textarea", multiLine: true }
+```
+
+키 조작: `Enter` = 줄바꿈, `Ctrl/Cmd+Enter` = 저장, `Tab` = 저장+이동,
+`Esc` = 취소. React/Vue/Vue2/Svelte/`mountGrid` 모두 동일.
 
 ## 커밋 순서
 

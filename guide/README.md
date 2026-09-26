@@ -45,10 +45,11 @@
 | 데이터 | 셀 병합 (rowSpan/colSpan/auto-merge) | [features/cell-merge.md](./features/cell-merge.md) |
 | 컬럼 | 리사이즈·재배치·고정·숨김·자동 너비·그룹 헤더·컬럼 관리 | [features/columns.md](./features/columns.md) |
 | 선택 | 행/셀/범위 선택 + 체크박스 + 상태바 집계 | [features/selection.md](./features/selection.md) |
-| 편집 | 인라인 편집 + 체크박스/다중선택 에디터 + 검증 + Undo/Redo | [features/editing.md](./features/editing.md) |
-| 편집 | 클립보드 복사/붙여넣기 (TSV) | [features/clipboard.md](./features/clipboard.md) |
+| 편집 | 인라인 편집 + 체크박스/다중선택/라디오/textarea 에디터 + 검증 + Undo/Redo | [features/editing.md](./features/editing.md) |
+| 편집 | 클립보드 복사/붙여넣기 (TSV) + 행 자동 확장(pasteExtend) | [features/clipboard.md](./features/clipboard.md) |
+| 편집 | 찾기/바꾸기 — findCells/replaceAll | [features/find-replace.md](./features/find-replace.md) |
 | 컬럼 | 계산 컬럼 — 수식(formula)/누계(cumulative) | [features/computed-columns.md](./features/computed-columns.md) |
-| 렌더 | 셀 타입 (이미지·버튼·링크·프로그레스) + 셀 툴팁 | [features/cell-types.md](./features/cell-types.md) |
+| 렌더 | 셀 타입 (이미지·버튼·링크·프로그레스·HTML) + 셀 툴팁 + 멀티라인 | [features/cell-types.md](./features/cell-types.md) |
 | 상호작용 | 컨텍스트 메뉴 (셀/헤더 우클릭) | [features/context-menu.md](./features/context-menu.md) |
 | 상호작용 | 이벤트 + 행 번호 + 채우기 핸들 | [features/events.md](./features/events.md) |
 | 설정 | 다국어(locale) + 접근성(aria) | [features/i18n.md](./features/i18n.md) |
