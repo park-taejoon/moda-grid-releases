@@ -29,8 +29,20 @@ core ──┬─→ react (dist)  svelte (dist)
 - dev 앱 실행에는 패키지 빌드가 **불필요**하다 — `exports`가 `src`를
   가리키므로 Vite가 소스를 직접 컴파일한다. 코어를 고치면 모든 앱에서
   HMR로 즉시 반영된다.
-- `dist/`는 배포(publish)용 산출물이다. 실제 npm 배포 시에는
-  `publishConfig.exports`를 dist로 가리키도록 추가할 것.
+- `dist/`는 배포(publish)용 산출물이다. 각 패키지의 `publishConfig.exports`가
+  dist를 가리키므로 **publish 시에는 자동으로 dist 경로가 적용**되고
+  `workspace:*` 의존성도 실제 버전으로 변환된다.
+
+## npm 배포
+
+```bash
+pnpm build               # dist 생성 (css/SFC 복사 포함)
+pnpm publish:packages    # packages/* 5개 일괄 publish (이미 올라간 버전은 스킵)
+```
+
+또는 `v*` 태그 push 시 `publish-npm.yml` 워크플로우가 typecheck → test →
+build → publish를 실행한다. 필요한 Secret: `NPM_TOKEN`(npm Automation 토큰).
+npm 페이지에 표시되는 README는 각 `packages/*/README.md`.
 
 ## 요구 런타임
 

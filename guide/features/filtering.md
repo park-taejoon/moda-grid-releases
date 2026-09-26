@@ -9,6 +9,9 @@
 - `filterType`에 따른 연산자 셀렉트 + 값 입력 (+ `inRange` 시 상한 입력)
 - `filterType: "set"`이면 `<details>` 팝오버의 값 체크리스트(`.mg-setfilter`)
 
+필터 행의 표시/숨김은 `filterToggle` prop(4개 어댑터 공통)으로 우상단
+`필터 ▾/▸` 버튼을 켤 수 있다. 숨겨도 설정된 필터 조건은 계속 적용된다.
+
 ## 코어 API
 
 ```ts
@@ -20,6 +23,11 @@ grid.setFilter("name", null);                      // 해제
 grid.clearFilters();                               // 전체 해제
 
 grid.setSearch("hana");                            // 전역 검색
+
+// 필터 입력 행 표시/숨김 (UI 표시 상태 — 필터 조건과 무관)
+grid.setFilterRowVisible(false);
+grid.toggleFilterRow();
+new GridCore({ columns, data, filterRowVisible: false }); // 초기 숨김
 ```
 
 필터/검색 변경 시 `pageIndex`는 0으로 리셋된다. 복수 컬럼 필터는 **AND** 결합.
@@ -71,4 +79,6 @@ grid.setFilter("role", null);  // 전체 선택과 동일 = 해제
 ## 관련 스냅샷 필드
 
 `snapshot.filters: Record<field, ColumnFilter>` / `snapshot.searchText` /
-`snapshot.filteredRowCount` (페이징 전 수) / `snapshot.totalRowCount` (필터 전 수).
+`snapshot.filterRowVisible` (필터 행 표시 여부 — `getState`/`applyState`에도
+포함) / `snapshot.filteredRowCount` (페이징 전 수) / `snapshot.totalRowCount`
+(필터 전 수).

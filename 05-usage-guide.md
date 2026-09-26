@@ -193,6 +193,7 @@ function App() {
 | `serverSide` | `ServerSideOptions` | — | 서버 데이터 소스 (내부 생성 모드만) |
 | `treeData` | `TreeDataOptions` | — | 트리 데이터 (내부 생성 모드만) |
 | `columnController` | `boolean` | `false` | 컬럼 관리 팝오버 |
+| `filterToggle` | `boolean` | `false` | 필터 행 표시/숨김 버튼 (filterable 컬럼 있을 때만) |
 | `rowCheckboxes` | `boolean` | `false` | 행 체크박스 선택 컬럼 (헤더 전체선택 포함) |
 | `statusBar` | `boolean` | `true` | 선택 영역 집계 상태바 |
 | `getRowId` | `(row) => string` | — | 행 ID 함수 |
@@ -361,6 +362,7 @@ set=`values` 배열 포함 여부.
 | 자동 너비 | `autoSizeColumn(field, measureText?)` / `autoSizeAllColumns(measureText?)` — 내용 기준 |
 | 그룹 헤더 | `ColumnDef.group` + `GridOptions.columnGroups` — `snapshot.headerGroups`의 2단 헤더 |
 | 컬럼 관리 UI | `columnController` prop — 우상단 `컬럼 ▾` 팝오버 (체크박스 + 전체 선택/해제) |
+| 필터 행 토글 | `filterToggle` prop — 우상단 `필터 ▾/▸` 버튼, `setFilterRowVisible()`/`toggleFilterRow()`. 숨겨도 적용된 필터는 유지 |
 
 ### 인라인 편집
 

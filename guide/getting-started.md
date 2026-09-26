@@ -18,6 +18,12 @@
 - Node.js >= 20, pnpm >= 9 (모노레포 개발 환경)
 - 브라우저 사용 시 별도 런타임 요구사항 없음 (ESM/IIFE)
 
+> 개발 환경은 pnpm 전용이다 — 내부 의존성이 `workspace:*` 프로토콜과
+> `pnpm-workspace.yaml`을 사용해 npm이 인식하지 못한다.
+> **라이브러리 사용자**는 npm/yarn 등 어떤 클라이언트로도 설치 가능하다 —
+> 각 패키지의 `publishConfig`가 publish 시 exports를 `dist/`로 치환한다.
+> 배포: `pnpm publish:packages` 또는 `v*` 태그 push → `publish-npm.yml`.
+
 ## Hello Grid — 30초
 
 ```ts

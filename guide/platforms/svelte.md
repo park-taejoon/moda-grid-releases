@@ -67,7 +67,7 @@ npm install @moda-grid/svelte   # peer: svelte ^5
 
 Props는 다른 어댑터와 동일: `store`/`columns`/`data`/`height`/`rowHeight`/
 `overscan`/`selectable`/`resizable`/`reorderable`/`columnController`/
-`rowCheckboxes`/`statusBar`/`getRowId`/`className`/`selectionMode`.
+`filterToggle`/`rowCheckboxes`/`statusBar`/`getRowId`/`className`/`selectionMode`.
 
 ## 커스텀 셀 / 에디터 — `{#snippet}`
 

@@ -85,6 +85,7 @@ grid.subscribe(() => render(grid.getSnapshot()));
 | `groupBy` / `expandedRowKeys` | 그룹화 필드 목록 / 펼친 그룹 키 집합 |
 | `displayRows` | 그룹화 시 평탄 렌더 목록 `DisplayRow[]` (아니면 `null`) |
 | `searchText` / `filters` | 전역 검색어 / 컬럼 필터 `Record<field, ColumnFilter>` |
+| `filterRowVisible` | 필터 입력 행 표시 여부 (기본값 `true` — 숨겨도 필터 조건은 유지) |
 | `pageIndex` / `pageSize` / `pageCount` | 페이징 상태 |
 | `selectedRowIds` | 선택된 행 ID 집합 |
 | `rowDrag` | 행 드래그 진행 상태 `{ draggingIndex, dropIndex }` (아니면 `null`) |
@@ -109,6 +110,7 @@ grid.subscribe(() => render(grid.getSnapshot()));
 | `pasteTsv(tsv, start?)` | TSV를 활성 셀부터 순차 쓰기 → `PasteResult` 반환 (편집 이력에 1개 단위로 기록) |
 | `setSearch(text)` | 전역 검색 (표시 컬럼 전체, 대소문자 무시) |
 | `clearFilters()` | 모든 컬럼 필터 해제 |
+| `setFilterRowVisible(visible)` / `toggleFilterRow()` | 필터 입력 행 표시/숨김 — 데이터 파이프라인 재계산 없이 스냅샷만 갱신 |
 | `toggleRowSelection(id)` / `clearSelection()` / `isSelected(id)` | 행 선택 |
 | `toggleAllRows()` / `isAllSelected()` / `isSomeSelected()` | 전체 행 선택 토글 / 전체·일부 선택 여부 (헤더 체크박스용) |
 | `setColumnVisibility(field, visible)` / `setColumnVisible(columnId, visible)` | 컬럼 표시/숨김 (동일 동작 — columnId는 `field`와 같음) |

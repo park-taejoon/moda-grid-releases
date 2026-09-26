@@ -81,7 +81,8 @@ dev-vue2    → @moda-grid/vue2  (workspace:*), vue 2.7.16 고정
 - dev 앱의 Vite가 패키지 소스를 직접 변환하므로 **코어 수정이 HMR로 즉시 반영**된다.
 - 각 패키지의 `pnpm build`는 배포용 `dist/` 산출물을 생성한다
   (core/react/vue는 `tsc`, svelte는 `svelte-package`).
-- 배포 시에는 exports를 `dist`로 전환하거나 `publishConfig`를 추가하는 것을 권장한다.
+- npm 배포 시 `publishConfig.exports`가 `dist/`로 자동 치환된다 —
+  개발은 소스 직접 참조, 배포는 빌드 산출물이라 두 세계가 공존한다.
 
 ## tsconfig 상속 구조
 

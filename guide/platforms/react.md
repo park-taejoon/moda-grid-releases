@@ -87,6 +87,7 @@ const { grid, snapshot } = useGridCore({ columns, data: users });
 | `serverSide` | `ServerSideOptions` | — | 무한 스크롤 데이터 소스 |
 | `treeData` | `TreeDataOptions` | — | 계층 데이터 |
 | `columnController` | `boolean` | `false` | 우상단 컬럼 관리 팝오버 |
+| `filterToggle` | `boolean` | `false` | 우상단 필터 행 표시/숨김 버튼 |
 | `rowCheckboxes` | `boolean` | `false` | 행 체크박스 + 헤더 전체선택 |
 | `statusBar` | `boolean` | `true` | 선택 범위 집계 상태바 |
 | `getRowId` | `(row) => string` | — | 행 ID 함수 |

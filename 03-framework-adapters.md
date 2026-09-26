@@ -56,6 +56,7 @@ const { grid, snapshot } = useGridCore({ columns, data });
 | `selectable` | `boolean` | `true` | 행 클릭 선택 토글 |
 | `getRowId` | `(row) => string` | — | 행 ID 함수 |
 | `columnController` | `boolean` | `false` | 우상단 컬럼 관리 도구(체크박스 팝오버 + 전체 선택/해제) 표시 |
+| `filterToggle` | `boolean` | `false` | 우상단 필터 행 표시/숨김 버튼 (filterable 컬럼이 있을 때만 렌더) |
 | `rowCheckboxes` | `boolean` | `false` | 행 체크박스 선택 컬럼 표시 (헤더에 전체선택 체크박스) |
 | `statusBar` | `boolean` | `true` | 선택 영역 집계 상태바 표시 |
 | `className` | `string` | — | 추가 클래스 |
@@ -112,7 +113,7 @@ const { grid, state } = useGrid<User>({ columns, data: users });
 
 props는 React 어댑터와 동일하다 (`columns`, `data`, `grid`, `height`,
 `rowHeight`, `overscan`, `selectable`, `getRowId`, `resizable`,
-`reorderable`, `columnController`, `rowCheckboxes`, `statusBar`). `columns`/`data`만
+`reorderable`, `columnController`, `filterToggle`, `rowCheckboxes`, `statusBar`). `columns`/`data`만
 넘기면 내부에서 GridCore를 생성하고, `grid`를 넘기면 외부 인스턴스를
 구독한다. `height`+`rowHeight`로 가상 스크롤 활성화 — 스크롤 컨테이너 +
 상/하 스페이서 `<tr>`, `@scroll → grid.handleScroll`.
@@ -313,6 +314,13 @@ Svelte는 `{#snippet editor}`.
   전체 선택/전체 해제 버튼은 `grid.setAllColumnsVisible`로 일괄 토글하며
   전부 숨기는 것도 허용된다(빈 그리드). 패널은 오버레이 클릭이나
   `Escape`로 닫힌다.
+
+- **필터 행 토글** (`filterToggle` prop, 기본값 false) — 우상단에
+  `필터 ▾/▸` 버튼을 오버레이하고 `grid.setFilterRowVisible`로 필터 입력
+  행을 표시/숨긴다. filterable 컬럼이 하나도 없으면 버튼은 렌더링되지
+  않는다. 숨겨도 이미 적용된 필터 조건은 유지된다 — 표시 여부만 코어
+  `snapshot.filterRowVisible`로 제어한다. `columnController`와 함께 쓰면
+  같은 오버레이 영역에 나란히 배치된다.
 
 - **테마/커스텀 클래스** — 모든 색상은 `--grid-*` CSS 변수 기반이며,
   `.grid-theme-dark` 클래스를 그리드(또는 상위 요소)에 적용하면 다크
