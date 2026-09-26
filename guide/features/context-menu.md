@@ -25,6 +25,54 @@ const grid = new GridCore({
 어댑터는 `<DataGrid contextMenu={items} />` prop으로 전달한다 (내부
 GridCore 생성 모드에서만 적용 — 제어 모드는 `new GridCore({ ..., contextMenu })`).
 
+### 팩토리 함수 형태
+
+`contextMenu`/`headerContextMenu`에는 **배열 대신 `(grid) => items` 함수**도
+넣을 수 있다. 메뉴를 열 때마다 그리드 인스턴스를 넘겨 호출하므로, 인스턴스가
+필요한 기본 프리셋과 섞어 쓰기에 적합하다:
+
+```ts
+contextMenu: (grid) => [
+  ...defaultContextMenuItems(grid),
+  { id: "my", label: "내 메뉴", onClick: (ctx) => ... },
+],
+```
+
+## 기본 메뉴 프리셋 — `defaultContextMenuItems`
+
+IBSheet 기본 우클릭 메뉴에 해당하는 항목을 코어가 제공한다:
+
+```ts
+import { defaultContextMenuItems, defaultHeaderContextMenuItems } from "@moda-grid/core";
+
+new GridCore({
+  columns, data,
+  contextMenu: defaultContextMenuItems,              // 함수를 그대로 넘겨도 됨
+  headerContextMenu: defaultHeaderContextMenuItems,
+});
+```
+
+`defaultContextMenuItems(grid)`가 반환하는 항목:
+
+| id | 동작 |
+| -- | ---- |
+| `undo` / `redo` | 실행 취소/다시 실행 — 이력 없으면 disabled |
+| `copy` | 선택 영역/활성 셀을 TSV로 클립보드에 복사 |
+| `copyHeaders` | 헤더 행 포함 복사 |
+| `paste` | 클립보드 TSV를 우클릭한 셀에 붙여넣기 |
+| `insertAbove` / `insertBelow` | 우클릭한 행 위/아래에 빈 행 삽입 (`addRows` + I 마킹) |
+| `clear` | 선택 영역 내용 지우기 (`clearRange`) |
+| `deleteRow` | 선택 행 삭제 — 다중 선택이면 라벨이 "선택한 N행 삭제" |
+| `exportCsv` | `exportToCsv()` 실행 |
+| `print` | `grid.print()` — 브라우저 인쇄 |
+
+`defaultHeaderContextMenuItems(grid)`는 컬럼 숨기기·너비 자동 조정·
+그룹화/해제·오름차순/내림차순/정렬 해제·모든 필터 지우기·컬럼 고정/해제
+항목을 반환한다.
+
+> 우클릭하면 코어가 해당 셀을 **활성 셀로 자동 지정**하므로 복사/지우기는
+> 우클릭한 셀을 기준으로 동작한다.
+
 ## ContextMenuItem 필드
 
 | 필드 | 타입 | 설명 |

@@ -42,6 +42,21 @@ grid.isGroupExpanded(key);
 - 가상 스크롤 병용 시 `displayRows.slice(startIndex, endIndex)`를 사용하고
   `virtual.totalHeight`는 그룹 헤더를 포함한 평탄 행 수 기준이다.
 
+## 그룹 패널 (`groupPanel`)
+
+그리드 상단에 그룹 상태 바를 표시한다 — 어댑터 prop과 `mountGrid` 옵션
+모두 지원:
+
+```tsx
+<DataGrid groupPanel />                 // React / Vue / Svelte 동일
+mountGrid(el, { columns, data, groupPanel: true });
+```
+
+- 그룹된 컬럼이 칩으로 나열되고 **칩 클릭 시 해당 그룹이 해제**된다.
+- 그룹이 없으면 `locale.groupPanelEmpty` 안내 문구가 표시된다.
+- 그룹 추가는 헤더 우클릭 → `defaultHeaderContextMenuItems`의
+  "컬럼으로 그룹화"/"그룹 해제" 항목 또는 `setGroupBy` API로 한다.
+
 ## 동작 규칙
 
 - `GroupNode`의 `key`는 전체 경로를 JSON 직렬화한 고유 문자열.

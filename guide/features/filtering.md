@@ -28,6 +28,10 @@ grid.setSearch("hana");                            // 전역 검색
 grid.setFilterRowVisible(false);
 grid.toggleFilterRow();
 new GridCore({ columns, data, filterRowVisible: false }); // 초기 숨김
+
+// 뷰 일괄 초기화 — 정렬·필터·검색·페이지·행/셀 선택 모두 해제
+// (데이터·컬럼 레이아웃·그룹화는 유지)
+grid.resetView();
 ```
 
 필터/검색 변경 시 `pageIndex`는 0으로 리셋된다. 복수 컬럼 필터는 **AND** 결합.

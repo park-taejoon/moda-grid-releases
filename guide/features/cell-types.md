@@ -60,3 +60,17 @@ const columns: ColumnDef<Product>[] = [
 해석된 문자열은 셀 `title` 속성으로 렌더링된다 (네이티브 툴팁).
 null/undefined 반환 시 툴팁 없음. **셀 유효성 에러가 있으면 에러 메시지가
 툴팁보다 우선**한다.
+
+## 셀 노트 (`ColumnDef.note`)
+
+툴팁과 별개로, 셀에 **주석 표시 삼각형**(우상단 코너)을 붙인다 — IBSheet
+Note 대응. 노트 내용은 `title` 툴팁으로 표시된다 (tooltip이 있으면 tooltip이
+우선):
+
+```ts
+{ field: "name", note: "관리자 승인 필요" },
+{ field: "age", note: ({ value }) => Number(value) >= 40 ? "시니어" : null },
+```
+
+노트가 있는 셀은 `td.mg-cell-note` 클래스를 받는다 — CSS로 표시 색상을
+바꿀 수 있다 (`::after` 코너 border 색, 기본 `--grid-primary-color`).

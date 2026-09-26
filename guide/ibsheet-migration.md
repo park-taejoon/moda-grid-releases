@@ -75,6 +75,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `onDblClick` | `cellDblClick` |
 | `onEdit` | `afterEdit` — `{ row, column, oldValue, newValue }` |
 | `onSelectRow` | `selectionChange` — `{ selectedIds }` |
+| 드래그 범위 선택 (MouseSelect) | `selectionMode: "multi-cell"` — 셀 드래그/Shift+키로 범위 선택 |
 | `onSort` | `sortChange` — `{ sortState }` |
 | `onFilter` | `filterChange` — `{ filters }` |
 | `onRowMove` | `rowReorder` — `{ fromIndex, toIndex, row }` |
@@ -123,23 +124,44 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 가상 스크롤 | `height` + `rowHeight` props |
 | 상태 저장 | `grid.getState()` / `applyState()` |
 | Excel/PDF보내기 | `exportToXlsx({styled})` / `exportToPdf()` |
-| 컨텍스트 메뉴 | `contextMenu` / `headerContextMenu` props |
+| 컨텍스트 메뉴 | `contextMenu` / `headerContextMenu` props (배열 또는 팩토리 함수) |
+| 기본 우클릭 메뉴 | `defaultContextMenuItems` / `defaultHeaderContextMenuItems` 프리셋 |
 | 다국어 | `locale` prop (`enLocale` 프리셋) |
 | 채우기 핸들 | 활성 셀 우하단 드래그 (자동, `fillRange` API) |
 | 붙여넣기 행 확장 (EditExtend) | `pasteExtend: true` 옵션 |
 | 찾기/바꾸기 | `grid.findCells()` / `grid.replaceAll()` |
+| 그룹 패널 (GroupBar) | `groupPanel` prop — 그룹 칩 표시·해제 |
+| 자동 행 높이 | `autoRowHeight` prop — multiLine 셀 기준 |
+| 셀 노트 (Note) | `ColumnDef.note` — 코너 표시 + 툴팁 |
 
 ## 주요 API 메서드 매핑
 
 | IBSheet | moda-grid |
 | ------- | --------- |
-| `sheet.getValue(r, c)` | `grid.getCellValue(row, col)` |
-| `sheet.setValue(r, c, v)` | `startEditing` → `updateEditValue` → `commitEditing` |
+| `sheet.getValue(r, c)` | `grid.getCellValueAt(r, c)` / `getCellValue(row, col)` |
+| `sheet.setValue(r, c, v)` | `grid.setCellValue(r, c, v)` — 검증·이력·이벤트 포함 |
+| `sheet.findText()` | `grid.findCells()` / `grid.findNext()` (순환 이동) |
+| `sheet.replaceText()` | `grid.replaceAll(find, replace)` |
 | `sheet.loadSearchData(json)` | `grid.setData(rows)` 또는 `data` prop 변경 |
 | `sheet.getSaveJson()` | `grid.getChanges()` — `{created, updated, deleted}` |
+| `sheet.addRow({row: i})` | `grid.addRows(row, index)` |
+| `sheet.copyRows()` / 행 복제 | `grid.duplicateRows(rows)` — 원본 뒤 삽입 + I 마킹 |
 | `sheet.setRowStatus(r, "I")` | `grid.addRows()` → 자동 I 마킹 |
+| 셀 선택 후 Del | `grid.clearRange()` (어댑터에서 Delete/Backspace 자동) |
+| Ctrl+A 전체 선택 | `grid.selectAll()` — multi-cell/row는 전체 범위, single-cell은 전체 행 |
+| 범위 드래그 이동 | `grid.moveRange(source, target)` |
 | `sheet.doSearch()` | (없음 — data prop 갱신) |
 | `sheet.doSort(col)` | `grid.toggleSort(field)` |
+| `sheet.setRowHeight(r, h)` | `grid.setRowHeight(id, px)` — `null`로 해제 |
+| `sheet.print()` | `grid.print()` — `@media print` 스타일 포함 |
+| 컬럼 속성 변경 | `grid.updateColumn(field, patch)` — 부분 갱신 |
+| `Editable: 0` (전체 편집 잠금) | `GridOptions.editable: false` / `grid.setEditable(bool)` |
+| `sheet.refresh()` | `grid.resetView()` — 정렬/필터/검색/페이지/선택 초기화 |
+| `sheet.insertCol()` | `grid.addColumn(def, index)` |
+| `sheet.removeCol()` | `grid.removeColumn(field)` — 정렬/필터도 함께 정리 |
+| 행 높이 드래그 (AllowRowResizing) | `rowResizable` prop/옵션 — `rowNumbers` 필요 |
+| `sheet.showRow(r)` / `focusRow` | `grid.scrollToRow(rowIndex)` — 표시 인덱스 기준 |
+| `sheet.setGroupBy(...)` / 그룹 해제 | `grid.setGroupBy(fields)` — 빈 배열로 해제 |
 | `sheet.directDown2Excel()` | `grid.exportToXlsx({ filename })` |
 | `sheet.dispose()` | 컴포넌트 언마운트 (자동) |
 

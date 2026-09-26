@@ -17,10 +17,12 @@
 | 조작 | 동작 |
 | ---- | ---- |
 | 셀 클릭 | 활성 셀 지정 (`.mg-cell-active` 아웃라인) |
+| 셀 드래그 | 누른 셀을 앵커로 드래그 중인 셀까지 범위 선택 — `multi-cell`/`row` 모드 |
 | 방향키 | 인접 셀로 이동 (경계 클램프) |
 | Home / End | 행의 첫/마지막 컬럼으로 이동 |
 | PageUp / PageDown | 뷰포트 행 수 단위 이동 |
 | Shift + 위 키 | 범위 확장 (`.mg-cell-selected`) — `multi-cell`/`row` 모드 |
+| Ctrl/Cmd + A | 전체 선택 — `multi-cell`/`row`는 전체 범위, `single-cell`은 전체 행 |
 | Escape | 선택 해제 |
 | 행 클릭 | `toggleRowSelection` — `selectable` prop으로 비활성 가능 |
 | Tab | 편집 종료 시 이동 ([editing.md](./editing.md) 참고) |
@@ -35,7 +37,9 @@ DOM 스크롤과 동기화한다 (scrollIntoView).
 grid.setSelectionMode("multi-cell");
 grid.setActiveCell(rowIndex, columnIndex);      // visibleData/visibleColumns 기준
 grid.setCellRange({ startRow: 0, startCol: 0, endRow: 3, endCol: 2 });
+grid.extendSelectionTo(rowIndex, columnIndex); // 앵커 유지, 활성 셀만 이동 (드래그)
 grid.navigateCell("down", true);                // dir + extend(Shift)
+grid.selectAll();                               // Ctrl+A와 동일
 grid.clearCellSelection();
 grid.isActiveCell(r, c); grid.isCellInRange(r, c);
 

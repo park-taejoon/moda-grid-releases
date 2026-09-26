@@ -40,7 +40,8 @@
     rowNumbers: true,     // 행 번호 컬럼
     rowCheckboxes: true,  // 행 체크박스 + 헤더 전체선택
     rowStatus: true,      // I/U/D 상태 컬럼
-    searchBox: true,      // 상단 검색 입력
+    searchBox: true,      // 상단 검색 입력 (데이터 필터)
+    findBox: true,        // 찾기 바 — 셀 텍스트 검색 후 매치로 이동
     pager: true,          // 하단 페이저/행수
     pageSize: 20,
     // 선언형 이벤트 (grid.on과 동일)
@@ -60,13 +61,32 @@
 ### mountGrid가 렌더링하는 것
 
 - 헤더 클릭 정렬 (Shift = 다중 정렬), `filterable` 컬럼의 필터 행
-- 더블클릭 인라인 편집 (text/number/select/date/checkbox/multiselect)
-- 셀 타입: `image` / `button` / `link` / `progress`
+- 다단계 헤더 (`columnGroups` + `ColumnDef.group` → `.mg-colgroup` 2행 헤더)
+- 헤더 리사이즈 핸들 (`resizable`, 기본 true) + 헤더 드래그 컬럼 재배치
+  (`reorderable`, 기본 true)
+- `groupPanel`: 그룹된 컬럼 칩 표시 + 클릭으로 해제
+- `autoRowHeight`: `multiLine` 셀 내용만큼 행 높이 자동 확장
+- 더블클릭 인라인 편집 (text/number/select/date/checkbox/multiselect/radio/textarea)
+- 셀 타입: `image` / `button` / `link` / `progress` / `html`
+- 키보드: 방향키/Home/End/PageUp·Down 이동, Enter/F2 편집 진입,
+  Delete/Backspace 내용 지우기(`clearRange`), Ctrl+C/V 복사·붙여넣기,
+  Ctrl+Z/Y·Ctrl+Shift+Z 실행취소/재실행, Ctrl+A 전체 선택(`selectAll`)
 - 행 선택, `rowStatus` I/U/D 마킹, `rowNumbers`
 - 그룹/소계/트리 행, 셀 병합(rowSpan/colSpan), pinned 컬럼
+- `aggregationFn` 컬럼의 합계 푸터(`tfoot`)
 - 셀/헤더 컨텍스트 메뉴 (`contextMenu`/`headerContextMenu` 옵션)
 - `height`+`rowHeight` 가상 스크롤, `appendScroll` 자동 로드
-- `pager`: `pageSize > 0`이면 이전/다음 버튼 + 페이지 정보
+- `pager`: `pageSize > 0`이면 이전/다음 버튼 + 페이지 번호 버튼 + 페이지 정보
+- 마우스 드래그 셀 범위 선택 (`selectionMode: "multi-cell"`/`"row"`)
+- `findBox`: 셀 찾기 바 — Enter 다음/Shift+Enter 이전 매치 이동
+  (`findCells`/`findNext` 기반, `searchBox`의 데이터 필터와는 별개)
+- `columnController`: 우상단 컬럼 관리 도구 — 표시/숨김 체크박스 팝오버
+  + 전체 선택/해제
+- `filterToggle`: 필터 행 표시/숨김 토글 버튼 (filterable 컬럼이 있을 때만)
+- `statusBar`: 선택 영역 집계 상태바 (셀 수/개수/합계/평균/최소/최대,
+  기본 true)
+- `pageSizeOptions`: 페이저에 페이지 크기 셀렉트 (예: `[10, 20, 50]`)
+- `rowResizable`: 행 번호 셀 하단 드래그로 행 높이 조정 (`rowNumbers` 필요)
 
 `GridOptions`의 모든 옵션(`treeData`, `pivot`, `groupSubtotals`, `locale`,
 `pinnedTopRows` …)을 그대로 받는다.

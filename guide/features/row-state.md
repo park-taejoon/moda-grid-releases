@@ -11,6 +11,14 @@
 | `D` | Delete — 삭제 예정 행 | `deleteRowsByIds()`로 마킹된 행 (화면에는 남아 있음) |
 | 없음 | 변경 없음 | 초기 로드 상태, `commitChanges()` 후 |
 
+> `addRows(rows, index)`에 위치를 주면 rawData 기준 해당 인덱스에
+> 삽입한다 (IBSheet `addRow(index)` 대응). 생략하면 끝에 추가한다.
+>
+> `duplicateRows(rows)`는 각 행을 얕은 복사해 **원본 바로 다음 위치**에
+> 삽입한다. 복제본은 `I`로 마킹되고, 커스텀 `getRowId`가 없으면 복제본의
+> `id` 필드를 비워 원본과 키가 충돌하지 않게 한다 (커스텀 `getRowId`를
+> 쓰는 경우 복제본 키는 호출자가 구분해야 한다).
+
 **핵심 규칙**
 
 - `I` 행은 아무리 수정해도 `I` 유지 — 서버에는 한 번의 INSERT면 충분하기 때문
@@ -29,6 +37,9 @@ grid.hasChanges();                // 변경분 존재 여부
 // 삭제 마킹 / 복원
 grid.deleteRowsByIds(["3", "7"]); // 기존 행 → D 마킹, I 행 → 즉시 제거
 grid.restoreRowsByIds(["3"]);     // D 마킹 해제
+
+// 행 복제
+grid.duplicateRows([row1, row2]); // 각 원본 바로 뒤에 얕은 복사본 삽입 — 복제본은 I 마킹
 
 // 확정 / 취소
 grid.commitChanges();             // D 행 실제 제거 + 모든 마킹 해제 (서버 저장 성공 후)

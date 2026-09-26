@@ -53,3 +53,19 @@ const { grid, snapshot } = useGridCore({ columns, data, pageSize: 20 });
 
 Vue/Svelte도 동일 — `state.value.pageIndex`(Vue) / `$store.pageIndex`
 (Svelte)로 읽고 `grid.setPage`로 변경한다.
+
+## `mountGrid` 내장 페이저
+
+`pager: true`면 이전/다음 버튼 + **페이지 번호 버튼**(현재 기준 ±2, 최소
+5칸 창 — `.mg-pager-pages`/`.mg-pager-num`, 활성 페이지는 `.mg-active`)을
+렌더링한다. `pageSizeOptions`를 주면 페이지 크기 셀렉트(`.mg-pager-size`)도
+추가된다:
+
+```ts
+mountGrid(el, {
+  columns, data,
+  pager: true,
+  pageSize: 20,
+  pageSizeOptions: [10, 20, 50, 100],
+});
+```

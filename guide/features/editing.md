@@ -52,6 +52,11 @@ grid.isEditing(r, c); grid.isCellEditable(r, c);
 grid.getEditorContext(r, c);                        // CellEditorContext (커스텀 에디터용)
 
 grid.undo(); grid.redo();                           // 이력 되돌리기/다시 실행
+
+// 전역 편집 잠금 (IBSheet Editable 대응)
+new GridCore({ columns, data, editable: false });    // 전체 편집 불가
+grid.setEditable(false);                             // 런타임 잠금 (편집 중이면 취소)
+grid.isEditable();
 grid.canUndo(); grid.canRedo();
 ```
 
@@ -111,6 +116,59 @@ select보다 한 클릭 빠르다 (IBSheet `Type:"Radio"` 대응). 선택 즉시
 
 키 조작: `Enter` = 줄바꿈, `Ctrl/Cmd+Enter` = 저장, `Tab` = 저장+이동,
 `Esc` = 취소. React/Vue/Vue2/Svelte/`mountGrid` 모두 동일.
+
+### 자동 행 높이 (`autoRowHeight`)
+
+`multiLine` 셀의 줄 수에 맞춰 행 높이를 자동 확장한다:
+
+```tsx
+<DataGrid autoRowHeight columns={[ { field: "memo", multiLine: true } ]} />
+```
+
+- 코어 `grid.getRowHeight(row)`가 컬럼 너비로 줄 수를 추정해 필요 높이를
+  반환한다 — 어댑터가 `tr` 높이로 적용.
+- `GridOptions.autoRowHeight` 또는 어댑터 `autoRowHeight` prop으로 설정,
+  `grid.setAutoRowHeight(bool)`로 토글 가능.
+- **가상 스크롤 모드에서는 무시**된다 — 가상 스크롤은 고정 행 높이가
+  필요하기 때문.
+- 줄 수는 추정치다 (글자당 ~8px 기준). 정확한 측정이 필요하면 직접 행
+  높이를 계산해 CSS로 적용하거나 `setRowHeight`를 사용한다.
+
+### 행별 높이 (`setRowHeight`)
+
+특정 행만 높이를 지정한다 (IBSheet `setRowHeight` 대응):
+
+```ts
+grid.setRowHeight(grid.getRowId(row), 80); // px
+grid.setRowHeight(id, null);               // 해제 → 기본/autoRowHeight 계산
+```
+
+`getRowHeight`는 오버라이드를 `autoRowHeight` 추정보다 **우선 적용**한다.
+어댑터/`mountGrid`는 `tr` 높이로 자동 반영. 가상 스크롤은 고정 높이를
+쓰므로 비가상 모드에서만 적용된다.
+
+### 행 높이 드래그 (`rowResizable`)
+
+`rowResizable` prop/`mountGrid` 옵션을 주면 **행 번호 셀 하단**에 드래그
+핸들(`.mg-row-resizer`)이 생긴다 — 엑셀/IBSheet의 행 경계 드래그처럼
+끌어서 행 높이를 조정한다 (`setRowHeight` 호출). `rowNumbers`가 필요하며
+가상 스크롤에서는 표시되지 않는다:
+
+```tsx
+<DataGrid rowNumbers rowResizable ... />
+mountGrid(el, { rowNumbers: true, rowResizable: true, ... });
+```
+
+## 텍스트 자동완성 (`editorOptions` + text 에디터)
+
+기본 `text` 에디터에 `editorOptions`를 주면 `<datalist>` 자동완성이
+연결된다 — IBSheet Suggestion/ComboEdit 대응. 입력은 자유롭고 후보를
+내려받아 고를 수 있다:
+
+```ts
+{ field: "dept", editorOptions: ["개발팀", "디자인팀", "기획팀"] }
+// cellEditor 생략(text) + editorOptions → 자동완성 input
+```
 
 ## 커밋 순서
 

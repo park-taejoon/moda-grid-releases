@@ -75,6 +75,24 @@ createGrid({
 - 커스텀 렌더러(비-어댑터)는 `grid.getRowClass(row, i)` /
   `grid.getCellClass(row, i, col)`로 해석 결과를 얻는다.
 
+## 인라인 스타일 — cellStyle
+
+클래스 없이 셀 하나만 직접 색을 바꿀 때 (IBSheet 조건부 색상 대응).
+CSS 문자열, kebab-case 속성 맵, 또는 셀 파라미터를 받는 함수를 지정한다:
+
+```ts
+{
+  field: "age",
+  cellStyle: ({ value }) =>
+    Number(value) >= 40 ? { "background-color": "#fee2e2", color: "#b91c1c" } : null,
+}
+// 또는 CSS 문자열: cellStyle: "background-color: #fee2e2; color: #b91c1c"
+```
+
+- 반환값은 `Record<string, string>`(kebab-case) 또는 CSS 문자열 —
+  코어가 문자열을 맵으로 파싱해 어댑터가 `<td style>`에 병합한다.
+- 커스텀 렌더러는 `grid.getCellStyle(row, rowIndex, col)`로 맵을 얻는다.
+
 ## 주요 구조 클래스 (커스텀 스타일링 대상)
 
 | 클래스 | 대상 |

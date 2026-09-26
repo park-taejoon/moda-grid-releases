@@ -23,6 +23,8 @@
 `resizable` prop(기본값 `true`)으로 헤더 우측 경계에 `.mg-resizer` 핸들이
 표시된다. 드래그는 `requestAnimationFrame`으로 스로틀해 프레임당 최대 1회
 코어에 반영하고, 포커스된 핸들에서 `←`/`→` 키로 ±10px 조절 가능하다.
+**핸들 더블클릭은 `autoSizeColumn`** — 내용 기준 자동 너비로 즉시 조정된다
+(엑셀/IBSheet 경계 더블클릭과 동일).
 
 ```ts
 grid.setColumnWidth("name", 180);            // min/max 클램프 적용
@@ -91,11 +93,43 @@ new GridCore({
 - 어댑터는 그룹 셀 `colspan`+`.mg-colgroup`, 단일 컬럼 `rowspan=2`로
   2단 `<tr>`을 렌더링한다.
 
+## 헤더 커스텀 클래스 (`headerClass`)
+
+헤더 `th`에 커스텀 클래스를 추가한다 — 문자열 또는 컬럼을 받는 함수:
+
+```ts
+{ field: "name", headerClass: "th-primary" }
+{ field: "age", headerClass: (col) => col.sortable === false ? "th-nosort" : null }
+```
+
+`grid.getHeaderClass(col)`로 해석된 값을 4개 어댑터와 `mountGrid`가
+`th` 클래스에 병합한다.
+
 ## 런타임 컬럼 교체
 
 ```ts
 grid.setColumns(newColumns);   // 너비/순서 상태 유지, 새 컬럼은 끝에 추가
+
+// 부분 수정 — 나머지 속성은 유지한 채 필요한 것만 갱신
+grid.updateColumn("name", { header: "성명", editable: false });
 ```
+
+`updateColumn(field, patch)`은 대상 컬럼이 없으면 `false`를 반환하고,
+`field` 자체는 patch로 덮을 수 없다. 피벗 모드에서는 원본(base) 컬럼이
+대상이 된다.
+
+### 컬럼 추가/제거
+
+```ts
+grid.addColumn({ field: "memo", header: "비고" });      // 끝에 추가
+grid.addColumn({ field: "memo", header: "비고" }, 0);   // 첫 위치에 삽입
+grid.removeColumn("name");                             // false = 없는 컬럼
+```
+
+`addColumn(def, index)`의 index는 **표시 순서**에도 반영된다 — 기존 컬럼의
+order를 밀어내고 해당 위치에 배치한다. `removeColumn(field)`는 정렬·필터·
+컬럼 상태에서 해당 필드를 함께 정리한다. 피벗 모드에서는 baseColumns가
+대상이다.
 
 `snapshot.columnState`(order 오름차순 `ColumnState[]`)로 레이아웃 상태를
 직접 읽을 수 있다. 레이아웃 변경은 파이프라인을 재계산하지 않고 스냅샷만

@@ -38,7 +38,7 @@
 | 데이터 | 정렬 / 다중 정렬 | [features/sorting.md](./features/sorting.md) |
 | 데이터 | 컬럼 필터 / 전역 검색 / Set 필터 | [features/filtering.md](./features/filtering.md) |
 | 데이터 | 페이징 | [features/paging.md](./features/paging.md) |
-| 데이터 | 행 그룹화 + 집계 + 소계 행 | [features/grouping.md](./features/grouping.md) |
+| 데이터 | 행 그룹화 + 집계 + 소계 행 + 그룹 패널 | [features/grouping.md](./features/grouping.md) |
 | 데이터 | 트리 데이터 (계층/레벨 접기/노드 검색/트리 소계) | [features/tree-data.md](./features/tree-data.md) |
 | 데이터 | 피벗 테이블 (행/열 디멘션 + 집계) | [features/pivot.md](./features/pivot.md) |
 | 데이터 | 서버 사이드 / 무한 스크롤 / Append Scroll | [features/server-side.md](./features/server-side.md) |
@@ -51,7 +51,7 @@
 | 컬럼 | 계산 컬럼 — 수식(formula)/누계(cumulative) | [features/computed-columns.md](./features/computed-columns.md) |
 | 렌더 | 셀 타입 (이미지·버튼·링크·프로그레스·HTML) + 셀 툴팁 + 멀티라인 | [features/cell-types.md](./features/cell-types.md) |
 | 상호작용 | 컨텍스트 메뉴 (셀/헤더 우클릭) | [features/context-menu.md](./features/context-menu.md) |
-| 상호작용 | 이벤트 + 행 번호 + 채우기 핸들 | [features/events.md](./features/events.md) |
+| 상호작용 | 이벤트 + 행 번호 + 채우기 핸들 + 범위 지우기/이동 + scrollToRow | [features/events.md](./features/events.md) |
 | 설정 | 다국어(locale) + 접근성(aria) | [features/i18n.md](./features/i18n.md) |
 | 출력 | 내장 포맷터 (숫자·통화·퍼센트·날짜) | [features/formatting.md](./features/formatting.md) |
 | 출력 | CSV 보내기/가져오기/템플릿 | [features/csv-export.md](./features/csv-export.md) |
