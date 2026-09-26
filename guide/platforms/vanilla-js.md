@@ -70,7 +70,10 @@
 - 셀 타입: `image` / `button` / `link` / `progress` / `html`
 - 키보드: 방향키/Home/End/PageUp·Down 이동, Enter/F2 편집 진입,
   Delete/Backspace 내용 지우기(`clearRange`), Ctrl+C/V 복사·붙여넣기,
-  Ctrl+Z/Y·Ctrl+Shift+Z 실행취소/재실행, Ctrl+A 전체 선택(`selectAll`)
+  Ctrl+Z/Y·Ctrl+Shift+Z 실행취소/재실행, Ctrl+A 전체 선택(`selectAll`),
+  Ctrl+D/R 아래/오른쪽 채우기(`fillDown`/`fillRight`), Tab 셀 이동,
+  Ctrl+X 잘라내기(`cutSelectionTsv`), Ctrl+Home/End·Ctrl+방향키 점프,
+  Shift+Space 행 선택 / Ctrl+Space 열 선택
 - 행 선택, `rowStatus` I/U/D 마킹, `rowNumbers`
 - 그룹/소계/트리 행, 셀 병합(rowSpan/colSpan), pinned 컬럼
 - `aggregationFn` 컬럼의 합계 푸터(`tfoot`)

@@ -22,6 +22,16 @@
 | Home / End | 행의 첫/마지막 컬럼으로 이동 |
 | PageUp / PageDown | 뷰포트 행 수 단위 이동 |
 | Shift + 위 키 | 범위 확장 (`.mg-cell-selected`) — `multi-cell`/`row` 모드 |
+| Tab / Shift+Tab | 활성 셀 좌/우 이동 (엑셀) |
+| Home / End | 행의 첫/마지막 셀로 이동 |
+| PageUp / PageDown | 뷰포트 행 수만큼 위/아래 이동 |
+| Ctrl/Cmd + Home / End | 그리드 첫/마지막 셀로 이동 (`"first"`/`"last"`) |
+| Ctrl/Cmd + ↑ / ↓ / ← / → | 같은 열 첫/마지막 행, 같은 행 첫/마지막 열로 이동 |
+| Shift + Space | 행 전체 선택 (`selectEntireRow`, `single-cell`은 행 선택으로 대체) |
+| Ctrl/Cmd + Space | 컬럼 전체 선택 (`selectEntireColumn`, `multi-cell`만) |
+| Ctrl/Cmd + D | 선택 범위 첫 행을 아래로 채우기 (`fillDown`) |
+| Ctrl/Cmd + R | 선택 범위 첫 컬럼을 오른쪽으로 채우기 (`fillRight`) |
+| Ctrl/Cmd + X | 잘라내기 — 복사 + 내용 지우기, Undo 1단위 (`cutSelectionTsv`) |
 | Ctrl/Cmd + A | 전체 선택 — `multi-cell`/`row`는 전체 범위, `single-cell`은 전체 행 |
 | Escape | 선택 해제 |
 | 행 클릭 | `toggleRowSelection` — `selectable` prop으로 비활성 가능 |
@@ -40,6 +50,9 @@ grid.setCellRange({ startRow: 0, startCol: 0, endRow: 3, endCol: 2 });
 grid.extendSelectionTo(rowIndex, columnIndex); // 앵커 유지, 활성 셀만 이동 (드래그)
 grid.navigateCell("down", true);                // dir + extend(Shift)
 grid.selectAll();                               // Ctrl+A와 동일
+grid.selectEntireRow(); grid.selectEntireColumn(); // Shift+Space / Ctrl+Space
+grid.fillDown(); grid.fillRight();              // Ctrl+D / Ctrl+R — 선택 범위 채우기
+grid.cutSelectionTsv();                         // Ctrl+X — TSV 반환 + 지우기
 grid.clearCellSelection();
 grid.isActiveCell(r, c); grid.isCellInRange(r, c);
 

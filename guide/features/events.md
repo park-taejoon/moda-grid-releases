@@ -83,6 +83,10 @@ const filled = grid.fillRange(
 );
 ```
 
+키보드 단축키도 지원한다 — 선택 범위에서 `Ctrl/Cmd+D`는 첫 행을 아래로,
+`Ctrl/Cmd+R`은 첫 컬럼을 오른쪽으로 채운다 (`fillDown`/`fillRight`,
+엑셀과 동일).
+
 ## 내용 지우기 (Delete/Backspace)
 
 그리드에 포커스된 상태에서 `Delete`/`Backspace`를 누르면 **선택 범위

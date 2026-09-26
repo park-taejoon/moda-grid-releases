@@ -148,6 +148,8 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `sheet.copyRows()` / 행 복제 | `grid.duplicateRows(rows)` — 원본 뒤 삽입 + I 마킹 |
 | `sheet.setRowStatus(r, "I")` | `grid.addRows()` → 자동 I 마킹 |
 | 셀 선택 후 Del | `grid.clearRange()` (어댑터에서 Delete/Backspace 자동) |
+| Ctrl+X 잘라내기 | `grid.cutSelectionTsv()` — TSV 반환 + 지우기, Undo 1단위 |
+| Shift+Space / Ctrl+Space | `grid.selectEntireRow()` / `selectEntireColumn()` — 행·열 전체 선택 |
 | Ctrl+A 전체 선택 | `grid.selectAll()` — multi-cell/row는 전체 범위, single-cell은 전체 행 |
 | 범위 드래그 이동 | `grid.moveRange(source, target)` |
 | `sheet.doSearch()` | (없음 — data prop 갱신) |
