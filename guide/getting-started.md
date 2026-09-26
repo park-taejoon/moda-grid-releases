@@ -96,4 +96,6 @@ pnpm bench        # 성능 벤치마크
 ## 다음 단계
 
 - 사용 중인 프레임워크의 [플랫폼 가이드](./README.md#플랫폼별-가이드)로 이동
+- **IBSheet 사용자**는 [ibsheet-migration.md](./ibsheet-migration.md)의
+  개념 매핑 치트시트로 바로 시작할 수 있다
 - 필요한 기능의 [기능 가이드](./README.md#기능별-가이드)에서 복사 가능한 예시 확인

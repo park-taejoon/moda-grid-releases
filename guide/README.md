@@ -16,12 +16,13 @@
 | 문서 | 내용 |
 | ---- | ---- |
 | [getting-started.md](./getting-started.md) | 설치, Hello Grid, 핵심 개념(스냅샷·파이프라인), 패키지 선택 |
+| [ibsheet-migration.md](./ibsheet-migration.md) | IBSheet → moda-grid 개념/API 매핑 치트시트 |
 
 ### 플랫폼별 가이드
 
 | 플랫폼 | 패키지 | 문서 |
 | ------ | ------ | ---- |
-| 순수 JS (CDN) | `moda-grid.js` (IIFE) | [platforms/vanilla-js.md](./platforms/vanilla-js.md) |
+| 순수 JS (CDN) | `moda-grid.js` (IIFE) — `mountGrid` 완성형 그리드 | [platforms/vanilla-js.md](./platforms/vanilla-js.md) |
 | React | `@moda-grid/react` | [platforms/react.md](./platforms/react.md) |
 | Vue 3 | `@moda-grid/vue` | [platforms/vue3.md](./platforms/vue3.md) |
 | Vue 2.7 | `@moda-grid/vue2` | [platforms/vue2.md](./platforms/vue2.md) |
