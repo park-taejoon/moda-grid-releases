@@ -35,14 +35,42 @@ core ──┬─→ react (dist)  svelte (dist)
 
 ## npm 배포
 
+### 릴리즈 (권장) — `pnpm release`
+
+`scripts/release.mjs`가 **5개 패키지의 version과 git 태그를 한 번에** 맞춘다 —
+태그와 package.json 버전 불일치로 배포가 실패하는 일이 없다:
+
 ```bash
-pnpm build               # dist 생성 (css/SFC 복사 포함)
-pnpm publish:packages    # packages/* 5개 일괄 publish (이미 올라간 버전은 스킵)
+pnpm release patch        # 0.1.0 → 0.1.1 : 버전 일괄 갱신 + 커밋 + 태그 v0.1.1
+pnpm release minor        # → 0.2.0
+pnpm release major        # → 1.0.0
+pnpm release 0.3.0        # 명시적 버전
+pnpm release patch --push # 커밋 + 태그 + origin push까지 한 번에
 ```
 
-또는 `v*` 태그 push 시 `publish-npm.yml` 워크플로우가 typecheck → test →
-build → publish를 실행한다. 필요한 Secret: `NPM_TOKEN`(npm Automation 토큰).
+동작 순서:
+
+1. `packages/*/package.json`의 `version`을 전부 새 버전으로 갱신
+   (버전 불일치가 있으면 경고 후 통일)
+2. 갱신분만 `chore(release): vX.Y.Z`로 커밋 — 작업 중인 다른 변경분은 건드리지 않음
+3. `git tag vX.Y.Z` 생성 (이미 있으면 중단)
+4. `--push`가 있으면 커밋+태그를 origin에 push → `publish-npm.yml` 실행
+
+push 없이 태그만 만들었다면 이후에 `git push && git push origin vX.Y.Z`로
+배포를 마무리한다.
+
+### 수동 배포
+
+```bash
+pnpm build               # dist 생성 (css/SFC 복사 포함)
+pnpm publish:packages    # packages/* 일괄 publish (이미 올라간 버전은 스킵)
+```
+
+`v*` 태그 push 시 `publish-npm.yml` 워크플로우가 typecheck → test →
+build → publish를 실행한다. 필요한 Secret: `NPM_TOKEN`(npm Automation 토큰,
+`@moda-grid` 스코프에 publish 권한 필요).
 npm 페이지에 표시되는 README는 각 `packages/*/README.md`.
+배포되는 tarball은 `files: ["dist"]`로 제한되어 dist/README/LICENSE만 포함된다.
 
 ## 요구 런타임
 
