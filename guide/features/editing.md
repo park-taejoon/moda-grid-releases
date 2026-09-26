@@ -30,8 +30,13 @@ Undo/Redo로 되돌릴 수 있다.
   valueSetter: (row, value) => { row.age = +value; },  // 기본: row[field]=value
   validate: (value, row) =>
     Number(value) >= 0 ? true : "0 이상이어야 합니다",  // false/문자열 → 저장 거부
+  required: true,                                      // 빈 값 저장 거부 + 헤더 * 표시
 }
 ```
+
+`required`와 `validate`는 편집 저장뿐 아니라 `importCsv`·`pasteTsv`에도
+같이 적용된다 — 같은 컬럼 정의가 모든 입력 경로의 검증 규칙이다.
+빈 값은 `null`/`undefined`/빈 문자열/`NaN`으로 판정한다.
 
 ## 코어 API
 
@@ -54,9 +59,21 @@ grid.canUndo(); grid.canRedo();
 `commitEditing()`은:
 
 1. `cellEditor === 'number'`이면 입력을 `Number`로 변환
-2. `column.validate(value, row)` — `true`가 아니면 `editError`에 메시지 기록,
+2. `validateCellValue(row, col, value)` — `required`(빈 값 거부) →
+   `column.validate` 순서로 검사. 실패 시 `editError`에 메시지 기록,
    편집 유지, `false` 반환
 3. `valueSetter` 호출(없으면 `row[field] = value`) 후 `notify()`로 파이프라인 재계산
+
+## 저장 전 검증 — validateChanges
+
+변경된 행(I/U)만 모아 검사하려면 행 상태 추적 API를 사용한다
+([row-state.md](./row-state.md) 참고). 변경 행에서 검증에 실패한 셀은
+`mg-cell-invalid` 클래스 + title 툴팁으로 표시된다:
+
+```ts
+const errors = grid.validateChanges(); // [{ row, rowId, field, message }]
+if (errors.length) return;             // 서버 전송 중단
+```
 
 ## 커스텀 에디터
 

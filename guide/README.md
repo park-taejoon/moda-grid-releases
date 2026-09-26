@@ -44,7 +44,8 @@
 | 선택 | 행/셀/범위 선택 + 체크박스 + 상태바 집계 | [features/selection.md](./features/selection.md) |
 | 편집 | 인라인 편집 + 검증 + 커스텀 에디터 + Undo/Redo | [features/editing.md](./features/editing.md) |
 | 편집 | 클립보드 복사/붙여넣기 (TSV) | [features/clipboard.md](./features/clipboard.md) |
-| 출력 | CSV보내기 | [features/csv-export.md](./features/csv-export.md) |
+| 출력 | CSV 보내기/가져오기/템플릿 | [features/csv-export.md](./features/csv-export.md) |
+| 행 | 행 상태 추적 (I/U/D) + 변경분 수집 | [features/row-state.md](./features/row-state.md) |
 | 행 | 행 드래그앤드롭 재정렬 | [features/row-drag.md](./features/row-drag.md) |
 | 행 | 고정 행 + 전체 총계 | [features/pinned-rows.md](./features/pinned-rows.md) |
 | 성능 | 가상 스크롤 | [features/virtual-scroll.md](./features/virtual-scroll.md) |

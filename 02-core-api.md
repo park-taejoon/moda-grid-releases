@@ -106,6 +106,8 @@ grid.subscribe(() => render(grid.getSnapshot()));
 | `expandAllGroups()` / `collapseAllGroups()` | 전체 펼치기/접기 |
 | `isGroupExpanded(key)` | 그룹 키 펼침 여부 |
 | `exportToCsv(options?)` | 표시 상태 데이터를 CSV 문자열로 반환 + 브라우저면 다운로드 |
+| `getCsvTemplate(options?)` | 그리드 컬럼에 맞는 CSV 템플릿(헤더 행) 반환 + 다운로드 |
+| `importCsv(csvText, options?)` | CSV 문자열 파싱 → 행 추가/교체. `CsvImportResult {added, skipped, errors}` 반환 |
 | `getSelectionTsv(options?)` | 선택 범위(없으면 활성 셀)를 TSV 문자열로 변환 (없으면 null). `{ includeHeaders: true }`면 첫 줄에 헤더 행 포함 |
 | `pasteTsv(tsv, start?)` | TSV를 활성 셀부터 순차 쓰기 → `PasteResult` 반환 (편집 이력에 1개 단위로 기록) |
 | `setSearch(text)` | 전역 검색 (표시 컬럼 전체, 대소문자 무시) |
@@ -139,6 +141,10 @@ grid.subscribe(() => render(grid.getSnapshot()));
 | `isEditing(r, c)` / `isCellEditable(r, c)` | 렌더링 시 편집 상태 조회 |
 | `getEditorContext(r, c)` | 커스텀 편집기용 컨텍스트 (`CellEditorContext`) |
 | `undo()` / `redo()` / `canUndo()` / `canRedo()` | 편집·붙여넣기 이력 되돌리기/다시 실행 (아래 Undo/Redo 참고) |
+| `getRowState(row)` / `getChanges()` / `hasChanges()` | 행 상태(I/U/D) 조회 / 변경분 수집 / 변경 여부 (아래 행 상태 추적 참고) |
+| `deleteRowsByIds(ids)` / `restoreRowsByIds(ids)` | 삭제 마킹(D) / 삭제 마킹 해제 |
+| `commitChanges()` / `clearChanges()` | D 행 실제 제거 + 마킹 초기화 / 마킹만 초기화 |
+| `validateChanges()` / `validateRow(row)` / `getCellError(row, col)` | I/U 행의 required·validate 검사 (저장 전 유효성 확인) |
 | `setPinnedTopRows(rows)` / `setPinnedBottomRows(rows)` | 상단/하단 고정 행 데이터 설정 (`null`로 해제) |
 | `getUniqueValues(field)` | 컬럼의 고유 표시 값 목록 — Set 필터 체크리스트용 |
 | `getState()` / `applyState(state)` | 직렬화 가능한 그리드 상태 저장/복원 (`GridPersistedState`) |
@@ -171,6 +177,7 @@ interface ColumnDef<TData> {
   cellEditor?: 'text'|'number'|'select'|'date'|'custom'; // 기본값 'text'
   editorOptions?: readonly string[];       // select 편집기 옵션
   valueSetter?: (row, value) => void;      // 기본값: row[field] = value
+  required?: boolean;                      // 필수 입력 — 빈 값이면 저장/가져오기/붙여넣기 거부 + 헤더 * 표시
   validate?: (value, row) => boolean | string; // 편집 저장 전 검증
   rowDrag?: boolean;                       // 이 컬럼 셀에 행 드래그 핸들 표시
   cellClass?: ClassSource<CellClassParams>; // 셀 커스텀 클래스 (문자열 | 함수)
@@ -307,7 +314,7 @@ new GridCore({
 | ------ | ---- |
 | `toggleTreeExpanded(rowId)` | 트리 노드 펼침/접힘 토글 |
 
-## CSV보내기
+## CSV보내기 / 가져오기 / 템플릿
 
 `grid.exportToCsv(options)`는 **현재 표시 상태**(필터·검색·정렬·페이징·
 그룹화가 반영된 데이터)를 CSV로 직렬화한다 (`csv.ts`).
@@ -328,6 +335,30 @@ grid.exportToCsv({
 - 그룹화 중이면 펼쳐진 리프 행만 표시 순서대로 출력 (그룹 헤더 제외)
 - 순수 함수 `escapeCsvCell` / `buildCsv` / `downloadCsv`도 개별 export된다
 
+**가져오기** — `grid.importCsv(csvText, options)`는 CSV 문자열을 파싱해
+행을 생성한다:
+
+```ts
+grid.importCsv(text, {
+  hasHeader: true,   // 첫 줄을 header ?? field / field 이름으로 컬럼 매칭
+  replace: false,    // false면 기존 데이터 뒤에 추가, true면 교체
+});
+```
+
+- `hasHeader` 매칭은 이름 기준이라 CSV의 컬럼 순서가 달라도 안전하고,
+  매칭 안 되는 열은 무시된다. `hasHeader: false`면 표시 컬럼 순서대로
+  위치 매칭.
+- `cellEditor`/`filterType`이 `'number'`인 컬럼은 숫자로 변환
+  (`coerceCsvCell` — 빈 문자열은 null). `valueSetter`가 있으면 사용.
+- `validate` 실패 행은 건너뛰고 `errors`에 행 번호와 사유를 남긴다.
+- 파서 `parseCsv`는 RFC 4180 (따옴표 필드, `""` 이스케이프, CRLF)과
+  선행 BOM을 처리한다. exportToCsv 출력은 그대로 재가져올 수 있다.
+
+**템플릿** — `grid.getCsvTemplate(options)`는 그리드 컬럼에 맞는
+헤더 행만 담긴 CSV(BOM 포함)를 반환하고 다운로드한다. export와 같은
+헤더 규칙을 쓰므로 사용자가 채운 파일을 importCsv로 바로 가져올 수 있다.
+`visibleColumnsOnly`(기본 false)로 숨긴 컬럼 제외 가능.
+
 ## 클립보드 (Copy & Paste)
 
 **Copy** — `getSelectionTsv()`가 `selectedRange`(없으면 `activeCell`) 영역을
@@ -339,7 +370,7 @@ TSV로 변환한다. 어댑터가 `Ctrl/Cmd+C`에서 `navigator.clipboard.writeT
 순차 쓰기한다:
 
 - `editable: false` 컬럼과 범위 밖 셀은 건너뜀 (`skipped`)
-- `cellEditor: 'number'` 컬럼은 숫자로 변환 (변환 불가 시 에러 기록)
+- `cellEditor`/`filterType`이 `'number'`인 컬럼은 숫자로 변환 (변환 불가 시 에러 기록)
 - 컬럼 `validate` 통과 실패 시 건너뜀 + `errors`에 위치·메시지 기록
 - 쓰기는 `valueSetter` 또는 `row[field] = value` — 편집 커밋과 동일 경로
 - 반환: `PasteResult { applied, skipped, errors }`, 적용 시 1회 `notify`
@@ -594,6 +625,30 @@ grid.canUndo(); grid.canRedo();
 - 이력 크기는 `GridOptions.undoLimit`(기본값 100)로 제한하고,
   `undoLimit: 0`이면 이력 기록 자체를 끈다.
 - `setData` 호출 시 이력은 초기화된다 (이전 행 객체 참조가 무의미해지므로).
+
+## 행 상태 추적 (I / U / D)
+
+각 행의 변경 상태를 `getRowId` 기준으로 추적해 스냅샷
+`rowStates: Record<string, RowState>`에 노출한다 — 서버에 변경분만 저장하는
+CRUD 패턴용:
+
+- `I` — `addRows`/`importCsv`/행 붙여넣기로 추가된 행. 이후 수정해도 `I` 유지.
+- `U` — 셀 편집·`pasteTsv`로 값이 바뀐 기존 행.
+- `D` — `deleteRowsByIds`로 마킹된 행. `commitChanges` 전까지 화면에 남고
+  `restoreRowsByIds`로 되돌릴 수 있다. `I` 행을 삭제하면 서버에 없는 행이므로
+  즉시 제거된다.
+
+```ts
+grid.deleteRowsByIds(["3", "7"]);       // → D 마킹
+const changes = grid.getChanges();      // { inserted, updated, deleted } — JSON 직렬화 가능
+await fetch("/api/users", { method: "POST", body: JSON.stringify(changes) });
+grid.commitChanges();                   // D 행 실제 제거 + 마킹 초기화
+grid.clearChanges();                    // (또는) 마킹만 초기화 — D 행 복귀
+```
+
+어댑터는 `rowStatus` prop으로 맨 왼쪽 상태 컬럼(배지 + 행별
+`mg-row-I`/`mg-row-U`/`mg-row-D` 클래스)을 표시한다. `setData`로 데이터를
+통째로 교체하면 상태도 초기화된다. 서버 사이드 모드와의 병용은 권장하지 않는다.
 
 ## 고정 행과 총계 (Pinned Rows & Grand Totals)
 

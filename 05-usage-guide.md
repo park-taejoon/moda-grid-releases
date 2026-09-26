@@ -435,6 +435,21 @@ grid.exportToCsv({
 - `,` `"` 줄바꿈 자동 이스케이프, UTF-8 BOM 포함 (엑셀 한글 대응)
 - 서버 모드에서는 로드된 행만 출력
 
+### CSV 가져오기 / 템플릿
+
+```ts
+grid.getCsvTemplate({ filename: "users-template.csv" }); // 컬럼에 맞는 헤더 행 다운로드
+const result = grid.importCsv(csvText, {
+  hasHeader: true,  // 첫 줄 헤더 → 컬럼 이름 매칭 (기본값)
+  replace: false,   // false=추가 / true=교체 (기본값)
+});
+// result: { added, skipped, errors }
+```
+
+- 헤더 매칭은 `header ?? field` 또는 `field` 이름 기준 — 컬럼 순서가 달라도 안전
+- `cellEditor`/`filterType: 'number'` 컬럼은 숫자 변환, `valueSetter`/`validate` 적용
+- export한 파일은 그대로 다시 가져올 수 있다
+
 ### 클립보드 (Copy & Paste)
 
 - `Ctrl/Cmd+C` — 선택 범위(없으면 활성 셀)를 TSV로 복사

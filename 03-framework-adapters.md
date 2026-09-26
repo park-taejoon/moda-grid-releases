@@ -58,6 +58,7 @@ const { grid, snapshot } = useGridCore({ columns, data });
 | `columnController` | `boolean` | `false` | 우상단 컬럼 관리 도구(체크박스 팝오버 + 전체 선택/해제) 표시 |
 | `filterToggle` | `boolean` | `false` | 우상단 필터 행 표시/숨김 버튼 (filterable 컬럼이 있을 때만 렌더) |
 | `rowCheckboxes` | `boolean` | `false` | 행 체크박스 선택 컬럼 표시 (헤더에 전체선택 체크박스) |
+| `rowStatus` | `boolean` | `false` | 맨 왼쪽 행 상태 컬럼 표시 — I(입력)/U(수정)/D(삭제) 배지 + `mg-row-I/U/D` 행 클래스 |
 | `statusBar` | `boolean` | `true` | 선택 영역 집계 상태바 표시 |
 | `className` | `string` | — | 추가 클래스 |
 
@@ -113,7 +114,7 @@ const { grid, state } = useGrid<User>({ columns, data: users });
 
 props는 React 어댑터와 동일하다 (`columns`, `data`, `grid`, `height`,
 `rowHeight`, `overscan`, `selectable`, `getRowId`, `resizable`,
-`reorderable`, `columnController`, `filterToggle`, `rowCheckboxes`, `statusBar`). `columns`/`data`만
+`reorderable`, `columnController`, `filterToggle`, `rowCheckboxes`, `rowStatus`, `statusBar`). `columns`/`data`만
 넘기면 내부에서 GridCore를 생성하고, `grid`를 넘기면 외부 인스턴스를
 구독한다. `height`+`rowHeight`로 가상 스크롤 활성화 — 스크롤 컨테이너 +
 상/하 스페이서 `<tr>`, `@scroll → grid.handleScroll`.
@@ -336,6 +337,10 @@ Svelte는 `{#snippet editor}`.
 
 **신규 상용 기능 렌더링** (4개 어댑터 공통):
 
+- **행 상태 컬럼** (`rowStatus` prop) — 맨 앞 `mg-status-cell` 컬럼에
+  스냅샷 `rowStates`의 I/U/D 배지를 표시하고 행 `<tr>`에
+  `mg-row-I`/`mg-row-U`/`mg-row-D` 클래스를 부여한다 (색상은 CSS로 제어).
+  그룹/스켈레톤/고정/총계 행에는 빈 셀로 정렬만 맞춘다.
 - **행 체크박스** (`rowCheckboxes` prop) — 맨 앞 `mg-check-cell` 컬럼에
   헤더 전체선택(`grid.isAllSelected()`/`isSomeSelected()`/`toggleAllRows()`)
   + 행별 체크박스를 렌더링한다. 그룹/스켈레톤/고정 행에는 빈 셀로 정렬만 맞춘다.
