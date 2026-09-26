@@ -25,8 +25,11 @@ Undo/Redo로 되돌릴 수 있다.
 {
   field: "age",
   editable: true,                                // 기본값 true
-  cellEditor: "number",                          // text|number|select|date|custom
-  editorOptions: ["admin", "editor"],            // select 편집기 옵션
+  cellEditor: "number",                          // text|number|select|date|checkbox|multiselect|custom
+  editorOptions: ["admin", "editor"],            // select/multiselect 편집기 옵션
+  // checkbox 편집기 전용:
+  checkedValue: "Y", uncheckedValue: "N",        // 체크/해제 시 저장값 (기본 true/false)
+  headerCheckbox: true,                          // 헤더에 전체 토글 체크박스 (삼중상태)
   valueSetter: (row, value) => { row.age = +value; },  // 기본: row[field]=value
   validate: (value, row) =>
     Number(value) >= 0 ? true : "0 이상이어야 합니다",  // false/문자열 → 저장 거부
@@ -53,6 +56,40 @@ grid.canUndo(); grid.canRedo();
 ```
 
 스냅샷: `editingCell` / `editValue` / `editError` / `canUndo` / `canRedo`.
+
+## 체크박스 편집기 (`cellEditor: "checkbox"`)
+
+편집 모드 없이 **클릭 즉시 토글**된다 — 셀에 체크박스가 상시 렌더링된다.
+
+```ts
+{ field: "active", cellEditor: "checkbox", checkedValue: "Y", uncheckedValue: "N", headerCheckbox: true }
+```
+
+- `checkedValue`/`uncheckedValue`로 저장값 지정 (기본 `true`/`false`,
+  `"Y"`/`"N"` 같은 문자열도 가능).
+- `headerCheckbox: true`면 헤더에 삼중 상태(전체/일부/없음) 체크박스가
+  표시되고, 클릭 시 **필터링된 모든 행**을 일괄 체크/해제한다 — 전체가
+  하나의 Undo 단위로 기록된다.
+- `validate`/`required` 검증을 통과하지 못하면 토글이 거부된다.
+
+```ts
+grid.isCellChecked(row, col);            // 셀의 체크 여부
+grid.toggleCellChecked(row, col);        // 즉시 토글 (검증 실패 시 false)
+grid.checkboxColumnState(col);           // "all" | "some" | "none"
+grid.toggleAllChecked(col);              // 헤더 체크박스 토글과 동일
+```
+
+## 다중 선택 편집기 (`cellEditor: "multiselect"`)
+
+`editorOptions` 중 복수 값을 체크박스 목록으로 선택하고 **배열로 저장**한다.
+CSV/xlsx보내기는 `;` 구분 문자열로 직렬화되어 왕복이 보장된다
+(`"a;b"` → `["a","b"]`).
+
+```ts
+{ field: "tags", cellEditor: "multiselect", editorOptions: ["긴급", "버그", "개선"] }
+// row.tags = ["긴급", "버그"]
+```
+
 
 ## 커밋 순서
 
@@ -97,3 +134,9 @@ commit, cancel }`)를 제공한다. 어댑터별 연결:
 - `GridOptions.undoLimit`(기본값 100)으로 깊이 제한. `0`이면 기록 자체를 끈다.
 - `setData` 호출 시 이력은 초기화된다.
 - 버튼 UI는 `snapshot.canUndo`/`canRedo`로 disabled 상태를 연동한다.
+
+## 읽기 전용 셀 표시
+
+`editable: false`이거나 `formula`가 있는 셀은 어댑터가 자동으로
+`mg-cell-readonly` 클래스를 부여해 연한 배경으로 구분한다.
+`--grid-readonly-bg` / `--grid-readonly-color` CSS 변수로 색을 바꿀 수 있다.

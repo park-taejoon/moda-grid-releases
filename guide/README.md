@@ -37,14 +37,23 @@
 | 데이터 | 정렬 / 다중 정렬 | [features/sorting.md](./features/sorting.md) |
 | 데이터 | 컬럼 필터 / 전역 검색 / Set 필터 | [features/filtering.md](./features/filtering.md) |
 | 데이터 | 페이징 | [features/paging.md](./features/paging.md) |
-| 데이터 | 행 그룹화 + 집계 | [features/grouping.md](./features/grouping.md) |
-| 데이터 | 트리 데이터 (계층) | [features/tree-data.md](./features/tree-data.md) |
-| 데이터 | 서버 사이드 / 무한 스크롤 | [features/server-side.md](./features/server-side.md) |
+| 데이터 | 행 그룹화 + 집계 + 소계 행 | [features/grouping.md](./features/grouping.md) |
+| 데이터 | 트리 데이터 (계층/레벨 접기/노드 검색/트리 소계) | [features/tree-data.md](./features/tree-data.md) |
+| 데이터 | 피벗 테이블 (행/열 디멘션 + 집계) | [features/pivot.md](./features/pivot.md) |
+| 데이터 | 서버 사이드 / 무한 스크롤 / Append Scroll | [features/server-side.md](./features/server-side.md) |
+| 데이터 | 셀 병합 (rowSpan/colSpan/auto-merge) | [features/cell-merge.md](./features/cell-merge.md) |
 | 컬럼 | 리사이즈·재배치·고정·숨김·자동 너비·그룹 헤더·컬럼 관리 | [features/columns.md](./features/columns.md) |
 | 선택 | 행/셀/범위 선택 + 체크박스 + 상태바 집계 | [features/selection.md](./features/selection.md) |
-| 편집 | 인라인 편집 + 검증 + 커스텀 에디터 + Undo/Redo | [features/editing.md](./features/editing.md) |
+| 편집 | 인라인 편집 + 체크박스/다중선택 에디터 + 검증 + Undo/Redo | [features/editing.md](./features/editing.md) |
 | 편집 | 클립보드 복사/붙여넣기 (TSV) | [features/clipboard.md](./features/clipboard.md) |
+| 컬럼 | 계산 컬럼 — 수식(formula)/누계(cumulative) | [features/computed-columns.md](./features/computed-columns.md) |
+| 렌더 | 셀 타입 (이미지·버튼·링크·프로그레스) + 셀 툴팁 | [features/cell-types.md](./features/cell-types.md) |
+| 상호작용 | 컨텍스트 메뉴 (셀 우클릭) | [features/context-menu.md](./features/context-menu.md) |
+| 설정 | 다국어(locale) + 접근성(aria) | [features/i18n.md](./features/i18n.md) |
+| 출력 | 내장 포맷터 (숫자·통화·퍼센트·날짜) | [features/formatting.md](./features/formatting.md) |
 | 출력 | CSV 보내기/가져오기/템플릿 | [features/csv-export.md](./features/csv-export.md) |
+| 출력 | Excel (xlsx) 보내기/가져오기 + 스타일 보내기 | [features/excel.md](./features/excel.md) |
+| 출력 | PDF 보내기 + 인쇄 | [features/pdf.md](./features/pdf.md) |
 | 행 | 행 상태 추적 (I/U/D) + 변경분 수집 | [features/row-state.md](./features/row-state.md) |
 | 행 | 행 드래그앤드롭 재정렬 | [features/row-drag.md](./features/row-drag.md) |
 | 행 | 고정 행 + 전체 총계 | [features/pinned-rows.md](./features/pinned-rows.md) |

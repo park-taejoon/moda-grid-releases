@@ -73,3 +73,44 @@ interface ServerSideGetRowsParams {
 
 서버는 정렬·필터·페이징(slice)을 직접 수행하고 행 배열을 반환한다.
 `lastRowIndex`는 전체 행 수를 알 때만 포함한다.
+
+## Append Scroll (누적 로드)
+
+`serverSide`의 블록 캐시 방식과 달리, IBSheet의 Append Scroll처럼
+**페이지 단위로 행을 끝에 누적**한다. 로컬 파이프라인(필터/정렬)이 그대로
+적용된다 — 서버는 순서대로 페이지만 내려주면 된다.
+
+```ts
+const grid = new GridCore({
+  columns,
+  data: [],
+  appendScroll: {
+    loadPage: async (page) => {
+      const res = await fetch(`/api/rows?page=${page}&size=50`);
+      return res.json();             // TData[] — 빈 배열/짧은 페이지면 끝으로 간주
+    },
+    pageSize: 50,                    // 기본값 50
+    startPage: 0,                    // 초기 데이터가 있으면 다음 페이지 번호
+    autoLoad: true,                  // 생성 시 첫 페이지 자동 로드 (기본값)
+  },
+});
+```
+
+- **자동 트리거** — 어댑터의 스크롤 핸들러가 `maybeLoadMore`를 호출해
+  하단 근접 시 다음 페이지를 요청한다 (`<DataGrid appendScroll={...} />`).
+- **수동 트리거** — "더 보기" 버튼에는 `grid.loadMore()`를 연결한다.
+- **스냅샷** — `snapshot.appendScroll = { loading, hasMore }`로
+  로딩 인디케이터와 버튼 disabled를 연동한다.
+
+```ts
+await grid.loadMore();        // 다음 페이지 로드. 요청했으면 true
+grid.hasMoreRows();           // 추가 데이터 가능 여부
+grid.maybeLoadMore(scrollTop, clientHeight, scrollHeight); // 어댑터 내부용
+```
+
+- 이미 로딩 중이거나 데이터 끝이면 중복 요청하지 않는다.
+- `pageSize` 미만으로 오거나 빈 배열이 오면 `hasMore`가 false가 되어
+  더 요청하지 않는다.
+- `serverSide`와 동시 지정할 수 없다 — 누적 방식이면 `appendScroll`,
+  블록 캐시 방식이면 `serverSide`를 선택한다.
+

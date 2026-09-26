@@ -37,6 +37,8 @@ grid.isGroupExpanded(key);
   `▾/▸` 토글 + `field: value (N)` 라벨, 나머지 컬럼에 집계 값.
 - 리프 행: `depth`만큼 첫 셀 들여쓰기. `rowIndex`는 `visibleData` 기준이라
   기존 선택/편집 인덱스와 호환된다.
+- 소계 행(`.mg-subtotal-row`): `groupSubtotals` 옵션 시 펼쳐진 그룹 끝에
+  표시 — 첫 컬럼에 "소계: field: value" 라벨, 집계 컬럼에 소계 값.
 - 가상 스크롤 병용 시 `displayRows.slice(startIndex, endIndex)`를 사용하고
   `virtual.totalHeight`는 그룹 헤더를 포함한 평탄 행 수 기준이다.
 
@@ -60,3 +62,15 @@ grid.isGroupExpanded(key);
 import { buildGroupTree, flattenGroupTree, collectGroupKeys,
          aggregateRows, formatAggregate } from "@moda-grid/core";
 ```
+
+## 그룹 소계 행 (groupSubtotals)
+
+```ts
+new GridCore({ columns, data, groupSubtotals: true });
+// 어댑터: <DataGrid groupSubtotals />
+```
+
+`setGroupBy`로 그룹화하면 **펼쳐진 각 그룹의 마지막**에 소계 행이 붙는다.
+집계는 그룹 헤더와 같은 `aggregates`를 공유하므로 `aggregationFn`이 선언된
+컬럼에만 값이 표시된다. 접힌 그룹에는 소계가 없다 — 헤더 행의 집계가
+그 역할을 한다. 타입은 `SubtotalDisplayRow` (`type: "subtotal"`).
