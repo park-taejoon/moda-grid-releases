@@ -23,6 +23,8 @@ grid.findCells("정확히", { wholeCell: true });  // 셀 전체 일치만
 ```
 
 - `rowIndex`/`columnIndex`는 `visibleData`/`visibleColumns` 기준 인덱스
+- `searchable: false`인 컬럼은 찾기 대상에서 제외된다.
+  `getSearchText(row)`가 있으면 표시 텍스트 대신 그 반환값으로 매칭한다.
   — `setActiveCell(m.rowIndex, m.columnIndex)`로 바로 이동 가능하다.
 - 필터/검색/정렬이 적용된 **현재 표시 상태**를 검색한다.
 - 빈 검색어는 빈 배열을 반환한다.

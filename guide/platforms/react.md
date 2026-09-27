@@ -91,6 +91,10 @@ const { grid, snapshot } = useGridCore({ columns, data: users });
 | `rowCheckboxes` | `boolean` | `false` | 행 체크박스 + 헤더 전체선택 |
 | `statusBar` | `boolean` | `true` | 선택 범위 집계 상태바 |
 | `getRowId` | `(row) => string` | — | 행 ID 함수 |
+| `detailRenderer` | `(row, rowIndex) => ReactNode` | — | 행 상세 패널 — 지정 시 첫 셀에 ▸ 토글 ([master-detail](../features/master-detail.md)) |
+| `detailHeight` | `number` | — | 상세 패널 높이(px) — 미지정 시 내용에 맞춤 |
+| `domLayout` | `"normal" \| "autoHeight"` | `normal` | 내용 높이 레이아웃 — 가상 스크롤 무시 |
+| `autoPageSize` | `boolean` | `false` | 뷰포트÷행 높이로 pageSize 자동 계산 |
 | `className` | `string` | — | 추가 클래스 |
 
 ## Hooks

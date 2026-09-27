@@ -59,6 +59,27 @@ grid.refreshServerRows();   // 캐시 폐기 + 현재 뷰포트부터 재요청
 `loading` 동안 어댑터는 스크롤 컨테이너 하단에 `.mg-loading` 인디케이터를
 표시한다.
 
+## 로딩 오버레이 (`loading`)
+
+서버 모드의 하단 인디케이터(`.mg-loading`)와 별개로, 그리드 전체를 덮는
+반투명 로딩 레이어를 표시할 수 있다 — 클라이언트 모드에서 비동기 데이터
+조회 중 입력을 차단할 때 사용한다.
+
+```tsx
+// React / Vue / Svelte — prop
+<DataGrid loading={isFetching} />
+
+// vanilla — 옵션 또는 런타임 API
+const mounted = mountGrid(el, { columns, data, loading: true });
+mounted.setLoading(false); // 로딩 해제
+```
+
+- 문구는 `locale.loadingMore`(기본 "불러오는 중…")를 사용한다 — 로케일로
+  커스터마이즈 가능.
+- 오버레이 클래스는 `.mg-loading-overlay`, 활성 시 루트에
+  `.mg-loading-host`가 붙는다 (CSS 커스터마이즈 지점).
+- 인쇄(`@media print`)에서는 자동으로 숨겨진다.
+
 ## 생명주기 이벤트
 
 블록 요청의 시작/성공/실패를 구독할 수 있다 — 로딩 스피너, 요청 로깅,

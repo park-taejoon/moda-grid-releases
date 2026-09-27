@@ -172,6 +172,7 @@ createGrid({
 | `.mg-pinned-top-row` / `.mg-pinned-bottom-row` | 고정 행 |
 | `.mg-total-row` | 총계 `<tfoot>` 행 |
 | `.mg-skeleton-row` / `.mg-loading` | 서버 모드 스켈레톤/로딩 |
+| `.mg-loading-host` / `.mg-loading-overlay` | 로딩 오버레이 활성 루트 / 오버레이 (`loading` 옵션·prop) |
 | `.mg-statusbar` / `.mg-colctl-panel` | 상태바 / 컬럼 관리 팝오버 |
 | `.mg-row-drag-handle` / `.mg-drop-before` / `.mg-drop-after` | 행 드래그 |
 | `.mg-empty` | 빈 그리드 행 |

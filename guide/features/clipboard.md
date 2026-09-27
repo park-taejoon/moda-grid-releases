@@ -133,3 +133,24 @@ document.addEventListener("copy", ...);   // navigator.clipboard.writeText(grid.
 ```
 
 비-어댑터 환경(CDN 직접 렌더링)에서는 위 패턴을 그대로 구현하면 된다.
+
+## 클립보드 구분자 (`clipboardDelimiter`)
+
+복사/붙여넣기의 셀 구분 문자를 바꾼다. 기본값은 탭(`\t`, TSV)이다.
+
+```ts
+new GridCore({
+  columns, data,
+  clipboardDelimiter: ";",  // 복사: 1;Hana;admin;34 / 붙여넣기도 ; 기준
+});
+grid.setClipboardDelimiter("|"); // 런타임 변경
+grid.setClipboardDelimiter(null); // 탭으로 복원
+```
+
+- **복사** — `getSelectionTsv`/`cutSelectionTsv`(Ctrl+C/X) 모두 적용.
+  셀/헤더 안에 구분자 문자나 탭·개행이 있으면 공백으로 치환해 왕복을
+  보장한다.
+- **붙여넣기** — 구분자가 없는 줄은 **탭으로 폴백 분할**한다 — 외부
+  앱(엑셀)에서 복사한 TSV는 구분자 설정과 무관하게 그대로 받는다.
+- 어댑터 prop: `clipboard-delimiter`(Vue), `clipboardDelimiter`
+  (React/Svelte), `clipboardDelimiter` 옵션(mountGrid).

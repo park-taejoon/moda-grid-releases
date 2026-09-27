@@ -44,6 +44,8 @@
     findBox: true,        // 찾기 바 — 셀 텍스트 검색 후 매치로 이동
     pager: true,          // 하단 페이저/행수
     pageSize: 20,
+    // 행 상세 패널 — 첫 셀에 ▸ 토글, 펼친 행 아래 전체 너비 패널
+    detailRenderer: (row) => `${row.name} 상세 내용`, // Node도 가능
     // 선언형 이벤트 (grid.on과 동일)
     events: {
       afterEdit: (e) => console.log(e.row.id, e.column.field, e.newValue),

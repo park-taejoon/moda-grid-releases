@@ -283,6 +283,28 @@ mountGrid(el, { rowNumbers: true, rowResizable: true, ... });
 // cellEditor 생략(text) + editorOptions → 자동완성 input
 ```
 
+## 행별 종속 옵션 (`editorOptions` 함수)
+
+`editorOptions`에 함수를 넘기면 **행 데이터로 옵션을 만든다** — 다른
+컬럼 값에 따라 선택지가 달라지는 종속 콤보에 사용한다 (타사 그리드
+종속 Enum/체인 콤보 대응):
+
+```ts
+// 활성 행은 전체 역할 선택 가능, 비활성 행은 viewer/operator만
+{
+  field: "role",
+  cellEditor: "select",
+  editorOptions: (row) =>
+    row.active ? ROLES : ["viewer", "operator"],
+}
+```
+
+- `select`·`multiselect`·`radio`·text(datalist) 에디터 모두 지원한다.
+- 함수는 편집 시작 시 행에 대해 한 번 호출된다 — 다른 셀 값이 바뀌어도
+  이미 열린 에디터의 옵션은 갱신되지 않는다.
+- 함수가 예외를 던지면 빈 목록으로 폴백한다.
+- 프로그래밍으로 해석하려면 `grid.getEditorOptions(column, row)` 사용.
+
 ## IME 조합 처리 (한글/일본어/중국어 입력)
 
 모든 렌더러의 키 핸들러는 `isComposing`을 검사한다 — 한글 IME로 입력 중

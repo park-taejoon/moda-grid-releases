@@ -43,7 +43,14 @@ grid.resetView();
 { field: "age",  filterable: true, filterType: "number" }     // 연산자 타입
 { field: "role", filterable: true, filterType: "set" }        // 값 체크리스트
 { field: "x",    filterPredicate: (value, row, filter) => boolean }  // 커스텀 판별
+{ field: "id",   searchable: false }                          // 전역 검색·찾기 제외
+{ field: "code", getSearchText: (row) => row.internalCode }   // 표시값 대신 다른 텍스트로 검색
 ```
+
+`searchable: false`는 **컬럼 필터와 무관**하다 — `setSearch` 전역 검색과
+`findCells`/`replaceAll` 찾기에서만 제외된다. `getSearchText`는
+포맷된 표시값 대신 검색 대상 문자열을 바꾼다 (예: 코드 컬럼을
+원시 코드로 검색). 두 옵션 모두 컬럼 필터·정렬에는 영향을 주지 않는다.
 
 ## 연산자 목록 (`filterType`별)
 

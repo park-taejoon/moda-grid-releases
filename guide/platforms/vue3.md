@@ -105,6 +105,9 @@ React 어댑터와 동일하다 (kebab-case로 전달): `columns` `data` `grid`
 
 - `#cell-{field}` 슬롯 props: `{ value, row, column }` — `value`는 원시 값.
 - 슬롯이 없는 컬럼은 `getCellText()`(formatter 적용)로 렌더링한다.
+- `#detail` 슬롯 props: `{ row, rowIndex }` — 지정 시 각 행 첫 셀에 ▸ 토글이
+  생기고 펼친 행 아래 전체 너비 상세 패널을 렌더링한다
+  ([master-detail](../features/master-detail.md)).
 
 ## 스냅샷으로 보조 UI 만들기
 

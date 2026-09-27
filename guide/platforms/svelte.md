@@ -98,6 +98,10 @@ Svelte 5의 named snippet으로 위임한다:
 
 - `cell` snippet 컨텍스트(`CellContext<TData>`): `{ value, row, column, text }`.
 - snippet이 없으면 `getCellText()`(formatter 적용)로 기본 렌더링.
+- `detail` snippet 컨텍스트: `{ row, rowIndex }` — 지정 시 각 행 첫 셀에
+  ▸ 토글이 생기고 펼친 행 아래 상세 패널을 렌더링한다
+  ([master-detail](../features/master-detail.md)). `detailHeight` prop으로
+  높이 고정 가능.
 
 ## 스냅샷으로 보조 UI 만들기
 

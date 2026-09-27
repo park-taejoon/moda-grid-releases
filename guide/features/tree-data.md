@@ -48,6 +48,27 @@ grid.getTreeAggregates(row);      // { headcount: 16 } 또는 null (자식 없�
 - 리프 행은 `depth`만큼 들여쓰기. 자식 없는 노드는 `.mg-tree-leaf`
   스페이서로 정렬.
 
+## 자손 연쇄 선택 (`selectsChildren`)
+
+`treeData.selectsChildren: true`이면 행 체크박스(`rowCheckboxes`)가
+부모-자식 연쇄로 동작한다.
+
+```ts
+new GridCore({
+  columns, data: treeRows,
+  treeData: { getParentId: (r) => r.parentId, selectsChildren: true },
+});
+```
+
+- 부모 행의 체크박스를 토글하면 **자신+모든 자손**이 함께 선택/해제된다.
+  자손 일부만 선택된 상태에서 클릭하면 전체 선택이 된다.
+- 자손 일부만 선택된 부모의 체크박스는 `indeterminate`(삼중 상태)로
+  표시된다. 집계 상태는 `grid.treeRowSelectState(id)` →
+  `"all" | "some" | "none"`으로도 조회할 수 있다.
+- `isRowSelectable`로 거부된 행은 연쇄 대상과 집계 모두에서 제외된다.
+- flat/nested 두 모드 모두 지원한다. 행 클릭 선택(`selectable`)도 같은
+  규칙으로 연쇄된다.
+
 ## 동작 규칙
 
 - `snapshot.displayRows`에 DFS 순서의 `LeafDisplayRow[]`가 들어간다 — 각

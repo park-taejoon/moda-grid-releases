@@ -151,6 +151,8 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 셀 병합 (MergeSheet) | `merge: "row"\|"col"\|"both"` |
 | Append Scroll | `appendScroll: { dataSource }` |
 | 가상 스크롤 | `height` + `rowHeight` props |
+| 페이지 크기 자동 (AutoPage) | `autoPageSize` 옵션/prop — 뷰포트÷행 높이로 pageSize 계산, 리사이즈 재계산 |
+| 내용 높이 레이아웃 | `domLayout: "autoHeight"` 옵션/prop — 내부 스크롤 없이 행 수만큼 높이 |
 | 상태 저장 | `grid.getState()` / `applyState()` |
 | Excel/PDF보내기 | `exportToXlsx({styled})` / `exportToPdf()` |
 | 컨텍스트 메뉴 | `contextMenu` / `headerContextMenu` props (배열 또는 팩토리 함수) |
@@ -168,6 +170,12 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 행 전체 편집 (`editType: "fullRow"`) | `editType: "fullRow"` 옵션/prop — 행의 모든 편집 셀 동시 편집, 커밋은 한 Undo 단위 |
 | 붙여넣기 전처리 (`OnBeforePaste`) | `beforePaste` 옵션/prop — 문자열 반환 시 대체, `false` 시 취소 |
 | 복사 전처리 | `beforeCopy` 옵션/prop — 문자열 반환 시 대체 TSV, `false` 시 복사 취소 (cut 구분) |
+| 클립보드 구분자 | `clipboardDelimiter` 옵션/prop — 복사·붙여넣기 셀 구분자 변경 (기본 탭, 탭 폴백 유지) |
+| 마스터-디테일 (DetailBand) | `detailRenderer`(React/vanilla) · `#detail` 슬롯(Vue) · `detail` snippet(Svelte) + `toggleRowDetail`/`setDetailExpanded` |
+| 로딩 오버레이 (로딩 이미지) | `loading` 옵션/prop — 그리드 전체 반투명 오버레이. vanilla은 `mounted.setLoading(on)` 런타임 API |
+| 자손 연쇄 선택 (TreeCheck) | `treeData.selectsChildren: true` — 부모 체크박스가 자손 전체 선택/해제, 삼중 상태 표시 |
+| 종속 콤보 (Enum 체인) | `editorOptions`에 함수 `(row) => string[]` — 다른 컬럼 값에 따라 행별 옵션 결정 |
+| 검색 제외 컬럼 | `searchable: false` 컬럼 옵션 — 전역 검색·찾기에서 제외. `getSearchText(row)`로 검색 텍스트 커스터마이즈 |
 | 표시 문자열 복사 | `copyFormatted` 옵션/prop 또는 `getSelectionTsv({ formatted: true })` — formatter/format 적용 텍스트 |
 | 복수 범위 선택 | Ctrl+드래그로 범위 추가 / `addCellRange` — 복사·삭제·집계는 모든 범위에 적용 |
 | 행 조건부 선택 | `isRowSelectable(row)` 옵션/prop — 불가 행은 클릭·체크박스·전체선택 모두 제외 |

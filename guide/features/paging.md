@@ -69,3 +69,41 @@ mountGrid(el, {
   pageSizeOptions: [10, 20, 50, 100],
 });
 ```
+
+## `autoPageSize` — 페이지 크기 자동 계산
+
+뷰포트 높이(`height`)와 행 높이(`rowHeight`)로 한 화면에 들어가는 행 수를
+자동 계산해 `pageSize`로 설정한다. 헤더·페이저 높이는 실측으로 차감하고,
+컨테이너 리사이즈 시 재계산한다.
+
+```ts
+mountGrid(el, {
+  columns, data,
+  height: 480,
+  rowHeight: 37,
+  pager: true,
+  autoPageSize: true,   // pageSize = floor((480 - 헤더 - 페이저) / 37)
+});
+```
+
+어댑터도 동일한 prop (`autoPageSize` / `auto-page-size`)을 제공한다.
+수동 `setPage(i, size)` 호출과 공존 가능하지만 리사이즈 시 자동값으로
+덮어쓴다.
+
+## `domLayout: "autoHeight"` — 내용만큼 높이
+
+`domLayout: "autoHeight"`이면 내부 스크롤 컨테이너의 높이 고정을 해제해
+그리드가 표시 행 수만큼 늘어난다. `height`와 가상 스크롤은 무시된다
+(페이지 크기로 행 수를 제한하는 `pager`/`autoPageSize`와 조합 권장).
+
+```ts
+mountGrid(el, {
+  columns, data,
+  domLayout: "autoHeight",
+  pager: true,
+  autoPageSize: false, // pageSize 미지정 시 전체 행이 한 화면에 펼쳐진다
+});
+```
+
+어댑터 prop: `domLayout="autoHeight"` (React), `dom-layout="autoHeight"`
+(Vue), `domLayout="autoHeight"` (Svelte).
