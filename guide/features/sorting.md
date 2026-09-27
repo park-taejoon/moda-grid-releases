@@ -42,6 +42,27 @@ grid.toggleSort("age", true);    // → 조건 제거, priority 재정규화
 - 기본 비교는 `Intl.Collator(numeric: true)` — 숫자/날짜/문자열 자연 비교.
 - 정렬은 파이프라인의 필터/검색 **이후**에 적용된다.
 
+## 정렬 후처리 (`postSort`)
+
+정렬까지 끝난 표시 행 배열을 제자리(in-place)로 재배치하는 훅
+(타사 그리드 `postSort` 대응) — 페이징·그룹화 **이전**에 적용된다:
+
+```ts
+new GridCore({
+  columns, data,
+  // admin 행을 정렬과 무관하게 항상 맨 위로
+  postSort: (rows) =>
+    rows.sort((a, b) => Number(b.role === "admin") - Number(a.role === "admin")),
+});
+grid.setPostSort(fn);   // 런타임 교체
+grid.setPostSort(null); // 해제
+```
+
+- 훅은 **복사본**을 받는다 — 제자리 변형해도 원본 데이터(`rawData`)가
+  오염되지 않는다.
+- 피벗에서는 피벗 결과 행의 정렬 이후에 적용된다(하단 합계 행 포함).
+- 어댑터에서는 `postSort`/`post-sort` prop으로 전달한다.
+
 ## 서버 사이드 모드
 
 `serverSide` 사용 시 로컬 정렬은 건너뛰고 `sortModel: SortSpec[]`이

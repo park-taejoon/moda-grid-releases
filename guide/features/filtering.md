@@ -99,6 +99,26 @@ mountGrid(el, { columns, data, headerFilters: true });
 - `filterRowVisible: false`로 필터 행을 숨겨도 헤더 드롭다운으로 필터할 수
   있다 — 빠른 필터 UX에 적합.
 
+## 외부 필터 (`externalFilter`)
+
+컬럼 필터·검색·행 상태 필터와 **AND로 조합되는 사용자 조건** — 그리드 바깥
+UI(체크박스/기간 선택/권한 규칙 등)로 표시 범위를 제어할 때 쓴다
+(타사 그리드 `externalFilter` 대응):
+
+```ts
+new GridCore({
+  columns, data,
+  externalFilter: (row) => row.age >= 30, // false면 행을 숨긴다
+});
+grid.setExternalFilter(fn);    // 런타임 교체 — filterChange 이벤트 발행
+grid.setExternalFilter(null);  // 해제
+```
+
+- 컬럼 필터/검색 이후 마지막 단계에 적용 — 결과는 `filteredRowCount`·집계·
+  내보내기에도 반영된다.
+- 어댑터에서는 `externalFilter`/`external-filter` prop으로 전달하고
+  반응형 교체도 지원한다.
+
 ## 서버 사이드 모드
 
 `serverSide` 사용 시 필터/검색은 `filterModel: Record<field, ColumnFilter>`로

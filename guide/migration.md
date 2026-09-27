@@ -140,6 +140,8 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | ------------ | --------- |
 | 헤더 필터 (FilterMode) | `filterable: true` + `filterToggle` prop |
 | AutoFilter (헤더 ▾ 필터) | `headerFilters` prop — 값 체크리스트 드롭다운 |
+| 외부 조건 필터 | `externalFilter(row)` 옵션/prop — 컬럼 필터와 별개로 행 제외 |
+| 정렬 후처리 | `postSort(rows)` 옵션/prop — 정렬된 표시 행을 제자리 재배치 |
 | 다중 정렬 | 헤더 클릭 + `Shift` 키 (자동) |
 | 행 번호 컬럼 (Seq) | `rowNumbers` prop |
 | 트리 (TreeMode) | `treeData: { getParentId }` / `{ childrenKey }` |
