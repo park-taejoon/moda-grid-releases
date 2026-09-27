@@ -136,6 +136,30 @@ CSS 문자열, kebab-case 속성 맵, 또는 셀 파라미터를 받는 함수�
   코어가 문자열을 맵으로 파싱해 어댑터가 `<td style>`에 병합한다.
 - 커스텀 렌더러는 `grid.getCellStyle(row, rowIndex, col)`로 맵을 얻는다.
 
+## 인라인 스타일 — rowStyle
+
+`rowClass`의 인라인 스타일 버전 — 행(`<tr>`) 전체에 스타일을 직접 적용한다.
+CSS 문자열/kebab-case 맵/행 파라미터 함수 모두 지원:
+
+```ts
+{
+  field: "role",
+  rowStyle: ({ row }) =>
+    row.role === "admin" ? { "background-color": "rgba(99,102,241,.15)" } : null,
+}
+
+// 모든 행 공통 — GridOptions.rowStyle
+createGrid({
+  columns, data,
+  rowStyle: "border-top: 2px solid #e5e7eb",
+});
+```
+
+- `GridOptions.rowStyle`과 모든 컬럼의 `rowStyle`이 **병합**되어 `<tr>`에 적용 —
+  같은 속성이면 나중(컬럼) 쪽이 우선한다.
+- 커스텀 렌더러는 `grid.getRowStyle(row, rowIndex)`로 맵을 얻는다.
+- `<tr>`에 적용되므로 `background-color`는 셀 배경이 투명할 때만 보인다.
+
 ## 주요 구조 클래스 (커스텀 스타일링 대상)
 
 | 클래스 | 대상 |

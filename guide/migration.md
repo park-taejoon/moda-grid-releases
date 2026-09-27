@@ -165,6 +165,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 행 줄무늬 (`Alternate`) | `striped` 옵션/prop + `grid.setStriped(bool)` — `--grid-stripe-bg` 변수 |
 | 편집 진입 차단 (`OnBeforeEdit`) | `beforeEdit` 옵션/prop — `false` 반환 시 편집 취소 (체크박스 토글 포함) |
 | 싱글클릭 편집 진입 | `singleClickEdit` 옵션/prop — 클릭 한 번으로 편집 (cellType 셀 제외) |
+| 행 전체 편집 (`editType: "fullRow"`) | `editType: "fullRow"` 옵션/prop — 행의 모든 편집 셀 동시 편집, 커밋은 한 Undo 단위 |
 | 붙여넣기 전처리 (`OnBeforePaste`) | `beforePaste` 옵션/prop — 문자열 반환 시 대체, `false` 시 취소 |
 | 복사 전처리 | `beforeCopy` 옵션/prop — 문자열 반환 시 대체 TSV, `false` 시 복사 취소 (cut 구분) |
 | 표시 문자열 복사 | `copyFormatted` 옵션/prop 또는 `getSelectionTsv({ formatted: true })` — formatter/format 적용 텍스트 |
@@ -217,6 +218,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `sheet.setGroupBy(...)` / 그룹 해제 | `grid.setGroupBy(fields)` — 빈 배열로 해제 |
 | `sheet.directDown2Excel()` | `grid.exportToXlsx({ filename })` |
 | `sheet.dispose()` | 컴포넌트 언마운트 (자동) |
+| 행 조건부 스타일 | `GridOptions.rowStyle` / `ColumnDef.rowStyle` — CSS 문자열·맵·함수, `<tr>`에 병합 |
 | 셀 커스텀 렌더러 | React `renderCell` · Vue `#cell-{field}` 슬롯 · Svelte `cell` snippet · vanilla `cellRenderer`(DOM Node 반환) |
 
 ## 프레임워크별 미니멀 예시

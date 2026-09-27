@@ -36,6 +36,32 @@ Undo/Redo로 되돌릴 수 있다.
 - 드래그 선택(click 억제)·Ctrl+드래그 복수 범위 선택과 공존한다 —
   드래그로 끝난 클릭은 편집을 시작하지 않는다.
 
+## 행 전체 편집 (`editType: "fullRow"`)
+
+기본 편집은 셀 단위(`"cell"`)다. `editType: "fullRow"`를 켜면 편집 진입
+시 **행의 모든 편집 가능 셀이 동시에 에디터를 표시**한다 (타사 그리드
+`editType:"fullRow"` 대응):
+
+```ts
+new GridCore({ columns, data, editType: "fullRow" });
+grid.setEditType("fullRow"); // 런타임 전환 — 편집 중이면 취소 후 전환
+```
+
+| 항목 | 동작 |
+| ---- | ---- |
+| 진입 | 더블클릭/F2/타이핑/`startEditing` — 행 전체가 편집 모드 |
+| 탭 이동 | Tab/Shift+Tab = **행 안** 다음·이전 편집 셀로 포커스 이동. 끝에서 커밋 후 이동 |
+| 커밋 | Enter·행 밖 클릭 — 행의 모든 보류 값을 **한 Undo 단위**로 적용 |
+| 검증 | 셀 하나라도 실패하면 아무것도 쓰지 않고 첫 오류 셀로 포커스 |
+| 취소 | Escape — 행의 모든 보류 값 폐기 |
+| 제외 | `editable:false`·`editable` 함수 거부·수식 컬럼은 일반 셀로 표시. `cellEditor:"checkbox"`는 즉시 토글 유지 |
+
+- 스냅샷: `editingValues`(field→보류 값 맵)·`editingErrors`(field→에러),
+  `editingCell`은 행 안 포커스된 셀을 가리킨다.
+- 셀별 에러는 해당 셀 에디터에 `mg-editor-error`/`mg-edit-error`로 표시된다.
+- `getEditorContext`의 `ctx.fullRow`·`ctx.focused`로 커스텀 에디터가
+  행 편집 중인지와 포커스 대상인지 구분할 수 있다.
+
 ## 컬럼 옵션
 
 ```ts
@@ -144,8 +170,9 @@ grid.setCellFlash(true);           // 런타임 토글
 - `checkedValue`/`uncheckedValue`로 저장값 지정 (기본 `true`/`false`,
   `"Y"`/`"N"` 같은 문자열도 가능).
 - `headerCheckbox: true`면 헤더에 삼중 상태(전체/일부/없음) 체크박스가
-  표시되고, 클릭 시 **필터링된 모든 행**을 일괄 체크/해제한다 — 전체가
-  하나의 Undo 단위로 기록된다.
+  표시되고, 클릭 시 **필터링된 모든 편집 가능 행**을 일괄 체크/해제한다 —
+  `editable: false`/`editable(row)`가 거부하는 행은 건너뛰며, 전체가 하나의
+  Undo 단위로 기록된다.
 - `validate`/`required` 검증을 통과하지 못하면 토글이 거부된다.
 
 ```ts

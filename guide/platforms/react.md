@@ -150,6 +150,10 @@ const { grid, snapshot } = useGridCore({ columns, data });
   리렌더되지 않는다(정상 동작).
 - **데이터가 안 바뀐다** — `useGridCore`는 `options.data` **참조** 변경을
   감지한다. 같은 배열을 mutate하면 `grid.setData(newArray)`를 직접 호출할 것.
+- **인라인 `data`/`columns` 주의** — 스냅샷을 구독하는 부모 아래에서
+  `data={makeRows()}`처럼 렌더마다 새 배열을 넘기면
+  `setData`→notify→리렌더→새 배열→… 무한 루프가 된다. 모듈 상수,
+  `useMemo`, 또는 상태로 안정 참조를 유지할 것.
 - **StrictMode** — `useSyncExternalStore` 기반이라 이중 마운트에 안전하다.
 
 기능별 상세는 [features/](../features/) 디렉토리, 코어 API 전체는
