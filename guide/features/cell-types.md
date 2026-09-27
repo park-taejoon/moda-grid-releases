@@ -48,6 +48,23 @@ const columns: ColumnDef<Product>[] = [
 - 편집(`cellEditor`)과 병용 가능 — 편집 중에는 에디터가 렌더링된다.
 - 더 복잡한 렌더링은 어댑터 커스텀 셀(React `renderCell`, Vue
   `#cell-{field}` 슬롯, Svelte `cell` snippet)을 사용한다.
+  vanilla `mountGrid`/CDN에서는 `ColumnDef.cellRenderer`를 사용한다:
+
+```ts
+{
+  field: "role",
+  cellRenderer: ({ value, text }) => {
+    const badge = document.createElement("span");
+    badge.className = `role-badge role-${value}`;
+    badge.textContent = text;
+    return badge; // Node → 그대로 삽입, string → 텍스트, null → 기본 렌더링
+  },
+}
+```
+
+`cellRenderer`는 `{ value, text, row, column, rowIndex }`를 받아
+DOM `Node` 또는 문자열을 반환한다 — `null`/`undefined` 반환 시 내장
+`cellType` 렌더링으로 되돌아간다. 편집 중에는 에디터가 우선한다.
 
 ## 셀 툴팁 (`ColumnDef.tooltip`)
 

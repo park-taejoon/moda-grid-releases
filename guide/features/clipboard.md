@@ -60,6 +60,26 @@ new GridCore({ columns, data, pasteExtend: true });
 - 서버 모드(`serverSide`)와 페이징(`pageSize > 0`)에서는 확장하지 않는다
   — 표시 범위 밖 행에 쓸 수 없기 때문. 넘어가는 줄은 `skipped`로 집계.
 
+## 붙여넣기 전처리 (`beforePaste`)
+
+`GridOptions.beforePaste`로 붙여넣을 TSV를 가로채 가공하거나 취소한다:
+
+```ts
+new GridCore({
+  columns, data,
+  beforePaste: ({ text, anchor }) => {
+    if (text.includes("금지어")) return false;        // 붙여넣기 취소
+    return text.replace(/,/g, "");                  // 천단위 쉼표 제거 후 진행
+  },
+});
+```
+
+- **문자열 반환** → 대체 텍스트로 붙여넣기 (공백 정규화·포맷 변환용)
+- **`false` 반환** → 붙여넣기 취소, `dataPaste` 이벤트도 발행하지 않는다
+- **void 반환** → 원본 그대로 진행
+- 어댑터에서는 `beforePaste` prop으로 전달한다 — `pasteTsv` 직접 호출에도
+  동일하게 적용된다.
+
 ## 복사 규칙
 
 - 숨김 컬럼 제외, 셀 내부 탭/줄바꿈은 공백으로 치환.

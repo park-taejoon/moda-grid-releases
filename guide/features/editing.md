@@ -11,7 +11,7 @@ Undo/Redo로 되돌릴 수 있다.
 | 활성 셀에서 Enter / F2 | 기존 값으로 편집 진입 |
 | 활성 셀에서 문자 입력 | 입력값으로 교체하며 편집 진입 |
 | Enter | 저장 + 아래 셀로 이동 |
-| Tab / Shift+Tab | 저장 + 오른쪽/왼쪽 이동 |
+| Tab / Shift+Tab | 저장 + 오른쪽/왼쪽 이동 — 행 끝/처음에서 다음/이전 행으로 wrap |
 | Escape | 취소 (저장 안 함) |
 | Ctrl/Cmd+Z | Undo, Ctrl/Cmd+Y·Ctrl/Cmd+Shift+Z | Redo |
 
@@ -66,6 +66,24 @@ grid.canUndo(); grid.canRedo();
 ```
 
 스냅샷: `editingCell` / `editValue` / `editError` / `canUndo` / `canRedo`.
+
+## 셀 변경 플래시 (`cellFlash`)
+
+실시간 갱신 UI처럼 **외부에서 값이 바뀐 셀을 잠깐 강조**하고 싶을 때 쓴다:
+
+```ts
+new GridCore({ columns, data, cellFlash: true });
+grid.setCellFlash(true);           // 런타임 토글
+```
+
+- `setCellValue`/`updateRow`/`applyTransaction`/붙여넣기/채우기/바꾸기 등
+  `dataChange` source가 `"edit"`이 아닌 변경에 적용된다 — 사용자가 직접
+  칸에 치는 편집은 플래시하지 않는다(이미 시각적으로 명확하므로).
+- 바뀐 셀에 `.mg-cell-flash` 클래스가 **600ms** 동안 붙고 자동 해제된다.
+  연속 변경이 들어오면 마지막 변경 기준으로 타이머가 리셋된다.
+- 스냅샷 `flashedCells`(ReadonlySet — `"rowId|field"` 키)로 커스텀 렌더러가
+  직접 소비할 수도 있다. 색상은 `--grid-accent`를 따라간다.
+- 어댑터: React/Vue/Svelte `cellFlash` prop, vanilla은 `MountOptions.cellFlash`.
 
 ## 체크박스 편집기 (`cellEditor: "checkbox"`)
 

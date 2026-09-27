@@ -22,7 +22,7 @@
 | Home / End | 행의 첫/마지막 컬럼으로 이동 |
 | PageUp / PageDown | 뷰포트 행 수 단위 이동 |
 | Shift + 위 키 | 범위 확장 (`.mg-cell-selected`) — `multi-cell`/`row` 모드 |
-| Tab / Shift+Tab | 활성 셀 좌/우 이동 (엑셀) |
+| Tab / Shift+Tab | 활성 셀 좌/우 이동 — 행 끝에서 다음/이전 행으로 wrap (엑셀) |
 | Home / End | 행의 첫/마지막 셀로 이동 |
 | PageUp / PageDown | 뷰포트 행 수만큼 위/아래 이동 |
 | Ctrl/Cmd + Home / End | 그리드 첫/마지막 셀로 이동 (`"first"`/`"last"`) |

@@ -156,3 +156,24 @@ grid.updateRow("42", { name: "새 이름", age: 30 }); // 부분 업데이트 �
 - 실제로 바뀐 셀만 모아 **한 Undo 단위**로 기록, 행 상태 U 마킹,
   `dataChange`(source `"api"`) 발행 — 필드별 `afterEdit`은 발행하지 않는다
 - 변경이 없으면 0을 반환하고 이력을 남기지 않는다
+
+## 일괄 행 트랜잭션 — `applyTransaction`
+
+행 추가·수정·삭제를 한 번의 호출로 적용한다 — 타사 그리드의
+일괄 변경 API에 해당한다:
+
+```ts
+const res = grid.applyTransaction({
+  add: [{ id: 9, name: "신규" }],     // 끝에 추가, I 마킹
+  addIndex: 0,                        // 선택 — 삽입 위치
+  update: [{ id: 1, age: 40 }],       // ID로 찾아 부분 패치, U 마킹
+  remove: ["3", rowObj],              // ID 문자열 또는 행 객체
+});
+// res = { added, updated, removed } — 실제 적용된 것만
+```
+
+- 내부적으로 `batch`로 묶여 스냅샷 발행은 1회다
+- `add`→`addRows`, `update`→`updateRow`(컬럼 규칙/검증 동일),
+  `remove`→`deleteRowsByIds`(D 마킹)를 재사용한다
+- 존재하지 않는 ID의 update/remove는 무시되고 결과에도 없다
+- `rowAdd`/`rowDelete`/`dataChange` 이벤트는 각각 정상 발행된다

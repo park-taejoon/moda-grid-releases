@@ -279,3 +279,18 @@ grid.scrollToRow(match.rowIndex);   // findNext/findCells 결과와 조합
 - **비가상 스크롤**: `snapshot.scrollRequest`(`{rowIndex, seq}`)를 발행 —
   어댑터가 `td[data-mg-row]`로 `scrollIntoView({block:"nearest"})`한다.
 - 범위 밖 인덱스는 무시한다.
+
+## 셀/컬럼으로 스크롤 — `scrollToCell` / `scrollToColumn`
+
+넓은 그리드에서 가려진 컬럼까지 보이게 할 때 사용한다 (타사 `showCell`/
+`showColumn` 대응):
+
+```ts
+grid.scrollToCell(150, 8);   // 행+열 — 수직·수평 스크롤 모두 보정
+grid.scrollToColumn(8);      // 수평만 — 활성 행(없으면 첫 행) 기준
+```
+
+- 수평 스크롤은 `scrollRequest`의 `columnIndex`로 전달 — 모든 어댑터가
+  `scrollIntoView({inline:"nearest"})`로 처리한다.
+- 고정(pinned) 컬럼은 `position: sticky`라 수평 이동 없이도 이미 보인다.
+- 범위 밖 인덱스는 무시한다.

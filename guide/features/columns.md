@@ -26,6 +26,25 @@
 정렬 등에 사용한다. `headerTooltip`은 헤더 셀의 `title` 속성으로
 렌더링되어 마우스 오버 시 브라우저 기본 툴팁이 표시된다.
 
+## 공통 기본값 (`defaultColDef`)
+
+모든 컬럼에 공통으로 적용할 속성을 한 번만 선언한다 (타사 그리드
+`defaultColDef` 대응):
+
+```ts
+new GridCore({
+  columns,
+  data,
+  defaultColDef: { sortable: true, resizable: true, width: 120 },
+});
+```
+
+- 컬럼에 명시된 속성이 기본값을 덮어쓴다 — `{...defaultColDef, ...column}`
+  병합. `field`는 컬럼마다 다르므로 넣지 않는다.
+- 생성자뿐 아니라 `setColumns`/`addColumn` 경로에도 동일하게 적용된다.
+- 어댑터: React/Vue/Svelte `defaultColDef` prop — vanilla는
+  `MountOptions.defaultColDef`.
+
 ## 너비 리사이즈
 
 `resizable` prop(기본값 `true`)으로 헤더 우측 경계에 `.mg-resizer` 핸들이

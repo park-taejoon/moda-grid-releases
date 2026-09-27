@@ -159,6 +159,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 헤더 높이 (`HeaderRowHeight`) | `headerHeight` 옵션/prop — 멀티레벨 헤더는 행 수로 균등 분할 |
 | 행 줄무늬 (`Alternate`) | `striped` 옵션/prop + `grid.setStriped(bool)` — `--grid-stripe-bg` 변수 |
 | 편집 진입 차단 (`OnBeforeEdit`) | `beforeEdit` 옵션/prop — `false` 반환 시 편집 취소 (체크박스 토글 포함) |
+| 붙여넣기 전처리 (`OnBeforePaste`) | `beforePaste` 옵션/prop — 문자열 반환 시 대체, `false` 시 취소 |
 | 자동 행 높이 | `autoRowHeight` prop — multiLine 셀 기준 |
 | 셀 노트 (Note) | `ColumnDef.note` — 코너 표시 + 툴팁 |
 
@@ -170,6 +171,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `sheet.setValue(r, c, v)` | `grid.setCellValue(r, c, v)` — 검증·이력·이벤트 포함 |
 | `sheet.getRowData(r)` / 행 조회 | `grid.getRowById(id)` — 숨김·필터 행 포함 |
 | `sheet.setRowData(r, {...})` | `grid.updateRow(id, patch)` — 한 Undo 단위 + `dataChange` |
+| 일괄 행 변경 (add/update/remove) | `grid.applyTransaction({ add, update, remove })` |
 | `sheet.findText()` | `grid.findCells()` / `grid.findNext()` (순환 이동) |
 | `sheet.replaceText()` | `grid.replaceAll(find, replace)` |
 | `sheet.loadSearchData(json)` | `grid.setData(rows)` 또는 `data` prop 변경 |
@@ -191,17 +193,21 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `sheet.print()` | `grid.print()` — `@media print` 스타일 포함 |
 | 컬럼 속성 변경 | `grid.updateColumn(field, patch)` — 부분 갱신 |
 | `Editable: 0` (전체 편집 잠금) | `GridOptions.editable: false` / `grid.setEditable(bool)` |
+| 변경 셀 플래시 (타사 변경 강조) | `GridOptions.cellFlash: true` / `grid.setCellFlash(bool)` — `.mg-cell-flash` 클래스 |
 | `sheet.refresh()` | `grid.resetView()` — 정렬/필터/검색/페이지/선택 초기화 |
 | `sheet.insertCol()` | `grid.addColumn(def, index)` |
+| 컬럼 공통 속성 일괄 지정 | `GridOptions.defaultColDef` — 모든 컬럼 기본값 병합 |
 | `sheet.removeCol()` | `grid.removeColumn(field)` — 정렬/필터도 함께 정리 |
 | 행 높이 드래그 (AllowRowResizing) | `rowResizable` prop/옵션 — `rowNumbers` 필요 |
 | 행 드래그 이동 | `col.rowDrag: true` 핸들 + `grid.moveRow(from, to)` / `rowReorder` 이벤트 |
 | `sheet.showRow(r)` / `focusRow` | `grid.scrollToRow(rowIndex)` — 표시 인덱스 기준 |
+| `showCell(r, c)` / `showColumn(c)` | `grid.scrollToCell(r, c)` / `scrollToColumn(c)` — 수평 스크롤 포함 |
 | 다크 모드 / 테마 | `theme="dark"` prop/`mountGrid` 옵션 또는 `.grid-theme-dark` 클래스 — `--grid-*` CSS 변수로 커스텀 팔레트 |
 | 키보드 이동 셀 화면 추적 | 자동 — `scrollRequest`가 행+열 좌표를 발행, 어댑터가 scrollIntoView |
 | `sheet.setGroupBy(...)` / 그룹 해제 | `grid.setGroupBy(fields)` — 빈 배열로 해제 |
 | `sheet.directDown2Excel()` | `grid.exportToXlsx({ filename })` |
 | `sheet.dispose()` | 컴포넌트 언마운트 (자동) |
+| 셀 커스텀 렌더러 | React `renderCell` · Vue `#cell-{field}` 슬롯 · Svelte `cell` snippet · vanilla `cellRenderer`(DOM Node 반환) |
 
 ## 프레임워크별 미니멀 예시
 
