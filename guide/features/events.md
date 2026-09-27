@@ -177,7 +177,8 @@ Vue 3는 `<DataGrid ref="g" />` 템플릿 ref의 `g.grid`로도 접근 가능
 ## 채우기 핸들 (Fill handle)
 
 활성 셀 우하단의 작은 사각형(`.mg-fill-handle`)을 드래그하면 소스 범위의
-값을 드래그 방향으로 **타일링 복사**한다 — 엑셀 채우기 핸들 방식:
+값을 드래그 방향으로 **타일링 복사**한다 — 엑셀 채우기 핸들 방식.
+React·Vue3·Vue2·Svelte 어댑터와 vanilla `mountGrid`(CDN 포함) 모두 지원한다:
 
 - 소스 범위가 여러 행/열이면 패턴이 반복된다.
 - `editable: false`·수식 컬럼은 채우기 대상에서 제외.

@@ -129,6 +129,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 읽기 전용 | `{ editable: false }` — `mg-cell-readonly` 스타일 자동 |
 | `SaveName` | `field` (행 객체의 키) |
 | `Align`/`HeaderAlign` | `align` / `headerAlign` — left\|center\|right |
+| 헤더 툴팁 | `headerTooltip` — 헤더 마우스오버 시 title 툴팁 |
 
 ## 기능 매핑
 
@@ -173,6 +174,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `sheet.replaceText()` | `grid.replaceAll(find, replace)` |
 | `sheet.loadSearchData(json)` | `grid.setData(rows)` 또는 `data` prop 변경 |
 | `sheet.getSaveJson()` | `grid.getChanges()` — `{created, updated, deleted}` |
+| 행 상태별 조회 필터 | `grid.setRowStatusFilter(["I","U","D"])` — 변경분만 보기 |
 | `sheet.addRow({row: i})` | `grid.addRows(row, index)` |
 | `sheet.copyRows()` / 행 복제 | `grid.duplicateRows(rows)` — 원본 뒤 삽입 + I 마킹 |
 | `sheet.setRowStatus(r, "I")` | `grid.addRows()` → 자동 I 마킹 |

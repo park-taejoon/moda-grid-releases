@@ -17,12 +17,14 @@
   group: "score",                // 컬럼 그룹 ID — 다단계 헤더
   align: "right",                // 셀 텍스트 정렬 left|center|right
   headerAlign: "center",         // 헤더 정렬 — 생략 시 align을 따라감
+  headerTooltip: "사원 성명",     // 헤더 마우스오버 툴팁 (th title)
 }
 ```
 
 `align`은 셀에 `mg-align-*` 클래스, `headerAlign`은 헤더에
 `mg-halign-*` 클래스로 적용된다 — 숫자 컬럼 우측 정렬, 체크박스 가운데
-정렬 등에 사용한다.
+정렬 등에 사용한다. `headerTooltip`은 헤더 셀의 `title` 속성으로
+렌더링되어 마우스 오버 시 브라우저 기본 툴팁이 표시된다.
 
 ## 너비 리사이즈
 

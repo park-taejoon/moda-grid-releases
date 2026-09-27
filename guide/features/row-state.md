@@ -46,6 +46,13 @@ grid.duplicateRowsByIds(["3", "7"]);   // ID 기반 — snapshot.selectedRowIds�
 grid.commitChanges();             // D 행 실제 제거 + 모든 마킹 해제 (서버 저장 성공 후)
 grid.clearChanges();              // 마킹만 해제 (D 행은 화면에 복귀)
 
+// 상태 필터 — 지정 상태의 행만 표시 (저장 전 변경분 검토용)
+grid.setRowStatusFilter(["I","U","D"]);  // 변경된 행만
+grid.setRowStatusFilter(["D"]);          // 삭제 예정 행만
+grid.setRowStatusFilter(null);           // 해제
+grid.getRowStatusFilter();               // 현재 필터 (없으면 null)
+// snapshot.rowStatusFilter로 UI 상태 표시, getState/applyState에 포함됨
+
 // 유효성 검사 (저장 전)
 grid.validateChanges();           // I/U 행의 required/validate 에러 목록
 grid.validateRow(row);            // 행 하나의 에러 목록
