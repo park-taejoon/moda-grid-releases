@@ -1,6 +1,6 @@
 # 셀 병합 (Cell Merge)
 
-같은 값의 연속 셀을 `rowSpan`/`colSpan`으로 병합한다. IBSheet의
+같은 값의 연속 셀을 `rowSpan`/`colSpan`으로 병합한다. 타사 그리드의
 행 병합/auto-merge에 해당한다.
 
 ## 컬럼 옵션

@@ -59,6 +59,27 @@ grid.refreshServerRows();   // 캐시 폐기 + 현재 뷰포트부터 재요청
 `loading` 동안 어댑터는 스크롤 컨테이너 하단에 `.mg-loading` 인디케이터를
 표시한다.
 
+## 생명주기 이벤트
+
+블록 요청의 시작/성공/실패를 구독할 수 있다 — 로딩 스피너, 요청 로깅,
+에러 토스트에 사용한다 (타사 그리드 `OnSearchEnd`/검색 완료 이벤트 대응).
+
+```ts
+grid.on("serverRequest", (e) => showSpinner(e.params));
+//   { params: ServerSideGetRowsParams } — getRows에 전달된 값
+grid.on("serverResponse", (e) => hideSpinner(e.result.rows.length));
+//   { params, result: { rows, lastRowIndex? } }
+grid.on("serverError", (e) => toast(e.error));
+//   { params, error } — 실패 블록은 "error" 표시되고
+//   refreshServerRows()로 재시도할 수 있다
+```
+
+- `serverRequest`는 `getRows` 호출 직전에 발행된다.
+- 정렬/필터 변경으로 purge된 세대의 늦은 응답은 폐기되며
+  `serverResponse`/`serverError`도 발행되지 않는다.
+- 초기 뷰포트 요청은 생성자에서 시작되므로, 첫 요청을 잡으려면
+  어댑터의 `events` prop으로 등록한다 (생성 시점에 연결됨).
+
 ## 서버가 받는 파라미터
 
 ```ts
@@ -76,7 +97,7 @@ interface ServerSideGetRowsParams {
 
 ## Append Scroll (누적 로드)
 
-`serverSide`의 블록 캐시 방식과 달리, IBSheet의 Append Scroll처럼
+`serverSide`의 블록 캐시 방식과 달리, 타사 그리드의 Append Scroll처럼
 **페이지 단위로 행을 끝에 누적**한다. 로컬 파이프라인(필터/정렬)이 그대로
 적용된다 — 서버는 순서대로 페이지만 내려주면 된다.
 

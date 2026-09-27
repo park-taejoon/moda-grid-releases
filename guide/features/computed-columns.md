@@ -1,6 +1,6 @@
 # 계산 컬럼 — 수식(formula) / 누계(cumulative)
 
-실제 데이터에 없는 파생 값을 컬럼으로 표시한다. IBSheet의 Formula와 누계에
+실제 데이터에 없는 파생 값을 컬럼으로 표시한다. 타사 그리드의 Formula와 누계에
 해당한다.
 
 ## 수식 컬럼 (`ColumnDef.formula`)
@@ -39,7 +39,7 @@ evaluateFormula("price * qty", row, ["price", "qty"]); // 직접 평가
 
 ## 누계 컬럼 (`ColumnDef.cumulative`)
 
-지정 필드의 값을 **표시 순서대로 누적 합산**해 표시한다 (IBSheet 누계):
+지정 필드의 값을 **표시 순서대로 누적 합산**해 표시한다 (타사 그리드 누계):
 
 ```ts
 const columns: ColumnDef<Sale>[] = [

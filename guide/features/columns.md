@@ -15,8 +15,14 @@
   visible: true,                 // 기본값 true
   pinned: "left",                // "left" | "right" | null
   group: "score",                // 컬럼 그룹 ID — 다단계 헤더
+  align: "right",                // 셀 텍스트 정렬 left|center|right
+  headerAlign: "center",         // 헤더 정렬 — 생략 시 align을 따라감
 }
 ```
+
+`align`은 셀에 `mg-align-*` 클래스, `headerAlign`은 헤더에
+`mg-halign-*` 클래스로 적용된다 — 숫자 컬럼 우측 정렬, 체크박스 가운데
+정렬 등에 사용한다.
 
 ## 너비 리사이즈
 
@@ -24,7 +30,7 @@
 표시된다. 드래그는 `requestAnimationFrame`으로 스로틀해 프레임당 최대 1회
 코어에 반영하고, 포커스된 핸들에서 `←`/`→` 키로 ±10px 조절 가능하다.
 **핸들 더블클릭은 `autoSizeColumn`** — 내용 기준 자동 너비로 즉시 조정된다
-(엑셀/IBSheet 경계 더블클릭과 동일).
+(엑셀/타사 그리드 경계 더블클릭과 동일).
 
 테이블은 **`table-layout: fixed` + `<colgroup>`**로 너비를 관리한다 —
 nowrap 셀 내용이 컬럼을 밀어내지 않으므로 좁히는 리사이즈도 정확히 동작하고

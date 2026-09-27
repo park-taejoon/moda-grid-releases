@@ -29,7 +29,7 @@ grid.toggleTreeExpanded(rowId);   // 노드 펼침/접힘
 grid.expandAllGroups();           // 전체 펼치기 (그룹화와 공유)
 grid.collapseAllGroups();
 
-// 레벨 펼침/접기 (IBSheet 레벨 접기)
+// 레벨 펼침/접기 (타사 그리드 레벨 접기)
 grid.setTreeExpandLevel(0);       // 전체 접기 (루트만 표시)
 grid.setTreeExpandLevel(1);       // 루트 펼침 → 자식까지 표시
 grid.getTreeMaxDepth();           // 최대 깊이 (루트=0)

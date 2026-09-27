@@ -1,6 +1,6 @@
 # 컨텍스트 메뉴 (셀 우클릭)
 
-셀 우클릭 시 커스텀 메뉴를 표시한다 — IBSheet 컨텍스트 메뉴에 해당한다.
+셀 우클릭 시 커스텀 메뉴를 표시한다 — 타사 그리드 컨텍스트 메뉴에 해당한다.
 
 ## 설정
 
@@ -40,7 +40,7 @@ contextMenu: (grid) => [
 
 ## 기본 메뉴 프리셋 — `defaultContextMenuItems`
 
-IBSheet 기본 우클릭 메뉴에 해당하는 항목을 코어가 제공한다:
+타사 그리드 기본 우클릭 메뉴에 해당하는 항목을 코어가 제공한다:
 
 ```ts
 import { defaultContextMenuItems, defaultHeaderContextMenuItems } from "@moda-grid/core";

@@ -90,6 +90,10 @@ snapshot.selectionAggregates = {
 `snapshot.activeCell` / `snapshot.selectedRange` / `snapshot.selectionMode` /
 `snapshot.selectedRowIds` / `snapshot.selectionAggregates`.
 
+선택된 행의 **데이터**가 필요하면 `grid.getSelectedRowData()`를 사용한다 —
+숨김·필터로 화면에서 빠진 선택 행도 포함되고, 순서는 rawData 순이다
+(타사 그리드 `FindCheckedRow`/`GetRowsByStatus` 계열 대응).
+
 ## 주의사항
 
 - 인덱스는 **visibleData/visibleColumns 기준** — 정렬·필터·페이징·컬럼

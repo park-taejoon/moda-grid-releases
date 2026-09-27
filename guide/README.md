@@ -16,7 +16,7 @@
 | 문서 | 내용 |
 | ---- | ---- |
 | [getting-started.md](./getting-started.md) | 설치, Hello Grid, 핵심 개념(스냅샷·파이프라인), 패키지 선택 |
-| [ibsheet-migration.md](./ibsheet-migration.md) | IBSheet → moda-grid 개념/API 매핑 치트시트 |
+| [migration.md](./migration.md) | 레거시 엔터프라이즈 그리드 → moda-grid 개념/API 매핑 치트시트 |
 
 ### 플랫폼별 가이드
 

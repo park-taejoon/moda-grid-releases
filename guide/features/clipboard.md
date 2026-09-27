@@ -24,6 +24,19 @@ grid.pasteTsv(tsv, { rowIndex: 0, columnIndex: 0 }); // 시작 위치 지정
 
 `PasteResult` = `{ applied, skipped, errors }`.
 
+붙여넣기가 처리되면 **`dataPaste` 이벤트**(타사 그리드 `OnPaste` 대응)가
+발행된다 — `{ applied, skipped, errors, start }`. 서버 동기화나
+검증 실패 사용자 알림에 활용한다:
+
+```ts
+grid.on("dataPaste", (e) => {
+  if (e.errors.length) toast(`붙여넣기 실패 ${e.errors.length}건`);
+  else saveSnapshot(); // applied 셀 수만큼 변경됨
+});
+```
+
+빈 텍스트나 활성 셀 없음처럼 아무 셀도 시도하지 않은 호출은 발행하지 않는다.
+
 ## 붙여넣기 규칙
 
 - `editable: false` 컬럼과 범위 밖 셀은 건너뜀 (`skipped`에 기록).
@@ -35,7 +48,7 @@ grid.pasteTsv(tsv, { rowIndex: 0, columnIndex: 0 }); // 시작 위치 지정
 ## 붙여넣기 행 확장 (`pasteExtend`)
 
 `GridOptions.pasteExtend: true`면 붙여넣은 줄 수가 표시 데이터를 넘을 때
-부족한 만큼 **빈 행을 자동 추가**하고 붙여넣는다 (IBSheet `EditExtend` 대응).
+부족한 만큼 **빈 행을 자동 추가**하고 붙여넣는다 (타사 그리드 `EditExtend` 대응).
 
 ```ts
 new GridCore({ columns, data, pasteExtend: true });

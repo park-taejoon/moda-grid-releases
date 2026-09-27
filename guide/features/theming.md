@@ -36,7 +36,7 @@ mountGrid(el, { columns, data, theme: "dark" });
 
 ## 행 줄무늬 — `striped`
 
-zebra 줄무늬(짝수 표시 행 배경)를 켠다 — IBSheet `Alternate` 스타일 대응:
+zebra 줄무늬(짝수 표시 행 배경)를 켠다 — 타사 그리드 `Alternate` 스타일 대응:
 
 ```tsx
 <DataGrid columns={cols} data={rows} striped />   // 어댑터 prop
@@ -120,7 +120,7 @@ createGrid({
 
 ## 인라인 스타일 — cellStyle
 
-클래스 없이 셀 하나만 직접 색을 바꿀 때 (IBSheet 조건부 색상 대응).
+클래스 없이 셀 하나만 직접 색을 바꿀 때 (타사 그리드 조건부 색상 대응).
 CSS 문자열, kebab-case 속성 맵, 또는 셀 파라미터를 받는 함수를 지정한다:
 
 ```ts

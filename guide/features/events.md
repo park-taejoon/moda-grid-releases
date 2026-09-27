@@ -2,7 +2,7 @@
 
 ## 타입 이벤트 (`grid.on`)
 
-IBSheet의 onClick/onDblClick/onEdit 계열에 해당하는 타입 안전 이벤트:
+타사 그리드의 onClick/onDblClick/onEdit 계열에 해당하는 타입 안전 이벤트:
 
 ```ts
 grid.on("cellClick", (e) => {
@@ -23,17 +23,73 @@ grid.on("filterChange", (e) => {
 });
 grid.on("rowReorder", (e) => { /* { fromIndex, toIndex, row } */ });
 grid.on("rowAdd", (e) => {
-  // { rows, index } — addRows/duplicateRows 후 (IBSheet OnRowAdd 대응)
+  // { rows, index } — addRows/duplicateRows 후 (타사 그리드 OnRowAdd 대응)
 });
 grid.on("rowDelete", (e) => {
-  // { ids } — deleteRowsByIds로 D 마킹/제거된 행 (IBSheet OnRowDelete 대응)
+  // { ids } — deleteRowsByIds로 D 마킹/제거된 행 (타사 그리드 OnRowDelete 대응)
 });
 grid.on("dataLoad", (e) => {
-  // { rows } — setData로 원본 데이터 교체 후 (IBSheet OnDataLoad 대응)
+  // { rows } — setData로 원본 데이터 교체 후 (타사 그리드 OnDataLoad 대응)
 });
 grid.on("cellEditStart", (e) => {
   // { row, rowIndex, column, columnIndex } — 편집 진입 성공 직후
   // (beforeEdit를 통과하고 editingCell이 설정된 시점)
+});
+grid.on("activeCellChange", (e) => {
+  // { row, rowIndex, column, columnIndex, previous }
+  // — 활성 셀 이동/해제 (타사 그리드 OnFocus 대응). 클릭·키보드
+  //   navigateCell·clearCellSelection 등 모든 경로에서 발행되고,
+  //   batch 안의 중간 이동은 최종 위치 하나로 합쳐진다.
+});
+grid.on("dataPaste", (e) => {
+  // { applied, skipped, errors, start } — TSV 붙여넣기 처리 후
+  // (타사 그리드 OnPaste 대응). start는 붙여넣기 시작 셀 위치.
+});
+grid.on("dataChange", (e) => {
+  // { source, edits? } — 모든 데이터 변경의 통합 이벤트
+  // (타사 그리드 OnChange 대응). 자동 저장/dirty 표시에 개별 이벤트를
+  // 모두 구독할 필요 없이 이 하나면 된다.
+  //   source: "edit" | "api" | "paste" | "fill" | "move" | "replace"
+  //         | "clear" | "rowAdd" | "rowDelete" | "setData" | "undo" | "redo"
+  //   edits: 셀 단위 변경의 편집 레코드 (구조적 변경이면 없음)
+});
+
+// UI 상태 이벤트 (타사 그리드 OnColResize/OnColMove/OnExpand 대응)
+grid.on("columnResize", (e) => {
+  // { field, width } — 드래그 리사이즈는 픽셀 단위 연속 발행
+});
+grid.on("columnMove", (e) => {
+  // { field, fromIndex, toIndex } — 컬럼 드래그 재배치 후
+});
+grid.on("columnVisible", (e) => {
+  // { field, visible } — setColumnVisible·컬럼 컨트롤러·헤더 메뉴
+});
+grid.on("pageChange", (e) => {
+  // { pageIndex, pageSize } — 실제로 바뀔 때만 발행
+});
+grid.on("rowExpand", (e) => {
+  // { key, expanded } — 그룹 행 + 트리 노드 토글 (key는 그룹 키/행 ID)
+});
+grid.on("groupChange", (e) => {
+  // { groupBy } — setGroupBy 기준 변경. 동일 기준 재설정은 무시.
+});
+grid.on("pivotChange", (e) => {
+  // { pivot } — setPivot 설정/해제 (해제·빈 존이면 null).
+  // addPivotField/removePivotField/setPivotValueAgg 경유도 발행.
+});
+grid.on("rowResize", (e) => {
+  // { id, height } — setRowHeight 지정/해제 (해제 시 height는 null)
+});
+
+// 서버 사이드 모드 생명주기 (타사 그리드 OnSearchEnd 대응)
+grid.on("serverRequest", (e) => {
+  // { params } — 캐시 블록 getRows 요청 직전
+});
+grid.on("serverResponse", (e) => {
+  // { params, result } — 응답 적용 후 (stale 세대 응답은 미발행)
+});
+grid.on("serverError", (e) => {
+  // { params, error } — 요청 실패 (refreshServerRows로 재시도)
 });
 ```
 
@@ -83,7 +139,7 @@ grid.watch((s) => s.editingCell, (c) => log(c), { immediate: true });
 
 ### 선언형 구독 — `events` prop (권장)
 
-`grid.on` 대신 선언형 맵으로 넘길 수 있다 — IBSheet의 `options.Events`에 해당:
+`grid.on` 대신 선언형 맵으로 넘길 수 있다 — 타사 그리드의 `options.Events`에 해당:
 
 ```tsx
 // 어댑터 prop — 마운트 시 구독, 언마운트 시 자동 해제
@@ -107,7 +163,7 @@ Vue 3는 `<DataGrid ref="g" />` 템플릿 ref의 `g.grid`로도 접근 가능
 
 ## 행 번호 컬럼 (`rowNumbers`)
 
-IBSheet의 행번호(Seq) 컬럼 — 맨 왼쪽에 표시 순번을 렌더링한다:
+타사 그리드의 행번호(Seq) 컬럼 — 맨 왼쪽에 표시 순번을 렌더링한다:
 
 ```tsx
 <DataGrid columns={cols} data={data} rowNumbers />   // React
@@ -156,7 +212,7 @@ Ctrl+Enter(`fillActiveToSelection`)는 엑셀과 마찬가지로 항상 복사�
 ## 내용 지우기 (Delete/Backspace)
 
 그리드에 포커스된 상태에서 `Delete`/`Backspace`를 누르면 **선택 범위
-(없으면 활성 셀)의 내용을 지운다** — 엑셀/IBSheet와 동일한 동작.
+(없으면 활성 셀)의 내용을 지운다** — 엑셀/타사 그리드와 동일한 동작.
 
 - `editable: false`·수식 컬럼은 건너뛴다.
 - `checkbox` 컬럼은 `uncheckedValue`로, 나머지는 `null`로 지운다.
@@ -210,7 +266,7 @@ new GridCore({
 
 ## 행으로 스크롤 — `scrollToRow`
 
-표시 인덱스 기준으로 해당 행이 보이도록 스크롤한다 (IBSheet `showRow` 대응):
+표시 인덱스 기준으로 해당 행이 보이도록 스크롤한다 (타사 그리드 `showRow` 대응):
 
 ```ts
 grid.scrollToRow(150);              // 150번째 표시 행으로 이동

@@ -54,7 +54,7 @@ mountGrid(el, { columns, data, groupPanel: true });
 
 - 그룹된 컬럼이 칩으로 나열되고 **칩 클릭 시 해당 그룹이 해제**된다.
 - **컬럼 헤더를 패널로 드래그해 드롭하면 그룹에 추가**된다
-  (IBSheet 그룹 패널과 동일) — 이미 그룹된 필드는 무시되고, 드롭 중에는
+  (타사 그리드 그룹 패널과 동일) — 이미 그룹된 필드는 무시되고, 드롭 중에는
   `mg-drop-target` 하이라이트가 표시된다. 헤더 드래그는
   `application/x-mg-column` 데이터 타입을 사용한다.
 - 그룹이 없으면 `locale.groupPanelEmpty` 안내 문구가 표시된다.

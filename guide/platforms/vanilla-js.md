@@ -2,7 +2,7 @@
 
 프레임워크 없이 `<script>` 태그로 사용하는 두 가지 방식:
 
-- **`mountGrid`** — 완성된 DOM 그리드를 한 번에 마운트 (IBSheet `create` 방식)
+- **`mountGrid`** — 완성된 DOM 그리드를 한 번에 마운트 (타사 그리드 `create` 방식)
 - **`GridCore`** — 헤드리스 코어만 사용, DOM 렌더링은 직접 작성
 
 ## 설치 (CDN)

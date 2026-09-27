@@ -1,6 +1,6 @@
 # PDF 보내기
 
-현재 표시 데이터를 PDF 표로 저장한다 — IBSheet PDF 다운로드에 해당한다.
+현재 표시 데이터를 PDF 표로 저장한다 — 타사 그리드 PDF 다운로드에 해당한다.
 **jspdf + jspdf-autotable**을 첫 호출 시 지연 로드(dynamic import)한다.
 
 ## 사용법

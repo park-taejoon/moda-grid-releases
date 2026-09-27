@@ -19,6 +19,11 @@ Undo/Redo로 되돌릴 수 있다.
 입력 테두리가 빨간색이 된다. 에디터 내부 키는 `stopPropagation`으로
 그리드 네비게이션과 분리된다.
 
+저장 후 이동(Enter/Tab)이 성공하면 그리드 스크롤 컨테이너로 포커스가
+복귀된다 — 편집기가 DOM에서 제거되면서 포커스가 `body`로 빠져 이후
+방향키/Enter가 먹지 않는 문제를 막는다. 저장 실패(검증 오류) 시에는
+편집 상태와 위치를 유지한다.
+
 ## 컬럼 옵션
 
 ```ts
@@ -53,7 +58,7 @@ grid.getEditorContext(r, c);                        // CellEditorContext (커스
 
 grid.undo(); grid.redo();                           // 이력 되돌리기/다시 실행
 
-// 전역 편집 잠금 (IBSheet Editable 대응)
+// 전역 편집 잠금 (타사 그리드 Editable 대응)
 new GridCore({ columns, data, editable: false });    // 전체 편집 불가
 grid.setEditable(false);                             // 런타임 잠금 (편집 중이면 취소)
 grid.isEditable();
@@ -80,9 +85,24 @@ grid.canUndo(); grid.canRedo();
 ```ts
 grid.isCellChecked(row, col);            // 셀의 체크 여부
 grid.toggleCellChecked(row, col);        // 즉시 토글 (검증 실패 시 false)
+grid.setCellChecked(row, col, true);     // 명시적 설정 (토글 아님)
 grid.checkboxColumnState(col);           // "all" | "some" | "none"
 grid.toggleAllChecked(col);              // 헤더 체크박스 토글과 동일
+
+// 행 ID / 데이터 기준 API — 인덱스와 무관
+grid.getCheckedRows();                   // 체크된 행 데이터[] (첫 checkbox 컬럼 기준)
+grid.getCheckedRows("done");             // 지정 필드 기준
+grid.setRowChecked("42", true);          // ID로 체크 설정 — checkedValue 자동 매핑
+grid.setRowChecked("42", false, "done"); // 필드 지정 + 해제
 ```
+
+- `getCheckedRows(field?)` — 체크박스 컬럼 값이 `checkedValue`인 행을
+  반환한다. **행 선택(`selection`)과는 별개 개념**이다. `field` 생략 시 첫
+  `cellEditor: "checkbox"` 컬럼. 숨김·필터된 행도 포함한다.
+- `setRowChecked(id, checked, field?)` — `toggleCellChecked`의 결정적 버전.
+  이미 같은 상태면 성공(true)으로 처리하고 이력을 남기지 않는다.
+  field 지정 시 checkbox 에디터이거나 `checkedValue`/`uncheckedValue`가
+  선언된 컬럼만 허용한다.
 
 ## 다중 선택 편집기 (`cellEditor: "multiselect"`)
 
@@ -98,7 +118,7 @@ CSV/xlsx보내기는 `;` 구분 문자열로 직렬화되어 왕복이 보장된
 ## 라디오 편집기 (`cellEditor: "radio"`)
 
 `editorOptions`를 라디오 버튼 그룹으로 렌더링한다 — 옵션이 적을 때
-select보다 한 클릭 빠르다 (IBSheet `Type:"Radio"` 대응). 선택 즉시
+select보다 한 클릭 빠르다 (타사 그리드 `Type:"Radio"` 대응). 선택 즉시
 커밋되며, 이미 선택된 옵션을 다시 눌러도 행 상태가 `U`로 변하지 않는다.
 
 ```ts
@@ -136,7 +156,7 @@ select보다 한 클릭 빠르다 (IBSheet `Type:"Radio"` 대응). 선택 즉시
 
 ### 행별 높이 (`setRowHeight`)
 
-특정 행만 높이를 지정한다 (IBSheet `setRowHeight` 대응):
+특정 행만 높이를 지정한다 (타사 그리드 `setRowHeight` 대응):
 
 ```ts
 grid.setRowHeight(grid.getRowId(row), 80); // px
@@ -150,7 +170,7 @@ grid.setRowHeight(id, null);               // 해제 → 기본/autoRowHeight �
 ### 행 높이 드래그 (`rowResizable`)
 
 `rowResizable` prop/`mountGrid` 옵션을 주면 **행 번호 셀 하단**에 드래그
-핸들(`.mg-row-resizer`)이 생긴다 — 엑셀/IBSheet의 행 경계 드래그처럼
+핸들(`.mg-row-resizer`)이 생긴다 — 엑셀/타사 그리드의 행 경계 드래그처럼
 끌어서 행 높이를 조정한다 (`setRowHeight` 호출). `rowNumbers`가 필요하며
 가상 스크롤에서는 표시되지 않는다:
 
@@ -162,7 +182,7 @@ mountGrid(el, { rowNumbers: true, rowResizable: true, ... });
 ## 텍스트 자동완성 (`editorOptions` + text 에디터)
 
 기본 `text` 에디터에 `editorOptions`를 주면 `<datalist>` 자동완성이
-연결된다 — IBSheet Suggestion/ComboEdit 대응. 입력은 자유롭고 후보를
+연결된다 — 타사 그리드 Suggestion/ComboEdit 대응. 입력은 자유롭고 후보를
 내려받아 고를 수 있다:
 
 ```ts
@@ -205,7 +225,7 @@ if (errors.length) return;             // 서버 전송 중단
 ## 편집 진입 차단 — `beforeEdit`
 
 행 상태·값에 따라 조건부로 편집을 막으려면 `beforeEdit` 훅을 사용한다
-(IBSheet `OnBeforeEdit` 대응). `false`를 반환하면 해당 셀의 편집 진입이
+(타사 그리드 `OnBeforeEdit` 대응). `false`를 반환하면 해당 셀의 편집 진입이
 취소된다 — `checkbox` 에디터의 클릭 토글에도 적용된다:
 
 ```tsx

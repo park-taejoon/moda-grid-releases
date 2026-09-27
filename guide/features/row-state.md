@@ -12,7 +12,7 @@
 | 없음 | 변경 없음 | 초기 로드 상태, `commitChanges()` 후 |
 
 > `addRows(rows, index)`에 위치를 주면 rawData 기준 해당 인덱스에
-> 삽입한다 (IBSheet `addRow(index)` 대응). 생략하면 끝에 추가한다.
+> 삽입한다 (타사 그리드 `addRow(index)` 대응). 생략하면 끝에 추가한다.
 >
 > `duplicateRows(rows)`는 각 행을 얕은 복사해 **원본 바로 다음 위치**에
 > 삽입한다. 복제본은 `I`로 마킹되고, 커스텀 `getRowId`가 없으면 복제본의
@@ -127,7 +127,7 @@ async function save() {
 
 ## 행 숨기기 (`hiddenRowIds`)
 
-특정 행을 표시 목록에서만 제외합니다 — IBSheet의 `setRowHidden`에
+특정 행을 표시 목록에서만 제외합니다 — 타사 그리드의 `setRowHidden`에
 대응합니다. **원본 데이터는 유지**되며 삭제와 달리 `getChanges()`에도
 잡히지 않습니다.
 

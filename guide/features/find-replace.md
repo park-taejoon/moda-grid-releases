@@ -1,6 +1,6 @@
 # 찾기 / 바꾸기
 
-그리드 데이터를 텍스트로 검색·일괄 치환하는 코어 API — IBSheet의
+그리드 데이터를 텍스트로 검색·일괄 치환하는 코어 API — 타사 그리드의
 `findText`/`replaceText`에 해당한다. 어댑터 종류와 무관하게
 `GridCore` 메서드로 동작하므로 헤드리스로도 쓸 수 있다.
 
@@ -62,7 +62,7 @@ grid.replaceAll("구버전", "v2", { wholeCell: true });
 ## 검색 후 이동 — `findNext`
 
 `findCells` 결과를 직접 순회할 필요 없이, 활성 셀 다음 위치부터 첫 매치로
-이동시키는 편의 API다. 목록 끝에 도달하면 처음으로 순환한다 — 엑셀/IBSheet
+이동시키는 편의 API다. 목록 끝에 도달하면 처음으로 순환한다 — 엑셀/타사 그리드
 "다음 찾기"와 같은 UX:
 
 ```ts
@@ -93,7 +93,7 @@ mountGrid(el, { columns, data, findBox: true });
 
 - `Enter` = 다음 매치, `Shift+Enter` = 이전 매치, 버튼 클릭도 동일.
 - 검색 옵션 체크박스 — **대소문자 구분**(`caseSensitive`)과
-  **셀 전체 일치**(`wholeCell`)를 지원한다 (IBSheet 찾기 옵션 대응).
+  **셀 전체 일치**(`wholeCell`)를 지원한다 (타사 그리드 찾기 옵션 대응).
   라벨은 `locale.findMatchCase`/`findWholeCell`로 다국어 대응한다.
 - 그리드에 포커스가 있을 때 **`Ctrl+F`/`Cmd+F`로 찾기 입력에 포커스**
   (기존 검색어 전체 선택). `findBox`가 꺼져 있으면 브라우저 기본 검색에 양보한다.
@@ -122,7 +122,7 @@ snapshot.findQuery;               // 현재 하이라이트 검색어 | null
 
 ## 인덱스 기반 직접 읽기/쓰기 — `getCellValueAt` / `setCellValue`
 
-IBSheet `getValue(r, c)`/`setValue(r, c, v)`에 해당하는 인덱스 기반 API.
+타사 그리드 `getValue(r, c)`/`setValue(r, c, v)`에 해당하는 인덱스 기반 API.
 인덱스는 `visibleData`/`visibleColumns` 기준이다:
 
 ```ts
@@ -137,3 +137,22 @@ grid.setCellValue(0, 1, 99);          // 쓰기 — 편집 커밋과 동일 경�
 - `valueSetter` 컬럼은 세터를 통해 저장된다
 - 변경 시 행 상태(U)·Undo 이력·`afterEdit` 이벤트에 기록된다
 - 값이 같으면 이력을 남기지 않고 `true`를 반환한다 (팬텀 U 방지)
+
+## 행 ID 기반 읽기/쓰기 — `getRowById` / `updateRow`
+
+타사 그리드 `getRowData`/`setRowData`에 해당하는 ID 기반 API — 인덱스가
+정렬·필터로 바뀌어도 안전하다:
+
+```ts
+grid.getRowById("42");                    // TData | undefined (숨김 행 포함)
+grid.updateRow("42", { name: "새 이름", age: 30 }); // 부분 업데이트 → 적용 셀 수
+```
+
+`updateRow` 규칙:
+
+- 컬럼이 있는 필드는 `setCellValue`와 같은 규칙 — `editable:false`·수식·
+  검증 실패 필드는 건너뛰고 `valueSetter`를 경유한다
+- 컬럼에 없는 필드는 직접 할당한다 (검증 없음 — 메타/외래키 필드용)
+- 실제로 바뀐 셀만 모아 **한 Undo 단위**로 기록, 행 상태 U 마킹,
+  `dataChange`(source `"api"`) 발행 — 필드별 `afterEdit`은 발행하지 않는다
+- 변경이 없으면 0을 반환하고 이력을 남기지 않는다

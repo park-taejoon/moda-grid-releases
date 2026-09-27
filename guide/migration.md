@@ -1,12 +1,13 @@
-# IBSheet → moda-grid 마이그레이션
+# 타사 엔터프라이즈 그리드 → moda-grid 마이그레이션
 
-IBSheet에 익숙한 개발자를 위한 개념 매핑과 치트시트.
+명령형 인스턴스 기반 엔터프라이즈 그리드에 익숙한 개발자를 위한
+개념 매핑과 치트시트.
 
 ## TL;DR — 5줄 비교
 
 ```js
-// IBSheet: 인스턴스가 DOM에 직접 렌더링
-IBSheet.create({
+// 기존 엔터프라이즈 그리드: 인스턴스가 DOM에 직접 렌더링
+const sheet = GridLib.create({
   el: "sheetDiv",
   options: { Cfg: {...}, Cols: [...], Events: { onClick: fn } },
   data: [...],
@@ -27,9 +28,9 @@ IBSheet.create({
 - `options.Events` → `events` prop (또는 `grid.on()`)
 - 반환 인스턴스 → `onReady` 콜백 / React `useGridCore` / Vue `ref` + `expose`
 
-### CDN/script 태그 환경 (IBSheet와 동일 패턴)
+### CDN/script 태그 환경 (레거시 그리드와 동일 패턴)
 
-IBSheet처럼 빌드 도구 없이 `<script>` 태그만으로 쓰려면 `mountGrid`:
+레거시 그리드처럼 빌드 도구 없이 `<script>` 태그만으로 쓰려면 `mountGrid`:
 
 ```html
 <link rel="stylesheet" href="https://grid.modaolive.com/style.css" />
@@ -39,7 +40,7 @@ IBSheet처럼 빌드 도구 없이 `<script>` 태그만으로 쓰려면 `mountGr
   const m = ModaGrid.mountGrid(document.getElementById("grid"), {
     columns: [{ field: "name", header: "이름", filterable: true }],
     data: rows,
-    events: { afterEdit: (e) => save(e) },   // IBSheet Events 대응
+    events: { afterEdit: (e) => save(e) },   // 레거시 Events 옵션 대응
   });
   m.grid.exportToCsv();  // create() 반환 인스턴스와 동일한 위치
 </script>
@@ -47,9 +48,9 @@ IBSheet처럼 빌드 도구 없이 `<script>` 태그만으로 쓰려면 `mountGr
 
 ## 초기화 매핑
 
-| IBSheet | moda-grid |
+| 기존 엔터프라이즈 그리드 | moda-grid |
 | ------- | --------- |
-| `IBSheet.create({el, options, data})` | `<DataGrid columns={cols} data={rows} />` |
+| `GridLib.create({el, options, data})` (레거시 초기화) | `<DataGrid columns={cols} data={rows} />` |
 | `options.Cols: [{Header, Type, Name}]` | `columns: [{ field, header, cellEditor, width }]` |
 | `options.Cfg` (SearchMode, Page…) | `DataGrid` props 또는 `useGridCore` 옵션 |
 | `options.Events` | `events` prop → `{ cellClick, afterEdit, ... }` |
@@ -69,7 +70,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 
 ## 이벤트 매핑
 
-| IBSheet Events | moda-grid `events` prop / `grid.on` |
+| 레거시 `Events` 옵션 | moda-grid `events` prop / `grid.on` |
 | -------------- | ----------------------------------- |
 | `onClick` | `cellClick` — `{ row, rowIndex, column, columnIndex, value }` |
 | `onDblClick` | `cellDblClick` |
@@ -83,6 +84,21 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `onRowDelete` | `rowDelete` — `{ ids }` (deleteRowsByIds — D 마킹 포함) |
 | `onDataLoad` | `dataLoad` — `{ rows }` (setData 교체 후) |
 | `onEditStart` (진입 시점) | `cellEditStart` — `{ row, rowIndex, column, columnIndex }` |
+| `onFocus` / `onFocusCell` | `activeCellChange` — `{ row, rowIndex, column, columnIndex, previous }` |
+| `onPaste` | `dataPaste` — `{ applied, skipped, errors, start }` |
+| `onChange` (모든 데이터 변경) | `dataChange` — `{ source, edits? }` — 편집/붙여넣기/행 추가·삭제/undo·redo/setData 통합 |
+| `onColResize` | `columnResize` — `{ field, width }` (드래그 중 연속 발행) |
+| `onColMove` | `columnMove` — `{ field, fromIndex, toIndex }` |
+| 컬럼 표시/숨김 | `columnVisible` — `{ field, visible }` |
+| `onPageChange` | `pageChange` — `{ pageIndex, pageSize }` |
+| `onExpand` (그룹/트리 펼침) | `rowExpand` — `{ key, expanded }` |
+| 그룹화 기준 변경 | `groupChange` — `{ groupBy }` |
+| 피벗 설정 변경 | `pivotChange` — `{ pivot }` (해제 시 null) |
+| `SetRowHeight` | `grid.setRowHeight(id, px)` + `rowResize` 이벤트 |
+| `onSearchEnd` / 서버 조회 완료 | `serverRequest`/`serverResponse`/`serverError` — 서버 사이드 모드 블록 요청 생명주기 (`server-side.md` 참조) |
+| `findCheckedRow` / 선택 행 조회 | `grid.getSelectedRowData()` — 선택 행 데이터 배열 |
+| 체크박스 컬럼 체크 행 조회 | `grid.getCheckedRows(field?)` — `checkedValue` 기준, 선택과 별개 |
+| 체크 설정 | `grid.setRowChecked(id, checked, field?)` — ID 기준, 값 매핑 자동 |
 | 조합 상태 감시 | `grid.watch(selector, listener)` — 스냅샷 슬라이스 옵저버 (`events.md` 참조) |
 
 ```tsx
@@ -97,7 +113,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 
 ## 컬럼 타입 매핑
 
-| IBSheet `Type` | moda-grid `ColumnDef` |
+| 레거시 컬럼 `Type` | moda-grid `ColumnDef` |
 | -------------- | --------------------- |
 | `Text` | 기본값 (`cellEditor` 생략) |
 | `Int`/`Float` | `{ type: "number" }` 또는 `cellEditor: "number"` + `format: {kind:"number"}` |
@@ -112,10 +128,11 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `AutoSum`/`Formula` | `{ formula: "price * qty" }` / `{ cumulative: "amount" }` |
 | 읽기 전용 | `{ editable: false }` — `mg-cell-readonly` 스타일 자동 |
 | `SaveName` | `field` (행 객체의 키) |
+| `Align`/`HeaderAlign` | `align` / `headerAlign` — left\|center\|right |
 
 ## 기능 매핑
 
-| IBSheet 기능 | moda-grid |
+| 레거시 그리드 기능 | moda-grid |
 | ------------ | --------- |
 | 헤더 필터 (FilterMode) | `filterable: true` + `filterToggle` prop |
 | AutoFilter (헤더 ▾ 필터) | `headerFilters` prop — 값 체크리스트 드롭다운 |
@@ -146,10 +163,12 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 
 ## 주요 API 메서드 매핑
 
-| IBSheet | moda-grid |
+| 기존 엔터프라이즈 그리드 | moda-grid |
 | ------- | --------- |
 | `sheet.getValue(r, c)` | `grid.getCellValueAt(r, c)` / `getCellValue(row, col)` |
 | `sheet.setValue(r, c, v)` | `grid.setCellValue(r, c, v)` — 검증·이력·이벤트 포함 |
+| `sheet.getRowData(r)` / 행 조회 | `grid.getRowById(id)` — 숨김·필터 행 포함 |
+| `sheet.setRowData(r, {...})` | `grid.updateRow(id, patch)` — 한 Undo 단위 + `dataChange` |
 | `sheet.findText()` | `grid.findCells()` / `grid.findNext()` (순환 이동) |
 | `sheet.replaceText()` | `grid.replaceAll(find, replace)` |
 | `sheet.loadSearchData(json)` | `grid.setData(rows)` 또는 `data` prop 변경 |
@@ -213,7 +232,7 @@ import "@moda-grid/svelte/styles.css";
 
 ## 철학 차이
 
-- **IBSheet**: 그리드 인스턴스가 DOM과 데이터를 소유, 명령형 API 중심.
+- **레거시 그리드**: 그리드 인스턴스가 DOM과 데이터를 소유, 명령형 API 중심.
 - **moda-grid**: 헤드리스 코어(`GridCore`) + 프레임워크 어댑터.
   데이터 소유는 앱(`data` prop), 그리드는 표시 상태(정렬·필터·편집)만 관리.
   행 데이터를 바꾸려면 `data` prop을 갈아끼우거나 `grid.setData()`를 호출.
