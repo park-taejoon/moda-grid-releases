@@ -85,6 +85,24 @@ new GridCore({
 - 숨김 컬럼 제외, 셀 내부 탭/줄바꿈은 공백으로 치환.
 - 표시 상태(필터·정렬·페이징 결과) 기준으로 복사된다.
 
+## 표시 문자열 복사 (`copyFormatted`)
+
+기본 복사는 **원시값**(1234 → `1234`)을 쓴다. `copyFormatted`를 켜면 화면에 보이는 그대로 — `formatter`/`format`이 적용된 문자열(`34` → `34세`)을 복사한다.
+
+```ts
+new GridCore({ columns, data, copyFormatted: true });
+grid.setCopyFormatted(false); // 런타임 토글
+
+// 호출별 덮어쓰기 — 옵션과 무관하게 동작
+grid.getSelectionTsv();                    // 옵션 따름
+grid.getSelectionTsv({ formatted: true }); // 강제 포맷
+grid.getSelectionTsv({ formatted: false });// 강제 원시값
+```
+
+- Ctrl+C/Ctrl+X(`cutSelectionTsv`)에도 동일하게 적용된다.
+- 붙여넣기 대상 앱이 "화면 그대로"를 기대하는 경우(문서 작성 등)에 유용하고, 데이터 정합성이 필요하면 기본값(false)을 유지한다.
+- 복수 범위 선택 시에도 각 블록에 동일 규칙이 적용된다.
+
 ## 어댑터 연결 방식 (커스텀 UI용)
 
 ```ts

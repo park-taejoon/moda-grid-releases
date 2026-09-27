@@ -18,6 +18,7 @@
   align: "right",                // 셀 텍스트 정렬 left|center|right
   headerAlign: "center",         // 헤더 정렬 — 생략 시 align을 따라감
   headerTooltip: "사원 성명",     // 헤더 마우스오버 툴팁 (th title)
+  movable: false,                // 헤더 드래그 이동 잠금 (기본값 true)
 }
 ```
 
@@ -78,6 +79,11 @@ DOM 없이도 동작한다.
 ```ts
 grid.reorderColumn("name", "role");   // draggedId → targetId 위치로
 ```
+
+컬럼에 `movable: false`를 주면 그 컬럼은 드래그할 수 없고
+`reorderColumn` 호출도 거부된다 (타사 그리드 컬럼 이동 잠금 대응).
+다른 컬럼을 잠긴 컬럼 위치로 드롭하는 것은 허용된다 — 잠금은
+"그 컬럼이 움직이지 않는다"가 아니라 "그 컬럼을 드래그할 수 없다"다.
 
 ## 고정 (Pinning)
 
