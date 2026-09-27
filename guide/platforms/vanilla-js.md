@@ -73,7 +73,9 @@
   Ctrl+Z/Y·Ctrl+Shift+Z 실행취소/재실행, Ctrl+A 전체 선택(`selectAll`),
   Ctrl+D/R 아래/오른쪽 채우기(`fillDown`/`fillRight`), Tab 셀 이동,
   Ctrl+X 잘라내기(`cutSelectionTsv`), Ctrl+Home/End·Ctrl+방향키 점프,
-  Shift+Space 행 선택 / Ctrl+Space 열 선택
+  Shift+Space 행 선택 / Ctrl+Space 열 선택, Ctrl+Enter 범위 입력
+  (`fillActiveToSelection`), `fillSeries` 시리즈 채우기 옵션,
+  키보드 이동 시 수평 스크롤 자동 추적 (`scrollRequest.columnIndex`)
 - 행 선택, `rowStatus` I/U/D 마킹, `rowNumbers`
 - 그룹/소계/트리 행, 셀 병합(rowSpan/colSpan), pinned 컬럼
 - `aggregationFn` 컬럼의 합계 푸터(`tfoot`)
@@ -81,11 +83,19 @@
 - `height`+`rowHeight` 가상 스크롤, `appendScroll` 자동 로드
 - `pager`: `pageSize > 0`이면 이전/다음 버튼 + 페이지 번호 버튼 + 페이지 정보
 - 마우스 드래그 셀 범위 선택 (`selectionMode: "multi-cell"`/`"row"`)
-- `findBox`: 셀 찾기 바 — Enter 다음/Shift+Enter 이전 매치 이동
+- `col.rowDrag` 행 드래그 재정렬 — 핸들 드래그 + 드롭 가이드 라인
+  (`beginRowDrag`/`updateRowDropPosition`/`endRowDrag` → `moveRow`)
+- `findBox`: 셀 찾기 바 — Enter 다음/Shift+Enter 이전 매치 이동 (어댑터 `findBox` prop과 동일)
   (`findCells`/`findNext` 기반, `searchBox`의 데이터 필터와는 별개)
 - `columnController`: 우상단 컬럼 관리 도구 — 표시/숨김 체크박스 팝오버
   + 전체 선택/해제
 - `filterToggle`: 필터 행 표시/숨김 토글 버튼 (filterable 컬럼이 있을 때만)
+- `headerFilters`: filterable 컬럼 헤더에 ▾ 값 체크리스트 드롭다운
+  (엑셀 autofilter — 어댑터 `headerFilters` prop과 동일)
+- `pivotPanel`: 상단에 필드/행/열/값 존 패널 — 칩 드래그로 피벗 구성
+  (엑셀 피벗 필드 목록 — 어댑터 `pivotPanel` prop과 동일)
+- `theme`: 그리드 자체 테마 (`"light" | "dark"`) — 루트에 `grid-theme-*`
+  클래스 적용, 생략 시 상위 팔레트 상속 (어댑터 `theme` prop과 동일)
 - `statusBar`: 선택 영역 집계 상태바 (셀 수/개수/합계/평균/최소/최대,
   기본 true)
 - `pageSizeOptions`: 페이저에 페이지 크기 셀렉트 (예: `[10, 20, 50]`)

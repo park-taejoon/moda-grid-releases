@@ -62,7 +62,10 @@ new GridCore({
 | `paste` | 클립보드 TSV를 우클릭한 셀에 붙여넣기 |
 | `insertAbove` / `insertBelow` | 우클릭한 행 위/아래에 빈 행 삽입 (`addRows` + I 마킹) |
 | `clear` | 선택 영역 내용 지우기 (`clearRange`) |
+| `duplicateRow` | 선택 행(없으면 우클릭 행) 복제 — `duplicateRowsByIds`, 원본 뒤에 I 마킹 삽입 |
 | `deleteRow` | 선택 행 삭제 — 다중 선택이면 라벨이 "선택한 N행 삭제" |
+| `hideRow` | 선택 행(없으면 우클릭 행) 숨기기 — `setRowHidden` |
+| `unhideRows` | 숨긴 행 전체 표시 — 숨긴 행이 있을 때만 표시됨 |
 | `exportCsv` | `exportToCsv()` 실행 |
 | `print` | `grid.print()` — 브라우저 인쇄 |
 

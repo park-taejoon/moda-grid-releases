@@ -76,19 +76,49 @@ grid.findNext("긴급", { backward: true }); // 이전 매치 방향으로 순�
 - 이동 순서는 행 우선(row-major) — 같은 행이면 오른쪽 컬럼부터.
 - `backward: true`는 활성 셀 이전으로 거슬러 올라가며, 처음에서 끝으로 순환한다.
 
-### `mountGrid` 찾기 바 — `findBox`
+### 내장 찾기 바 — `findBox`
 
-`searchBox`(데이터 필터)와 별개로, vanilla `mountGrid`에는 셀 텍스트를
-검색해 매치로 이동하는 내장 창이 있다:
+`searchBox`(데이터 필터)와 별개로, 셀 텍스트를 검색해 매치로 이동하는
+내장 창을 켤 수 있다 — 5개 렌더러 모두 지원:
+
+```tsx
+// React/Vue3/Vue2/Svelte — prop
+<DataGrid columns={cols} data={rows} findBox />
+```
 
 ```ts
+// vanilla
 mountGrid(el, { columns, data, findBox: true });
 ```
 
 - `Enter` = 다음 매치, `Shift+Enter` = 이전 매치, 버튼 클릭도 동일.
+- 검색 옵션 체크박스 — **대소문자 구분**(`caseSensitive`)과
+  **셀 전체 일치**(`wholeCell`)를 지원한다 (IBSheet 찾기 옵션 대응).
+  라벨은 `locale.findMatchCase`/`findWholeCell`로 다국어 대응한다.
+- 그리드에 포커스가 있을 때 **`Ctrl+F`/`Cmd+F`로 찾기 입력에 포커스**
+  (기존 검색어 전체 선택). `findBox`가 꺼져 있으면 브라우저 기본 검색에 양보한다.
 - 매치 총 건수를 표시하고, 찾은 셀로 `scrollIntoView`한다.
+- **입력 즉시 매치 셀에 `mg-find-match` 배경이 칠해진다** — 입력을
+  지우면 해제. 색상은 `--grid-find-match-bg`/`--grid-find-current-bg`
+  변수로 테마 대응한다.
 - 내부적으로 `findCells`/`findNext`를 사용한다 — 같은 동작을 직접 구현할
   수도 있다.
+
+### 매치 하이라이트 API — `setFindQuery` / `isFindMatch`
+
+findBox 없이 하이라이트만 제어할 수 있다:
+
+```ts
+grid.setFindQuery("서울");        // 매치 셀에 mg-find-match 클래스
+grid.setFindQuery("서울", { wholeCell: true });
+grid.setFindQuery(null);          // 해제
+grid.isFindMatch(row, "region");  // boolean — 커스텀 렌더링용
+snapshot.findQuery;               // 현재 하이라이트 검색어 | null
+```
+
+매치 판정은 `getCellText`(표시 텍스트) 기준이며 `"행ID|필드"` 캐시로
+계산된다 — 정렬/페이지 이동/그룹 토글로 표시 인덱스가 바뀌어도 정확하고,
+필터로 빠진 행은 매치하지 않는다.
 
 ## 인덱스 기반 직접 읽기/쓰기 — `getCellValueAt` / `setCellValue`
 

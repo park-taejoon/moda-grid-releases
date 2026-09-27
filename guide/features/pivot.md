@@ -62,3 +62,43 @@ grid.isPivot();         // 활성 여부
 import { buildPivot } from "@moda-grid/core";
 const { columns, rows } = buildPivot(rows, opts, sourceColumns, readValue);
 ```
+
+## 드래그앤드랍 피벗 패널 (`pivotPanel`)
+
+`pivotPanel`을 켜면 그리드 상단에 **필드/행/열/값** 4개 존이 표시된다 —
+엑셀 피벗테이블 필드 목록 방식. 필드 칩을 존 사이로 드래그하면 피벗이
+즉시 재구성된다.
+
+```tsx
+// 어댑터 (React/Vue3/Vue2/Svelte)
+<DataGrid columns={cols} data={rows} pivotPanel />
+
+// mountGrid
+mountGrid(el, { columns, data, pivotPanel: true });
+```
+
+- **필드 존**: 모든 원본 컬럼(`snapshot.sourceColumns`) 칩 — 배치된 필드는
+  흐리게(`mg-pivot-chip-placed`) 표시.
+- **존으로 드롭**: 해당 디멘션에 추가 — 다른 존에 있던 필드는 **이동**
+  (한 필드는 한 존에만 존재).
+- **칩 위에 드롭**: 그 위치에 삽입 — 존 내 순서 변경도 같은 방식.
+- **필드 존으로 드롭 / 칩의 ×**: 모든 존에서 제거 — 전부 비면 피벗 해제 +
+  원본 컬럼 복원.
+- **값 존 칩**: 집계 함수 셀렉트(sum/avg/min/max/count)로 즉시 변경.
+- **헤더 컬럼 드래그**(reorderable)를 존에 드롭해도 추가된다 —
+  `application/x-mg-column` 드래그 타입을 함께 수용.
+
+드래그 경로 없이 코드로 같은 작업을 할 수 있는 코어 API:
+
+```ts
+grid.addPivotField("rows", "team");                    // 존에 추가/이동
+grid.addPivotField("columns", "quarter", { index: 0 }); // 위치 지정
+grid.addPivotField("values", "amount", { agg: "avg" }); // 기본 agg: sum
+grid.removePivotField("team");                         // 모든 존에서 제거
+grid.setPivotValueAgg("amount", "max");                // 집계 변경
+grid.getSnapshot().pivot;          // 현재 PivotOptions | null
+grid.getSnapshot().sourceColumns;  // 원본 컬럼(피벗 중에도 노출)
+```
+
+세 API 모두 `setPivot` 위의 얇은 래퍼 — 이벤트/스냅샷 갱신/Undo가 아닌
+피벗 재계산 경로를 그대로 탄다.

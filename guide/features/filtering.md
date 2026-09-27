@@ -75,6 +75,30 @@ grid.setFilter("role", null);  // 전체 선택과 동일 = 해제
 - 어댑터는 `(전체 선택)` → `setFilter(field, null)`, 개별 토글 → `values`
   갱신 후 `operator: "set"`으로 재지정한다.
 
+## 헤더 필터 드롭다운 (`headerFilters`)
+
+필터 행과 별개로, `filterable` 컬럼 헤더에 `▾` 버튼을 달아
+엑셀 autofilter식 **값 체크리스트 드롭다운**을 연다:
+
+```tsx
+// React/Vue3/Vue2/Svelte — prop
+<DataGrid columns={cols} data={rows} headerFilters />
+```
+
+```ts
+// vanilla
+mountGrid(el, { columns, data, headerFilters: true });
+```
+
+- 클릭 시 해당 컬럼의 고유 값 체크리스트(`getUniqueValues`)가 버튼 아래
+  팝오버로 열린다 — `(전체 선택)` + 값별 체크박스.
+- 토글은 즉시 `operator: "set"` 필터로 반영되고, 모든 값이 선택되면
+  `setFilter(field, null)`로 자동 해제된다.
+- 활성 필터가 있는 컬럼의 버튼은 강조 색(`mg-active`)으로 표시된다.
+- 한 번에 하나만 열리며, 오버레이 클릭·`Esc`·버튼 재클릭으로 닫힌다.
+- `filterRowVisible: false`로 필터 행을 숨겨도 헤더 드롭다운으로 필터할 수
+  있다 — 빠른 필터 UX에 적합.
+
 ## 서버 사이드 모드
 
 `serverSide` 사용 시 필터/검색은 `filterModel: Record<field, ColumnFilter>`로

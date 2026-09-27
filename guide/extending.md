@@ -15,7 +15,11 @@ main push 시 GitHub Action(`deploy-docs.yml`)이 자동으로
 2. **개발자 문서 갱신** — API/타입이 바뀌면 상위 `docs/02-core-api.md`,
    `03-framework-adapters.md`, `05-usage-guide.md`도 함께 갱신한다.
    `ColumnDef`/`GridOptions` 스키마가 바뀌면 05 문서 상단 타입 블록도 갱신.
-3. **커밋에 문서 포함** — 기능 코드와 문서 변경을 같은 PR/커밋에 넣는다.
+3. **데모 앱 반영** — `apps/dev-*` 5개 데모에도 반영한다. 각 앱 상단의
+   기능 체크리스트(FEATURES 배열)에 항목을 추가하고 해당 prop/옵션을
+   실제로 켜서 사용자가 바로 확인할 수 있게 한다.
+   (`pnpm demo`로 통합 데모 확인, 상세: 루트 `AGENTS.md`)
+4. **커밋에 문서 포함** — 기능 코드와 문서 변경을 같은 PR/커밋에 넣는다.
    문서가 빠진 기능 PR은 완료로 보지 않는다.
 
 ## 기능 문서 템플릿
@@ -62,4 +66,5 @@ main push 시 GitHub Action(`deploy-docs.yml`)이 자동으로
 3. `docs/guide/README.md` 목차 표에 행 추가 (새 파일인 경우)
 4. `docs/05-usage-guide.md`의 "기능 명세" 섹션에도 항목 추가
 5. `ColumnDef`/`GridOptions` 변경 시 05 문서 상단 타입 블록 갱신
-6. 코드와 같은 커밋으로 포함 → push 시 자동 배포
+6. `apps/dev-*` 데모의 기능 체크리스트에 항목 추가 + prop 활성화
+7. 코드와 같은 커밋으로 포함 → push 시 자동 배포

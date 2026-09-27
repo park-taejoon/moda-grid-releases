@@ -170,6 +170,17 @@ mountGrid(el, { rowNumbers: true, rowResizable: true, ... });
 // cellEditor 생략(text) + editorOptions → 자동완성 input
 ```
 
+## IME 조합 처리 (한글/일본어/중국어 입력)
+
+모든 렌더러의 키 핸들러는 `isComposing`을 검사한다 — 한글 IME로 입력 중
+**조합 확정 Enter가 편집 커밋·셀 이동·찾기 이동으로 오작동하지 않는다**:
+
+- 인라인 에디터(text/number/select/textarea): 조합 중 Enter/Escape/Tab 무시
+- 그리드 키 내비게이션: 조합 중 화살표/단축키 무시
+- 찾기 바(`findBox`): 조합 확정 Enter가 다음 매치로 이동하지 않음
+
+조합이 끝난 뒤의 키 입력은 정상 동작한다.
+
 ## 커밋 순서
 
 `commitEditing()`은:
@@ -190,6 +201,31 @@ mountGrid(el, { rowNumbers: true, rowResizable: true, ... });
 const errors = grid.validateChanges(); // [{ row, rowId, field, message }]
 if (errors.length) return;             // 서버 전송 중단
 ```
+
+## 편집 진입 차단 — `beforeEdit`
+
+행 상태·값에 따라 조건부로 편집을 막으려면 `beforeEdit` 훅을 사용한다
+(IBSheet `OnBeforeEdit` 대응). `false`를 반환하면 해당 셀의 편집 진입이
+취소된다 — `checkbox` 에디터의 클릭 토글에도 적용된다:
+
+```tsx
+<DataGrid
+  columns={cols}
+  data={rows}
+  beforeEdit={({ row, column, rowStatus }) =>
+    // 삭제 예정 행은 편집 불가, admin은 role 컬럼만 잠금
+    rowStatus === "D" || (row.role === "admin" && column.field === "role")
+      ? false
+      : undefined
+  }
+/>
+```
+
+- ctx: `{ row, rowIndex, column, columnIndex, rowStatus }` — `rowIndex`/
+  `columnIndex`는 표시(visibleData/visibleColumns) 기준이다.
+- 런타임 교체는 `grid.setBeforeEdit(fn)` — prop 동기화 경로도 이를 사용한다.
+- 프로그래밍적 쓰기(`setCellValue`, `pasteTsv`, 채우기)에는 적용되지 않는다 —
+  편집 UI 진입만 차단한다. 데이터 무결성은 `validate`/`validateChanges`로.
 
 ## 커스텀 에디터
 

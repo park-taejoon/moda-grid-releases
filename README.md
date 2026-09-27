@@ -32,7 +32,20 @@ pnpm dev:react        # http://localhost:5173
 pnpm dev:vue          # http://localhost:5174 (Vue 3)
 pnpm dev:svelte       # http://localhost:5175
 pnpm dev:vue2         # http://localhost:5176 (Vue 2.7)
-pnpm dev              # 4개 앱 동시 실행
+pnpm dev:vanilla      # http://localhost:5177 (mountGrid, 프레임워크 없음)
+pnpm dev              # 5개 앱 watch + http://localhost:8080 탭 셸로 통합 확인
+                      # (개별 포트 5173~5177로도 직접 접근 가능)
+
+pnpm demo             # 전체 데모 빌드 후 http://localhost:8080 통합 서빙
+```
+
+각 데모 앱 상단의 "구현된 기능 목록" 패널에서 현재 구현된 기능을 확인할 수 있다.
+
+### Docker
+
+```bash
+docker compose up --build                           # 프로덕션 — 8080 통합 데모 서버
+docker compose -f docker-compose.dev.yml up --build # watch — 소스 마운트 + HMR (5173~5177)
 ```
 
 ## 아키텍처 한눈에 보기
@@ -41,9 +54,9 @@ pnpm dev              # 4개 앱 동시 실행
 @moda-grid/core              순수 TypeScript — GridCore 클래스 (정렬·컬럼 필터·검색·페이징·선택·가상 스크롤)
    ▲        ▲        ▲        ▲
    │        │        │        │
-react      vue     svelte   vue2        프레임워크별 반응형 어댑터 (얇은 래퍼)
-   ▲        ▲        ▲        ▲
-dev-react dev-vue dev-svelte dev-vue2   Vite 개발/데모 앱
+react      vue     svelte   vue2   core/mountGrid  프레임워크별 반응형 어댑터 (얇은 래퍼)
+   ▲        ▲        ▲        ▲        ▲
+dev-react dev-vue dev-svelte dev-vue2 dev-vanilla Vite 개발/데모 앱
 ```
 
 핵심 로직은 전부 core의 `GridCore` 클래스에 있고, 어댑터는 `subscribe`/`getSnapshot` 계약을

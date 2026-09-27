@@ -39,7 +39,8 @@ grid.deleteRowsByIds(["3", "7"]); // 기존 행 → D 마킹, I 행 → 즉시 �
 grid.restoreRowsByIds(["3"]);     // D 마킹 해제
 
 // 행 복제
-grid.duplicateRows([row1, row2]); // 각 원본 바로 뒤에 얕은 복사본 삽입 — 복제본은 I 마킹
+grid.duplicateRows([row1, row2]);      // 각 원본 바로 뒤에 얕은 복사본 삽입 — 복제본은 I 마킹
+grid.duplicateRowsByIds(["3", "7"]);   // ID 기반 — snapshot.selectedRowIds와 함께 쓰기 좋다
 
 // 확정 / 취소
 grid.commitChanges();             // D 행 실제 제거 + 모든 마킹 해제 (서버 저장 성공 후)
@@ -123,3 +124,31 @@ async function save() {
 - `commitChanges()`는 **로컬 마킹 정리만** 합니다. 서버 호출은 애플리케이션 코드에서 처리하세요.
 - 서버 사이드 모드(`serverSide`)에서는 로컬 행 추적과 충돌할 수 있으므로 사용을 권장하지 않습니다.
 - Undo/Redo는 데이터 변경을 되돌리지만 행 상태 마킹까지 완벽히 복원하지는 않습니다 — 저장 직전 `getChanges()` 결과를 기준으로 삼으세요.
+
+## 행 숨기기 (`hiddenRowIds`)
+
+특정 행을 표시 목록에서만 제외합니다 — IBSheet의 `setRowHidden`에
+대응합니다. **원본 데이터는 유지**되며 삭제와 달리 `getChanges()`에도
+잡히지 않습니다.
+
+```ts
+grid.setRowHidden("42", true);          // 행 1개 숨기기
+grid.setRowHidden(["1", "2"], true);    // 여러 행
+grid.setRowHidden("42", false);         // 다시 표시
+grid.setHiddenRows(["1", "2"]);         // 목록 통째로 교체 (prop 동기화용)
+grid.setHiddenRows(null);               // 전부 해제
+grid.isRowHidden("42");                 // boolean
+grid.getHiddenRowIds();                 // string[]
+```
+
+```tsx
+// 선언형 prop으로도 제어 가능 (전 렌더러 공통)
+<DataGrid hiddenRowIds={["3", "7"]} />
+```
+
+| 동작 | 규칙 |
+| ---- | ---- |
+| ID 기준 | `getRowId` 결과와 비교 — 없으면 `row.id` → 자동 ID 순으로 해석 |
+| 파이프라인 | 필터 적용 **후** 제외 — `filteredRowCount`, 정렬, 집계(grandTotals/소계)에서도 빠진다 |
+| 영속성 | `getState()`/`applyState()`에 `hiddenRowIds`가 포함되어 저장/복원된다 |
+| 스냅샷 | `snapshot.hiddenRowIds: ReadonlySet<string>` |

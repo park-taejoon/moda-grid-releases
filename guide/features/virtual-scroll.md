@@ -73,3 +73,23 @@ const v = computeVirtualScroll({
   </div>
 </div>
 ```
+
+## 대량 변경 묶기 — `grid.batch(fn)`
+
+여러 변경 API를 연속 호출하면 매번 파이프라인(필터→정렬→그룹→페이징)이
+재계산되고 스냅샷이 발행된다. `batch`로 묶으면 **블록이 끝날 때 한 번만**
+재계산·발행된다 — 대량 행 추가/숨김/정렬 변경 같은 배치 작업에 유용하다
+(IBSheet의 batch 업데이트와 동일 목적):
+
+```ts
+grid.batch(() => {
+  incoming.forEach((r) => grid.addRows(r));
+  grid.setRowHidden(idsToHide, true);
+  grid.setSort("name", "asc");
+}); // 여기서 딱 한 번만 refresh + notify
+```
+
+- 중첩 `batch`는 바깥이 끝날 때 한 번만 갱신된다.
+- 블록이 예외로 끝나도 pending 갱신은 flush된다 (finally 보장).
+- 블록 안에서 `getSnapshot()`은 **마지막 갱신 전 상태**를 반환할 수
+  있다 — batch는 읽기가 아니라 쓰기 묶음으로 사용한다.

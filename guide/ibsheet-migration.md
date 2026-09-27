@@ -79,6 +79,11 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `onSort` | `sortChange` — `{ sortState }` |
 | `onFilter` | `filterChange` — `{ filters }` |
 | `onRowMove` | `rowReorder` — `{ fromIndex, toIndex, row }` |
+| `onRowAdd` | `rowAdd` — `{ rows, index }` (addRows/duplicateRows) |
+| `onRowDelete` | `rowDelete` — `{ ids }` (deleteRowsByIds — D 마킹 포함) |
+| `onDataLoad` | `dataLoad` — `{ rows }` (setData 교체 후) |
+| `onEditStart` (진입 시점) | `cellEditStart` — `{ row, rowIndex, column, columnIndex }` |
+| 조합 상태 감시 | `grid.watch(selector, listener)` — 스냅샷 슬라이스 옵저버 (`events.md` 참조) |
 
 ```tsx
 <DataGrid
@@ -113,11 +118,12 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | IBSheet 기능 | moda-grid |
 | ------------ | --------- |
 | 헤더 필터 (FilterMode) | `filterable: true` + `filterToggle` prop |
+| AutoFilter (헤더 ▾ 필터) | `headerFilters` prop — 값 체크리스트 드롭다운 |
 | 다중 정렬 | 헤더 클릭 + `Shift` 키 (자동) |
 | 행 번호 컬럼 (Seq) | `rowNumbers` prop |
 | 트리 (TreeMode) | `treeData: { getParentId }` / `{ childrenKey }` |
 | 소계 (SubSum) | `groupSubtotals: true` + `setGroupBy()` |
-| 피벗 | `pivot: { rows, columns, values }` |
+| 피벗 | `pivot: { rows, columns, values }` / `pivotPanel` prop (드래그앤드랍 필드 패널) + `addPivotField`/`removePivotField`/`setPivotValueAgg` |
 | 고정 행 (Sum 머리글 등) | `pinnedTopRows` / `pinnedBottomRows` |
 | 셀 병합 (MergeSheet) | `merge: "row"\|"col"\|"both"` |
 | Append Scroll | `appendScroll: { dataSource }` |
@@ -130,7 +136,11 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 채우기 핸들 | 활성 셀 우하단 드래그 (자동, `fillRange` API) |
 | 붙여넣기 행 확장 (EditExtend) | `pasteExtend: true` 옵션 |
 | 찾기/바꾸기 | `grid.findCells()` / `grid.replaceAll()` |
-| 그룹 패널 (GroupBar) | `groupPanel` prop — 그룹 칩 표시·해제 |
+| 그룹 패널 (GroupBar) | `groupPanel` prop — 그룹 칩 표시·해제 + **헤더 드래그로 그룹 추가** |
+| 행 숨기기 (`setRowHidden`) | `grid.setRowHidden(ids, bool)` / `hiddenRowIds` prop |
+| 헤더 높이 (`HeaderRowHeight`) | `headerHeight` 옵션/prop — 멀티레벨 헤더는 행 수로 균등 분할 |
+| 행 줄무늬 (`Alternate`) | `striped` 옵션/prop + `grid.setStriped(bool)` — `--grid-stripe-bg` 변수 |
+| 편집 진입 차단 (`OnBeforeEdit`) | `beforeEdit` 옵션/prop — `false` 반환 시 편집 취소 (체크박스 토글 포함) |
 | 자동 행 높이 | `autoRowHeight` prop — multiLine 셀 기준 |
 | 셀 노트 (Note) | `ColumnDef.note` — 코너 표시 + 툴팁 |
 
@@ -152,6 +162,8 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | Shift+Space / Ctrl+Space | `grid.selectEntireRow()` / `selectEntireColumn()` — 행·열 전체 선택 |
 | Ctrl+A 전체 선택 | `grid.selectAll()` — multi-cell/row는 전체 범위, single-cell은 전체 행 |
 | 범위 드래그 이동 | `grid.moveRange(source, target)` |
+| 자동 채우기 시리즈 (숫자/날짜 외삽) | `GridOptions.fillSeries: true` / `fillRange(…, {series:true})` |
+| Ctrl+Enter 범위 입력 | `grid.fillActiveToSelection()` — 선택 범위 전체에 활성 셀 값 |
 | `sheet.doSearch()` | (없음 — data prop 갱신) |
 | `sheet.doSort(col)` | `grid.toggleSort(field)` |
 | `sheet.setRowHeight(r, h)` | `grid.setRowHeight(id, px)` — `null`로 해제 |
@@ -162,7 +174,10 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `sheet.insertCol()` | `grid.addColumn(def, index)` |
 | `sheet.removeCol()` | `grid.removeColumn(field)` — 정렬/필터도 함께 정리 |
 | 행 높이 드래그 (AllowRowResizing) | `rowResizable` prop/옵션 — `rowNumbers` 필요 |
+| 행 드래그 이동 | `col.rowDrag: true` 핸들 + `grid.moveRow(from, to)` / `rowReorder` 이벤트 |
 | `sheet.showRow(r)` / `focusRow` | `grid.scrollToRow(rowIndex)` — 표시 인덱스 기준 |
+| 다크 모드 / 테마 | `theme="dark"` prop/`mountGrid` 옵션 또는 `.grid-theme-dark` 클래스 — `--grid-*` CSS 변수로 커스텀 팔레트 |
+| 키보드 이동 셀 화면 추적 | 자동 — `scrollRequest`가 행+열 좌표를 발행, 어댑터가 scrollIntoView |
 | `sheet.setGroupBy(...)` / 그룹 해제 | `grid.setGroupBy(fields)` — 빈 배열로 해제 |
 | `sheet.directDown2Excel()` | `grid.exportToXlsx({ filename })` |
 | `sheet.dispose()` | 컴포넌트 언마운트 (자동) |

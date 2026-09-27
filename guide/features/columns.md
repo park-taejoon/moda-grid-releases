@@ -26,6 +26,12 @@
 **핸들 더블클릭은 `autoSizeColumn`** — 내용 기준 자동 너비로 즉시 조정된다
 (엑셀/IBSheet 경계 더블클릭과 동일).
 
+테이블은 **`table-layout: fixed` + `<colgroup>`**로 너비를 관리한다 —
+nowrap 셀 내용이 컬럼을 밀어내지 않으므로 좁히는 리사이즈도 정확히 동작하고
+넘치는 텍스트는 말줄임(`…`)으로 잘린다. 테이블 `min-width`는 전체 컬럼
+너비 합(미지정 컬럼은 120px 기본값)이라 컨테이너보다 좁아지지 않고 가로
+스크롤이 생긴다 — 리사이즈 결과가 임의로 뭉개지지 않는다.
+
 ```ts
 grid.setColumnWidth("name", 180);            // min/max 클램프 적용
 grid.autoSizeColumn("name");                 // 내용 기준 자동 너비 (단일)
@@ -92,6 +98,22 @@ new GridCore({
   인접해진 같은 그룹은 합쳐진다.
 - 어댑터는 그룹 셀 `colspan`+`.mg-colgroup`, 단일 컬럼 `rowspan=2`로
   2단 `<tr>`을 렌더링한다.
+
+## 헤더 높이 (`headerHeight`)
+
+헤더 영역 전체 높이를 px로 지정한다 — 멀티레벨 헤더(다단계)에서는
+**헤더 행 수로 균등 분할**된다 (예: `headerHeight: 60` + 2행 헤더 →
+각 행 30px).
+
+```tsx
+<DataGrid headerHeight={48} />          // prop (React/Vue/Svelte 공통)
+mountGrid(el, { columns, data, headerHeight: 48 });
+grid.setHeaderHeight(80);               // 런타임 변경 (null이면 기본값)
+```
+
+스냅샷에 `snapshot.headerHeight: number | null`로 노출되며, 각 헤더
+`tr`의 인라인 `height`로 적용된다. 지정하지 않으면 CSS 기본 높이를
+따른다.
 
 ## 헤더 커스텀 클래스 (`headerClass`)
 

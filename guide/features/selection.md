@@ -32,6 +32,7 @@
 | Ctrl/Cmd + D | 선택 범위 첫 행을 아래로 채우기 (`fillDown`) |
 | Ctrl/Cmd + R | 선택 범위 첫 컬럼을 오른쪽으로 채우기 (`fillRight`) |
 | Ctrl/Cmd + X | 잘라내기 — 복사 + 내용 지우기, Undo 1단위 (`cutSelectionTsv`) |
+| Ctrl/Cmd + Enter (편집 중) | 입력 값을 선택 범위 전체에 적용 (`fillActiveToSelection`) |
 | Ctrl/Cmd + A | 전체 선택 — `multi-cell`/`row`는 전체 범위, `single-cell`은 전체 행 |
 | Escape | 선택 해제 |
 | 행 클릭 | `toggleRowSelection` — `selectable` prop으로 비활성 가능 |

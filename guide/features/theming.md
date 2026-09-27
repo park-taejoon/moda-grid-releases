@@ -5,6 +5,25 @@
 
 ## 다크 모드
 
+### `theme` prop — 그리드 단위 테마 (권장)
+
+각 렌더러의 `theme` prop/`mountGrid` 옵션으로 그리드 자체에 테마를 적용한다 —
+상위 요소 클래스 없이 그리드 하나만 다크로 둘 수 있다:
+
+```tsx
+// 어댑터 (React/Vue3/Vue2/Svelte)
+<DataGrid columns={cols} data={rows} theme="dark" />
+
+// mountGrid
+mountGrid(el, { columns, data, theme: "dark" });
+```
+
+- `"dark"` → 루트에 `.grid-theme-dark`, `"light"` → `.grid-theme-light` 적용
+  (다크 페이지 안의 라이트 그리드도 가능).
+- 생략하면 클래스를 추가하지 않는다 — 상위 요소/`:root` 팔레트를 상속.
+
+### 클래스 직접 적용
+
 그리드 또는 상위 요소에 `.grid-theme-dark` 클래스를 적용한다 (CSS 변수는
 상속되므로 페이지 어디에 걸어도 된다):
 
@@ -14,6 +33,29 @@
 ```
 
 클래스를 지정하지 않으면 `:root`의 라이트 팔레트가 기본 적용된다.
+
+## 행 줄무늬 — `striped`
+
+zebra 줄무늬(짝수 표시 행 배경)를 켠다 — IBSheet `Alternate` 스타일 대응:
+
+```tsx
+<DataGrid columns={cols} data={rows} striped />   // 어댑터 prop
+mountGrid(el, { columns, data, striped: true }); // mountGrid 옵션
+grid.setStriped(true);                            // 런타임 토글
+```
+
+- `tbody tr:nth-child(even)`에 `--grid-stripe-bg`를 적용한다 — 정렬/필터/
+  그룹으로 표시 순서가 바뀌어도 화면 기준 짝수 행에 일관 적용.
+- hover·선택·I/U/D 상태·고정 행·find 하이라이트는 줄무늬보다 우선한다.
+- 고정(pinned) 셀에는 **불투명** `--grid-stripe-pinned-bg`를 사용한다 —
+  반투명을 쓰면 sticky 아래로 스크롤 콘텐츠가 비치는 잔상이 생긴다.
+- 색상은 `--grid-stripe-bg` / `--grid-stripe-pinned-bg` 변수로 재정의 가능
+  (다크 테마 값 내장).
+
+### 네이티브 컨트롤 — `color-scheme`
+
+테마 클래스는 `color-scheme: light|dark`를 함께 지정한다 — 그리드 내부의
+네이티브 스크롤바·checkbox·select 화살표 등도 테마에 맞춰 렌더링된다.
 
 ## CSS 변수
 
@@ -26,6 +68,7 @@
   --grid-row-hover-bg: #f4f6ff;
   --grid-row-selected-bg: #e5ecff;
   --grid-primary-color: #2563eb;
+  /* 행 상태 색도 변수: --grid-status-i/u/d-color, --grid-status-i/u/d-bg */
   /* 입력/패널/스켈레톤/고정 경계 등 파생 변수 — styles.css 참고 */
 }
 ```
@@ -108,3 +151,4 @@ CSS 문자열, kebab-case 속성 맵, 또는 셀 파라미터를 받는 함수�
 | `.mg-statusbar` / `.mg-colctl-panel` | 상태바 / 컬럼 관리 팝오버 |
 | `.mg-row-drag-handle` / `.mg-drop-before` / `.mg-drop-after` | 행 드래그 |
 | `.mg-empty` | 빈 그리드 행 |
+| `.mg-striped` | 줄무늬 활성 루트 (`striped` 옵션) |

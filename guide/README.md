@@ -60,9 +60,9 @@
 | 행 | 행 상태 추적 (I/U/D) + 변경분 수집 | [features/row-state.md](./features/row-state.md) |
 | 행 | 행 드래그앤드롭 재정렬 | [features/row-drag.md](./features/row-drag.md) |
 | 행 | 고정 행 + 전체 총계 | [features/pinned-rows.md](./features/pinned-rows.md) |
-| 성능 | 가상 스크롤 | [features/virtual-scroll.md](./features/virtual-scroll.md) |
+| 성능 | 가상 스크롤 + batch 일괄 갱신 | [features/virtual-scroll.md](./features/virtual-scroll.md) |
 | 상태 | 상태 저장/복원 (localStorage) | [features/state-persistence.md](./features/state-persistence.md) |
-| 스타일 | 테마 / 다크 모드 / 커스텀 클래스 | [features/theming.md](./features/theming.md) |
+| 스타일 | 테마 / 다크 모드 / 줄무늬 / 커스텀 클래스 | [features/theming.md](./features/theming.md) |
 
 ### 기여
 
