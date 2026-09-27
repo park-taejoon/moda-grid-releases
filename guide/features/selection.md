@@ -18,6 +18,7 @@
 | ---- | ---- |
 | 셀 클릭 | 활성 셀 지정 (`.mg-cell-active` 아웃라인) |
 | 셀 드래그 | 누른 셀을 앵커로 드래그 중인 셀까지 범위 선택 — `multi-cell`/`row` 모드 |
+| Ctrl/Cmd + 셀 드래그 | 기존 범위를 유지한 채 **복수 범위 추가** (`beginAdditionalRange`) |
 | 방향키 | 인접 셀로 이동 (경계 클램프) |
 | Home / End | 행의 첫/마지막 컬럼으로 이동 |
 | PageUp / PageDown | 뷰포트 행 수 단위 이동 |
@@ -48,6 +49,9 @@ DOM 스크롤과 동기화한다 (scrollIntoView).
 grid.setSelectionMode("multi-cell");
 grid.setActiveCell(rowIndex, columnIndex);      // visibleData/visibleColumns 기준
 grid.setCellRange({ startRow: 0, startCol: 0, endRow: 3, endCol: 2 });
+grid.addCellRange({ startRow: 6, startCol: 0, endRow: 8, endCol: 2 }); // 복수 범위 추가
+grid.getSelectedRanges();              // 모든 범위 — 마지막이 활성
+grid.beginAdditionalRange(r, c);       // Ctrl+드래그 시작 (어댑터가 호출)
 grid.extendSelectionTo(rowIndex, columnIndex); // 앵커 유지, 활성 셀만 이동 (드래그)
 grid.navigateCell("down", true);                // dir + extend(Shift)
 grid.selectAll();                               // Ctrl+A와 동일
@@ -87,8 +91,22 @@ snapshot.selectionAggregates = {
 
 ## 스냅샷 필드
 
-`snapshot.activeCell` / `snapshot.selectedRange` / `snapshot.selectionMode` /
-`snapshot.selectedRowIds` / `snapshot.selectionAggregates`.
+`snapshot.activeCell` / `snapshot.selectedRange` / `snapshot.selectedRanges` /
+`snapshot.selectionMode` / `snapshot.selectedRowIds` / `snapshot.selectionAggregates`.
+
+### 복수 범위 선택
+
+`multi-cell` 모드에서 **Ctrl/Cmd를 누른 채 드래그**하면 기존 범위를 유지한 채
+새 범위가 추가된다 (엑셀·상용 그리드와 동일):
+
+- `snapshot.selectedRanges`에 모든 범위가 순서대로 담기고, `selectedRange`는
+  마지막(활성) 범위다
+- 복사(`Ctrl+C`/`getSelectionTsv`)는 범위를 순서대로 연결하고, 헤더 포함 시
+  첫 블록에만 헤더를 붙인다
+- Delete/Backspace(`clearRange()`)는 **모든 범위**를 한 번에 지우고 Undo 1단위다
+- 상태바 집계(`selectionAggregates`)는 모든 범위를 합산한다
+- `Ctrl+D`/`Ctrl+R`/`Ctrl+Enter` 채우기는 활성 범위에만 적용된다
+- 일반 클릭·키보드 이동(Shift 미포함)은 단일 범위로 축소한다
 
 선택된 행의 **데이터**가 필요하면 `grid.getSelectedRowData()`를 사용한다 —
 숨김·필터로 화면에서 빠진 선택 행도 포함되고, 순서는 rawData 순이다

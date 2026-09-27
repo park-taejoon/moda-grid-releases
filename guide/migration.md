@@ -127,9 +127,11 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `Html` | `{ cellType: "html" }` — raw HTML, XSS 주의 |
 | `AutoSum`/`Formula` | `{ formula: "price * qty" }` / `{ cumulative: "amount" }` |
 | 읽기 전용 | `{ editable: false }` — `mg-cell-readonly` 스타일 자동 |
+| 행 조건부 읽기 전용 | `{ editable: (row) => boolean }` — 행 데이터로 편집 가능 여부 결정 |
 | `SaveName` | `field` (행 객체의 키) |
 | `Align`/`HeaderAlign` | `align` / `headerAlign` — left\|center\|right |
 | 헤더 툴팁 | `headerTooltip` — 헤더 마우스오버 시 title 툴팁 |
+| 입력값 파서 | `valueParser: (text) => 저장값` — 편집 커밋/붙여넣기/가져오기에 적용 |
 
 ## 기능 매핑
 
@@ -160,6 +162,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 행 줄무늬 (`Alternate`) | `striped` 옵션/prop + `grid.setStriped(bool)` — `--grid-stripe-bg` 변수 |
 | 편집 진입 차단 (`OnBeforeEdit`) | `beforeEdit` 옵션/prop — `false` 반환 시 편집 취소 (체크박스 토글 포함) |
 | 붙여넣기 전처리 (`OnBeforePaste`) | `beforePaste` 옵션/prop — 문자열 반환 시 대체, `false` 시 취소 |
+| 복수 범위 선택 | Ctrl+드래그로 범위 추가 / `addCellRange` — 복사·삭제·집계는 모든 범위에 적용 |
 | 자동 행 높이 | `autoRowHeight` prop — multiLine 셀 기준 |
 | 셀 노트 (Note) | `ColumnDef.note` — 코너 표시 + 툴팁 |
 

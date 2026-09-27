@@ -29,13 +29,14 @@ Undo/Redo로 되돌릴 수 있다.
 ```ts
 {
   field: "age",
-  editable: true,                                // 기본값 true
+  editable: true,                                // 기본값 true — 함수도 가능 (아래 참고)
   cellEditor: "number",                          // text|number|select|date|checkbox|multiselect|radio|textarea|custom
   editorOptions: ["admin", "editor"],            // select/multiselect 편집기 옵션
   // checkbox 편집기 전용:
   checkedValue: "Y", uncheckedValue: "N",        // 체크/해제 시 저장값 (기본 true/false)
   headerCheckbox: true,                          // 헤더에 전체 토글 체크박스 (삼중상태)
   valueSetter: (row, value) => { row.age = +value; },  // 기본: row[field]=value
+  valueParser: (text) => Number(String(text).replace(/,/g, "")),  // 입력 문자열 → 저장값
   validate: (value, row) =>
     Number(value) >= 0 ? true : "0 이상이어야 합니다",  // false/문자열 → 저장 거부
   required: true,                                      // 빈 값 저장 거부 + 헤더 * 표시
@@ -45,6 +46,41 @@ Undo/Redo로 되돌릴 수 있다.
 `required`와 `validate`는 편집 저장뿐 아니라 `importCsv`·`pasteTsv`에도
 같이 적용된다 — 같은 컬럼 정의가 모든 입력 경로의 검증 규칙이다.
 빈 값은 `null`/`undefined`/빈 문자열/`NaN`으로 판정한다.
+
+### editable 함수 — 행 조건부 편집
+
+`editable`에 함수를 주면 **행 단위로 편집 가능 여부**를 결정한다
+(타사 그리드 editable 콜백 대응):
+
+```ts
+{
+  field: "role",
+  editable: (row) => row.role !== "admin", // admin 행은 읽기 전용
+}
+```
+
+- 편집 진입·붙여넣기·채우기·범위 이동·지우기·`setCellValue`·`updateRow`·
+  `replaceAll`·체크박스 토글 등 **모든 쓰기 경로**에 적용된다
+- false인 셀은 `mg-cell-readonly` 스타일이 붙고 체크박스는 disabled로 렌더된다
+- 행 데이터를 바꾸면(예: 편집으로 role이 admin이 됨) 다음 렌더에서
+  자동으로 읽기 전용으로 전환된다
+
+### valueParser — 입력 문자열 변환
+
+`valueParser`는 편집 커밋·`pasteTsv` 붙여넣기·`importCsv`/xlsx 가져오기에서
+**입력 문자열을 저장값으로 변환**한다 (타사 그리드 valueParser 대응):
+
+```ts
+{
+  field: "amount",
+  cellEditor: "number",
+  valueParser: (text) => Number(String(text).replace(/,/g, "")), // "1,234" → 1234
+}
+```
+
+- 정의하면 내장 number/체크박스 변환보다 **우선**한다 — 파서가 반환한 값이 그대로 저장 경로로 간다
+- 변환된 값이 `valueSetter`·`validate`에 전달된다 — 검증은 변환 후 값 기준
+- select·checkbox 등 문자열이 아닌 값이 커밋되는 편집기에는 적용되지 않는다
 
 ## 코어 API
 
