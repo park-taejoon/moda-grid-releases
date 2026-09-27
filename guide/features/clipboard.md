@@ -80,6 +80,27 @@ new GridCore({
 - 어댑터에서는 `beforePaste` prop으로 전달한다 — `pasteTsv` 직접 호출에도
   동일하게 적용된다.
 
+## 복사 전처리 (`beforeCopy`)
+
+`beforePaste`의 복사측 대칭 훅 — 생성된 TSV를 가로채 가공하거나 복사를
+취소한다. Ctrl+C/X·`getSelectionTsv`·`cutSelectionTsv` 모두에 적용된다:
+
+```ts
+new GridCore({
+  columns, data,
+  beforeCopy: ({ tsv, cut, ranges }) => {
+    if (cut) return false;               // 잘라내기 금지 — 셀도 지워지지 않음
+    return `${tsv}\n(Copied)`;           // 복사본에 워터마크 줄 추가
+  },
+});
+```
+
+- **문자열 반환** → 대체 TSV로 복사 (마스킹·워터마크·형식 변환용)
+- **`false` 반환** → 복사 취소. 잘라내기에서 취소되면 **셀도 지우지 않는다**
+- **void 반환** → 원본 그대로
+- `cut` 플래그로 복사/잘라내기를 구분하고, `ranges`로 복사 대상 범위를 확인한다
+- 어댑터에서는 `beforeCopy` prop으로 전달한다
+
 ## 복사 규칙
 
 - 숨김 컬럼 제외, 셀 내부 탭/줄바꿈은 공백으로 치환.

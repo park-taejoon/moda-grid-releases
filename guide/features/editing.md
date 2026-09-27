@@ -7,7 +7,7 @@ Undo/Redo로 되돌릴 수 있다.
 
 | 조작 | 동작 |
 | ---- | ---- |
-| 셀 더블클릭 | 편집 진입 |
+| 셀 더블클릭 | 편집 진입 (`singleClickEdit: true`면 한 번 클릭) |
 | 활성 셀에서 Enter / F2 | 기존 값으로 편집 진입 |
 | 활성 셀에서 문자 입력 | 입력값으로 교체하며 편집 진입 |
 | Enter | 저장 + 아래 셀로 이동 |
@@ -23,6 +23,18 @@ Undo/Redo로 되돌릴 수 있다.
 복귀된다 — 편집기가 DOM에서 제거되면서 포커스가 `body`로 빠져 이후
 방향키/Enter가 먹지 않는 문제를 막는다. 저장 실패(검증 오류) 시에는
 편집 상태와 위치를 유지한다.
+
+## 싱글클릭 편집 (`singleClickEdit`)
+
+`singleClickEdit: true`를 켜면 셀 클릭 한 번으로 편집 모드에 들어간다
+(타사 그리드 `singleClickEdit` 대응). 런타임에는 `grid.setSingleClickEdit(bool)`.
+
+- `editable: false`·`editable` 함수가 거부한 셀은 클릭해도 진입하지 않는다.
+- `cellType`(button/link/image/checkbox/progress/html) 셀은 자체 클릭
+  동작이 있어 대상에서 제외된다. `cellEditor: "checkbox"`는 클릭 시
+  즉시 토글하는 기존 동작을 따른다.
+- 드래그 선택(click 억제)·Ctrl+드래그 복수 범위 선택과 공존한다 —
+  드래그로 끝난 클릭은 편집을 시작하지 않는다.
 
 ## 컬럼 옵션
 

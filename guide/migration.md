@@ -162,9 +162,12 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 헤더 높이 (`HeaderRowHeight`) | `headerHeight` 옵션/prop — 멀티레벨 헤더는 행 수로 균등 분할 |
 | 행 줄무늬 (`Alternate`) | `striped` 옵션/prop + `grid.setStriped(bool)` — `--grid-stripe-bg` 변수 |
 | 편집 진입 차단 (`OnBeforeEdit`) | `beforeEdit` 옵션/prop — `false` 반환 시 편집 취소 (체크박스 토글 포함) |
+| 싱글클릭 편집 진입 | `singleClickEdit` 옵션/prop — 클릭 한 번으로 편집 (cellType 셀 제외) |
 | 붙여넣기 전처리 (`OnBeforePaste`) | `beforePaste` 옵션/prop — 문자열 반환 시 대체, `false` 시 취소 |
+| 복사 전처리 | `beforeCopy` 옵션/prop — 문자열 반환 시 대체 TSV, `false` 시 복사 취소 (cut 구분) |
 | 표시 문자열 복사 | `copyFormatted` 옵션/prop 또는 `getSelectionTsv({ formatted: true })` — formatter/format 적용 텍스트 |
 | 복수 범위 선택 | Ctrl+드래그로 범위 추가 / `addCellRange` — 복사·삭제·집계는 모든 범위에 적용 |
+| 행 조건부 선택 | `isRowSelectable(row)` 옵션/prop — 불가 행은 클릭·체크박스·전체선택 모두 제외 |
 | 자동 행 높이 | `autoRowHeight` prop — multiLine 셀 기준 |
 | 셀 노트 (Note) | `ColumnDef.note` — 코너 표시 + 툴팁 |
 

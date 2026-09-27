@@ -75,6 +75,26 @@ grid.isAllSelected(); grid.isSomeSelected();
 헤더는 전체선택(불확정 상태 지원), 각 행은 개별 체크박스.
 그룹/스켈레톤/고정 행에는 빈 셀로 정렬만 맞춘다.
 
+## 행 조건부 선택 (`isRowSelectable`)
+
+행 데이터로 선택 가능 여부를 결정하는 콜백 (타사 그리드 `isRowSelectable` 대응):
+
+```ts
+new GridCore({
+  columns, data,
+  isRowSelectable: (row) => row.role !== "admin", // admin 행 선택 불가
+});
+grid.setIsRowSelectable(fn); // 런타임 교체 (null로 해제)
+```
+
+- `false`를 반환하는 행은 행 클릭·체크박스·`selectAll`·`toggleRowSelection`·
+  `selectEntireRow` 등 **모든 선택 경로**에서 제외된다.
+- 선택 불가 행의 체크박스는 `disabled`로 렌더링된다.
+- 전체선택 체크박스 기준도 선택 가능 행만 따진다 — 불가 행 제외 전부
+  선택 시 `checked`가 된다.
+- 콜백이 나중에 바뀌어 선택 불가가 된 행이라도 **해제는 허용**한다
+  (토글로 선택된 상태를 뺄 수 있다).
+
 ## 선택 영역 집계 (상태바)
 
 선택 범위(없으면 활성 셀)가 있으면 스냅샷에 집계가 들어간다:
