@@ -104,6 +104,7 @@ grid.subscribe(() => render(grid.getSnapshot()));
 | 메서드                                                                        | 동작                                                                                                           |
 | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | `setColumns(cols)`                                                            | 컬럼 정의 교체                                                                                                 |
+| `setDefaultColDef(def \| null)`                                               | 런타임에 `defaultColDef` 교체 — 마지막 입력 컬럼에 재머지. `undefined`는 미지정(유지), `null`은 해제           |
 | `toggleSort(field, additive?)`                                                | `asc → desc → 해제` 순환. `additive=true`(Shift+클릭)이면 다중 정렬 조건에 추가/제거                           |
 | `clearSorts()`                                                                | 모든 정렬 조건 해제                                                                                            |
 | `setGroupBy(fields \| null)`                                                  | 행 그룹화 기준 필드 목록 설정 (`['dept','role']`)                                                              |

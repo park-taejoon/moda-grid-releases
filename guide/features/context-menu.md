@@ -30,8 +30,10 @@ const grid = new GridCore({
 });
 ```
 
-어댑터는 `<DataGrid contextMenu={items} />` prop으로 전달한다 (내부
-GridCore 생성 모드에서만 적용 — 제어 모드는 `new GridCore({ ..., contextMenu })`).
+어댑터는 `<DataGrid contextMenu={items} />` prop으로 전달한다. 외부
+`grid` prop을 쓰는 제어 모드에서도 prop 변경 시 `grid.setContextMenu()`/
+`setHeaderContextMenu()`로 동기화되므로 어느 모드든 동일하게 동작한다
+(`null`을 넘기면 메뉴를 끈다).
 
 ### 팩토리 함수 형태
 
