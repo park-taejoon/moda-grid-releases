@@ -7,19 +7,19 @@
 
 ```ts
 const columns = [
-  { field: "team",  merge: "row" },  // 세로 방향 auto-merge (rowSpan)
-  { field: "name" },                 // 병합 안 함 (기본값 "none")
-  { field: "q1",    merge: "col" },  // 가로 방향 (colSpan)
-  { field: "q2",    merge: "both" }, // 두 방향 모두
+  { field: "team", merge: "row" }, // 세로 방향 auto-merge (rowSpan)
+  { field: "name" }, // 병합 안 함 (기본값 "none")
+  { field: "q1", merge: "col" }, // 가로 방향 (colSpan)
+  { field: "q2", merge: "both" }, // 두 방향 모두
 ];
 ```
 
-| merge | 동작 |
-| ----- | ---- |
-| `"row"` | 같은 값의 **연속 행**을 수직 병합 (rowSpan) |
-| `"col"` | 같은 값의 **연속 열**을 수평 병합 (colSpan) |
-| `"both"` | 두 방향 모두 적용 |
-| `"none"` | 병합 안 함 (기본값) |
+| merge    | 동작                                        |
+| -------- | ------------------------------------------- |
+| `"row"`  | 같은 값의 **연속 행**을 수직 병합 (rowSpan) |
+| `"col"`  | 같은 값의 **연속 열**을 수평 병합 (colSpan) |
+| `"both"` | 두 방향 모두 적용                           |
+| `"none"` | 병합 안 함 (기본값)                         |
 
 ## 동작 규칙
 
@@ -44,9 +44,9 @@ const span = grid.getCellSpan(row, column);
 
 ```ts
 const data = [
-  { team: "개발", name: "Hana",  role: "FE" },
+  { team: "개발", name: "Hana", role: "FE" },
   { team: "개발", name: "Daeho", role: "BE" },
-  { team: "개발", name: "Bora",  role: "BE" },
+  { team: "개발", name: "Bora", role: "BE" },
   { team: "영업", name: "Felix", role: "Sales" },
 ];
 // team 컬럼 merge:"row" → "개발"은 rowSpan=3으로 한 셀, "영업"은 1

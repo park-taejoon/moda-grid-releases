@@ -7,12 +7,12 @@
 
 ```ts
 await grid.exportToPdf({
-  filename: "report.pdf",     // 기본값 "grid.pdf"
-  title: "2026 매출 보고서",   // 페이지 상단 제목 (선택)
-  orientation: "landscape",   // 기본값 "portrait"
-  fontSize: 9,                // 본문 글자 크기 pt (기본값 9)
-  visibleColumnsOnly: true,   // 숨긴 컬럼 제외 (기본값)
-  selectedRowsOnly: false,    // true면 선택 행만
+  filename: "report.pdf", // 기본값 "grid.pdf"
+  title: "2026 매출 보고서", // 페이지 상단 제목 (선택)
+  orientation: "landscape", // 기본값 "portrait"
+  fontSize: 9, // 본문 글자 크기 pt (기본값 9)
+  visibleColumnsOnly: true, // 숨긴 컬럼 제외 (기본값)
+  selectedRowsOnly: false, // true면 선택 행만
 });
 ```
 

@@ -22,17 +22,18 @@
 
 ```ts
 // 직접 이동 + 이벤트
-grid.moveRow(fromIndex, toIndex);              // visibleData 기준, 성공 시 true
-grid.on("rowReorder", (e) => {                 // { fromIndex, toIndex, row }
-  saveOrder(e);                                // 서버 저장 등
+grid.moveRow(fromIndex, toIndex); // visibleData 기준, 성공 시 true
+grid.on("rowReorder", (e) => {
+  // { fromIndex, toIndex, row }
+  saveOrder(e); // 서버 저장 등
 });
 
 // 드래그 라이프사이클 (어댑터가 HTML5 DnD에 연결)
-grid.isRowDraggable();                         // 가능 여부
-grid.beginRowDrag(rowIndex);                   // 시작 (불가/범위 밖이면 false)
-grid.updateRowDropPosition(gapIndex);          // i면 i번 행 위, 행 수면 마지막 아래
-grid.endRowDrag(true);                         // 커밋 → moveRow / false면 취소
-grid.getRowDragState();                        // { draggingIndex, dropIndex } | null
+grid.isRowDraggable(); // 가능 여부
+grid.beginRowDrag(rowIndex); // 시작 (불가/범위 밖이면 false)
+grid.updateRowDropPosition(gapIndex); // i면 i번 행 위, 행 수면 마지막 아래
+grid.endRowDrag(true); // 커밋 → moveRow / false면 취소
+grid.getRowDragState(); // { draggingIndex, dropIndex } | null
 ```
 
 ## 동작 규칙

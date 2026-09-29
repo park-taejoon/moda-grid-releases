@@ -35,32 +35,32 @@ function UserTable({ users }: { users: User[] }) {
 
 ```tsx
 // 1) 내부 인스턴스 모드 — columns/data만 넘기면 GridCore를 자체 생성·관리
-<DataGrid columns={columns} data={users} height={480} rowHeight={37} />
+<DataGrid columns={columns} data={users} height={480} rowHeight={37} />;
 
 // 2) 제어 모드 — 툴바 등에서 grid를 직접 써야 할 때
 const { grid, snapshot } = useGridCore({ columns, data });
-<DataGrid grid={grid} columns={columns} height={480} rowHeight={37} />
+<DataGrid grid={grid} columns={columns} height={480} rowHeight={37} />;
 ```
 
-| prop | 타입 | 기본값 | 설명 |
-| ---- | ---- | ------ | ---- |
-| `columns` | `ReactColumnDef[]` | 필수 | 컬럼 정의 (`renderCell` 확장) |
-| `data` | `TData[]` | — | 행 데이터 (`grid` 제어 모드면 생략 가능) |
-| `grid` | `Grid<TData>` | — | 외부 GridCore. 생략 시 내부 생성 |
-| `height` | `number` | — | 가상 스크롤 뷰포트 높이 (`rowHeight`와 함께) |
-| `rowHeight` | `number` | — | 가상 스크롤 행 높이 |
-| `overscan` | `number` | `5` | 가상 스크롤 여유분 |
-| `resizable` | `boolean` | `true` | 헤더 리사이저 핸들 표시 |
-| `serverSide` | `ServerSideOptions` | — | 서버 사이드 데이터 소스 (무한 스크롤 + 스켈레톤). 내부 GridCore 생성 모드에서만 적용 |
-| `reorderable` | `boolean` | `true` | 헤더 DnD 컬럼 재배치 |
-| `selectable` | `boolean` | `true` | 행 클릭 선택 토글 |
-| `getRowId` | `(row) => string` | — | 행 ID 함수 |
-| `columnController` | `boolean` | `false` | 우상단 컬럼 관리 도구(체크박스 팝오버 + 전체 선택/해제) 표시 |
-| `filterToggle` | `boolean` | `false` | 우상단 필터 행 표시/숨김 버튼 (filterable 컬럼이 있을 때만 렌더) |
-| `rowCheckboxes` | `boolean` | `false` | 행 체크박스 선택 컬럼 표시 (헤더에 전체선택 체크박스) |
-| `rowStatus` | `boolean` | `false` | 맨 왼쪽 행 상태 컬럼 표시 — I(입력)/U(수정)/D(삭제) 배지 + `mg-row-I/U/D` 행 클래스 |
-| `statusBar` | `boolean` | `true` | 선택 영역 집계 상태바 표시 |
-| `className` | `string` | — | 추가 클래스 |
+| prop               | 타입                | 기본값  | 설명                                                                                 |
+| ------------------ | ------------------- | ------- | ------------------------------------------------------------------------------------ |
+| `columns`          | `ReactColumnDef[]`  | 필수    | 컬럼 정의 (`renderCell` 확장)                                                        |
+| `data`             | `TData[]`           | —       | 행 데이터 (`grid` 제어 모드면 생략 가능)                                             |
+| `grid`             | `Grid<TData>`       | —       | 외부 GridCore. 생략 시 내부 생성                                                     |
+| `height`           | `number`            | —       | 가상 스크롤 뷰포트 높이 (`rowHeight`와 함께)                                         |
+| `rowHeight`        | `number`            | —       | 가상 스크롤 행 높이                                                                  |
+| `overscan`         | `number`            | `5`     | 가상 스크롤 여유분                                                                   |
+| `resizable`        | `boolean`           | `true`  | 헤더 리사이저 핸들 표시                                                              |
+| `serverSide`       | `ServerSideOptions` | —       | 서버 사이드 데이터 소스 (무한 스크롤 + 스켈레톤). 내부 GridCore 생성 모드에서만 적용 |
+| `reorderable`      | `boolean`           | `true`  | 헤더 DnD 컬럼 재배치                                                                 |
+| `selectable`       | `boolean`           | `true`  | 행 클릭 선택 토글                                                                    |
+| `getRowId`         | `(row) => string`   | —       | 행 ID 함수                                                                           |
+| `columnController` | `boolean`           | `false` | 우상단 컬럼 관리 도구(체크박스 팝오버 + 전체 선택/해제) 표시                         |
+| `filterToggle`     | `boolean`           | `false` | 우상단 필터 행 표시/숨김 버튼 (filterable 컬럼이 있을 때만 렌더)                     |
+| `rowCheckboxes`    | `boolean`           | `false` | 행 체크박스 선택 컬럼 표시 (헤더에 전체선택 체크박스)                                |
+| `rowStatus`        | `boolean`           | `false` | 맨 왼쪽 행 상태 컬럼 표시 — I(입력)/U(수정)/D(삭제) 배지 + `mg-row-I/U/D` 행 클래스  |
+| `statusBar`        | `boolean`           | `true`  | 선택 영역 집계 상태바 표시                                                           |
+| `className`        | `string`            | —       | 추가 클래스                                                                          |
 
 `height` + `rowHeight`가 있으면 스크롤 컨테이너 + 상/하 스페이서 `<tr>`로
 가상화되고 `snapshot.virtualRows`만 DOM에 그린다. 헤더는 sticky로 고정.
@@ -263,7 +263,7 @@ Vue 3 어댑터와 API가 동일하다 (`useGrid`/`useGridState`/`DataGrid` SFC 
   최상단 z-index를 가진다. 고정 컬럼은 정확한 오프셋 계산을 위해 `width`
   지정을 권장한다 (미지정 시 `DEFAULT_COLUMN_WIDTH`).
 - **셀 선택/키보드 내비** (`selectionMode` prop) — `<table role="grid"
-  tabindex="0">`에 키 핸들러를 달고 `KeyboardEvent.key` → `CellNavigation`
+tabindex="0">`에 키 핸들러를 달고 `KeyboardEvent.key` → `CellNavigation`
   매핑 후 `grid.navigateCell(dir, shiftKey)` 호출. input/textarea/select
   안의 키 입력은 무시하고 `Escape`는 `clearCellSelection()`. 셀 클릭은
   `setActiveCell`. 활성 셀은 `.mg-cell-active`(아웃라인), 범위는
@@ -343,7 +343,7 @@ Svelte는 `{#snippet editor}`.
   그룹/스켈레톤/고정/총계 행에는 빈 셀로 정렬만 맞춘다.
 - **행 체크박스** (`rowCheckboxes` prop) — 맨 앞 `mg-check-cell` 컬럼에
   헤더 전체선택(`grid.isAllSelected()`/`isSomeSelected()`/`toggleAllRows()`)
-  + 행별 체크박스를 렌더링한다. 그룹/스켈레톤/고정 행에는 빈 셀로 정렬만 맞춘다.
+  - 행별 체크박스를 렌더링한다. 그룹/스켈레톤/고정 행에는 빈 셀로 정렬만 맞춘다.
 - **컬럼 그룹 헤더** — 스냅샷 `headerGroups`가 있으면 헤더를 두 `<tr>`로
   렌더링한다: 그룹 셀은 `colspan`+`mg-colgroup`, 그룹 없는 컬럼은 `rowspan=2`.
 - **Set 필터** — `filterType: 'set'` 컬럼은 연산자 셀렉트 대신
@@ -364,7 +364,7 @@ Svelte는 `{#snippet editor}`.
 새 프레임워크 어댑터를 만들 때 지키는 최소 규칙:
 
 1. **얇게 유지** — 상태 로직을 어댑터에 복제하지 않는다. 어댑터는 구독 연결
-   + 렌더링만 한다.
+   - 렌더링만 한다.
 2. **스냅샷 통째 전달** — 필드별로 ref/state를 나누지 않는다.
    `GridSnapshot`이 원자적이므로 torn state가 없다.
 3. **styles.css는 core 재수출** — 각 패키지의 `styles.css`는

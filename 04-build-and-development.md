@@ -2,39 +2,39 @@
 
 ## 명령어
 
-| 명령 | 위치 | 동작 |
-| ---- | ---- | ---- |
-| `pnpm install` | 루트 | 워크스페이스 전체 설치 |
-| `pnpm build` | 루트 | `packages/*` 빌드 — pnpm이 의존 순서 자동 정렬 |
-| `pnpm build:apps` | 루트 | dev 앱 프로덕션 빌드 (타입체크 포함) |
-| `pnpm build:all` | 루트 | 패키지 + 앱 전체 |
-| `pnpm typecheck` | 루트 | 전체 프로젝트 타입 검사 |
-| `pnpm test` | 루트 | `packages/core` vitest 실행 |
-| `pnpm dev` | 루트 | dev 앱 5개 + 탭 셸(`scripts/dev.mjs`) — **8080에서 탭 전환**으로 확인 |
-| `pnpm dev:react` / `:vue` / `:svelte` / `:vue2` / `:vanilla` | 루트 | 개별 dev 서버 (5173/5174/5175/5176/5177) |
-| `pnpm demo` | 루트 | `build:apps` 후 `scripts/serve-demos.mjs`로 8080 통합 서빙 |
-| `pnpm serve:demos` | 루트 | 빌드 없이 통합 데모 서버만 실행 |
-| `pnpm clean` | 루트 | 모든 `dist/`, `node_modules/` 제거 |
-| `pnpm dev` | 패키지 | `tsc --watch` / `svelte-package --watch` |
+| 명령                                                         | 위치   | 동작                                                                  |
+| ------------------------------------------------------------ | ------ | --------------------------------------------------------------------- |
+| `pnpm install`                                               | 루트   | 워크스페이스 전체 설치                                                |
+| `pnpm build`                                                 | 루트   | `packages/*` 빌드 — pnpm이 의존 순서 자동 정렬                        |
+| `pnpm build:apps`                                            | 루트   | dev 앱 프로덕션 빌드 (타입체크 포함)                                  |
+| `pnpm build:all`                                             | 루트   | 패키지 + 앱 전체                                                      |
+| `pnpm typecheck`                                             | 루트   | 전체 프로젝트 타입 검사                                               |
+| `pnpm test`                                                  | 루트   | `packages/core` vitest 실행                                           |
+| `pnpm dev`                                                   | 루트   | dev 앱 5개 + 탭 셸(`scripts/dev.mjs`) — **8080에서 탭 전환**으로 확인 |
+| `pnpm dev:react` / `:vue` / `:svelte` / `:vue2` / `:vanilla` | 루트   | 개별 dev 서버 (5173/5174/5175/5176/5177)                              |
+| `pnpm demo`                                                  | 루트   | `build:apps` 후 `scripts/serve-demos.mjs`로 8080 통합 서빙            |
+| `pnpm serve:demos`                                           | 루트   | 빌드 없이 통합 데모 서버만 실행                                       |
+| `pnpm clean`                                                 | 루트   | 모든 `dist/`, `node_modules/` 제거                                    |
+| `pnpm dev`                                                   | 패키지 | `tsc --watch` / `svelte-package --watch`                              |
 
 ## 데모 앱
 
 `apps/dev-*`는 각 어댑터의 **전체 기능 데모**다. 앱 상단의
 "구현된 기능 목록" 패널에서 현재 구현된 기능과 사용법을 확인할 수 있다.
 
-| 포트 | 앱 | 어댑터 |
-| ---- | ---- | ---- |
-| 5173 | `apps/dev-react` | `@moda-grid/react` |
-| 5174 | `apps/dev-vue` | `@moda-grid/vue` (Vue 3) |
-| 5175 | `apps/dev-svelte` | `@moda-grid/svelte` |
-| 5176 | `apps/dev-vue2` | `@moda-grid/vue2` (Vue 2.7) |
+| 포트 | 앱                 | 어댑터                                            |
+| ---- | ------------------ | ------------------------------------------------- |
+| 5173 | `apps/dev-react`   | `@moda-grid/react`                                |
+| 5174 | `apps/dev-vue`     | `@moda-grid/vue` (Vue 3)                          |
+| 5175 | `apps/dev-svelte`  | `@moda-grid/svelte`                               |
+| 5176 | `apps/dev-vue2`    | `@moda-grid/vue2` (Vue 2.7)                       |
 | 5177 | `apps/dev-vanilla` | `@moda-grid/core` — `mountGrid` (프레임워크 없음) |
 
 - 각 앱의 모드 셀렉트로 로컬/서버/트리/피벗 데이터를 전환한다.
 - **통합 탭 셸** — `pnpm dev`/`pnpm demo` 모두 `http://localhost:8080`에서
   탭으로 5개 데모를 전환한다 (`scripts/serve-demos.mjs`). dev 모드는
   각 vite 서버를 iframe으로 연결하고, prod 모드는 `/{react,vue,vue2,
-  svelte,vanilla}` 경로의 dist를 iframe한다. 개별 포트 직접 접근도 가능.
+svelte,vanilla}` 경로의 dist를 iframe한다. 개별 포트 직접 접근도 가능.
 - 로컬 모드 데이터는 5개 앱 모두 `mulberry32(42)` 시드로 생성한
   **동일한 5,000행**을 쓴다 (`apps/dev-*/src/data.*`의 `makeUsers`).
 - 새 기능 추가 시 데모에도 반영하는 규칙: 루트 `AGENTS.md` +
@@ -45,10 +45,10 @@
 
 ## Docker
 
-| 명령 | 동작 |
-| ---- | ---- |
-| `docker compose up --build` | 5개 데모 빌드 → 8080 통합 서빙 (프로덕션) |
-| `docker compose -f docker-compose.dev.yml up --build` | 소스 마운트 + vite watch → 5173~5177 |
+| 명령                                                  | 동작                                      |
+| ----------------------------------------------------- | ----------------------------------------- |
+| `docker compose up --build`                           | 5개 데모 빌드 → 8080 통합 서빙 (프로덕션) |
+| `docker compose -f docker-compose.dev.yml up --build` | 소스 마운트 + vite watch → 5173~5177      |
 
 `Dockerfile`은 멀티 스테이지: `base`(pnpm install) → `dev`(vite watch) /
 `build`(`build:apps`) → `prod`(dist + `serve-demos.mjs`만 복사한 경량 이미지).

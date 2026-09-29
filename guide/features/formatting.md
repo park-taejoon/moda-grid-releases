@@ -17,27 +17,27 @@ column.formatter (커스텀 함수) > column.format (내장 포맷) > String(val
 const columns = [
   // number — 천단위 콤마, 소수점, 접두/접미사
   { field: "price", format: { type: "number" } },
-  { field: "qty",   format: { type: "number", decimals: 2, suffix: "개" } },
+  { field: "qty", format: { type: "number", decimals: 2, suffix: "개" } },
 
   // currency — number + 통화 기호 (기본 "₩")
-  { field: "amount", format: { type: "currency" } },            // ₩1,234
-  { field: "usd",    format: { type: "currency", symbol: "$", decimals: 2 } },
+  { field: "amount", format: { type: "currency" } }, // ₩1,234
+  { field: "usd", format: { type: "currency", symbol: "$", decimals: 2 } },
 
   // percent — 0.15 → "15%" (1을 100%로 봄)
   { field: "ratio", format: { type: "percent", decimals: 1 } }, // 15.0%
 
   // date — 토큰 패턴. 값은 Date / timestamp(ms) / 파싱 가능한 문자열
-  { field: "created", format: { type: "date" } },                       // YYYY-MM-DD
-  { field: "at",      format: { type: "date", pattern: "YYYY.MM.DD HH:mm" } },
+  { field: "created", format: { type: "date" } }, // YYYY-MM-DD
+  { field: "at", format: { type: "date", pattern: "YYYY.MM.DD HH:mm" } },
 ];
 ```
 
-| 타입 | 옵션 | 기본값 | 예 |
-| ---- | ---- | ------ | -- |
-| `number` | `decimals`, `thousandsSeparator`, `prefix`, `suffix` | 소수점 입력 그대로, 콤마 true | `1,234.56` |
-| `currency` | `symbol`, `decimals` | `₩`, 0 | `₩1,234` |
-| `percent` | `decimals` | 0 | `15%` |
-| `date` | `pattern` | `YYYY-MM-DD` | `2026.09.26 14:30` |
+| 타입       | 옵션                                                 | 기본값                        | 예                 |
+| ---------- | ---------------------------------------------------- | ----------------------------- | ------------------ |
+| `number`   | `decimals`, `thousandsSeparator`, `prefix`, `suffix` | 소수점 입력 그대로, 콤마 true | `1,234.56`         |
+| `currency` | `symbol`, `decimals`                                 | `₩`, 0                        | `₩1,234`           |
+| `percent`  | `decimals`                                           | 0                             | `15%`              |
+| `date`     | `pattern`                                            | `YYYY-MM-DD`                  | `2026.09.26 14:30` |
 
 날짜 패턴 토큰: `YYYY` `YY` `MM` `DD` `HH` `mm` `ss`
 

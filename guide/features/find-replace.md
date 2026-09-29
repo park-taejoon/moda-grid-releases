@@ -19,7 +19,7 @@ matches.forEach((m) => {
 
 // 옵션
 grid.findCells("ABC", { caseSensitive: true }); // 대소문자 구분
-grid.findCells("정확히", { wholeCell: true });  // 셀 전체 일치만
+grid.findCells("정확히", { wholeCell: true }); // 셀 전체 일치만
 ```
 
 - `rowIndex`/`columnIndex`는 `visibleData`/`visibleColumns` 기준 인덱스
@@ -68,9 +68,9 @@ grid.replaceAll("구버전", "v2", { wholeCell: true });
 "다음 찾기"와 같은 UX:
 
 ```ts
-const m = grid.findNext("긴급");      // 활성 셀 이후 첫 매치로 이동
+const m = grid.findNext("긴급"); // 활성 셀 이후 첫 매치로 이동
 if (m) console.log(m.rowIndex, m.column.field);
-grid.findNext("긴급");                // 다시 호출 → 다음 매치 (순환)
+grid.findNext("긴급"); // 다시 호출 → 다음 매치 (순환)
 grid.findNext("긴급", { backward: true }); // 이전 매치 방향으로 순환
 ```
 
@@ -111,11 +111,11 @@ mountGrid(el, { columns, data, findBox: true });
 findBox 없이 하이라이트만 제어할 수 있다:
 
 ```ts
-grid.setFindQuery("서울");        // 매치 셀에 mg-find-match 클래스
+grid.setFindQuery("서울"); // 매치 셀에 mg-find-match 클래스
 grid.setFindQuery("서울", { wholeCell: true });
-grid.setFindQuery(null);          // 해제
-grid.isFindMatch(row, "region");  // boolean — 커스텀 렌더링용
-snapshot.findQuery;               // 현재 하이라이트 검색어 | null
+grid.setFindQuery(null); // 해제
+grid.isFindMatch(row, "region"); // boolean — 커스텀 렌더링용
+snapshot.findQuery; // 현재 하이라이트 검색어 | null
 ```
 
 매치 판정은 `getCellText`(표시 텍스트) 기준이며 `"행ID|필드"` 캐시로
@@ -128,8 +128,8 @@ snapshot.findQuery;               // 현재 하이라이트 검색어 | null
 인덱스는 `visibleData`/`visibleColumns` 기준이다:
 
 ```ts
-grid.getCellValueAt(0, 1);            // 읽기
-grid.setCellValue(0, 1, 99);          // 쓰기 — 편집 커밋과 동일 경로
+grid.getCellValueAt(0, 1); // 읽기
+grid.setCellValue(0, 1, 99); // 쓰기 — 편집 커밋과 동일 경로
 ```
 
 `setCellValue`는 인라인 편집과 같은 규칙을 거친다:
@@ -146,7 +146,7 @@ grid.setCellValue(0, 1, 99);          // 쓰기 — 편집 커밋과 동일 경�
 정렬·필터로 바뀌어도 안전하다:
 
 ```ts
-grid.getRowById("42");                    // TData | undefined (숨김 행 포함)
+grid.getRowById("42"); // TData | undefined (숨김 행 포함)
 grid.updateRow("42", { name: "새 이름", age: 30 }); // 부분 업데이트 → 적용 셀 수
 ```
 
@@ -166,10 +166,10 @@ grid.updateRow("42", { name: "새 이름", age: 30 }); // 부분 업데이트 �
 
 ```ts
 const res = grid.applyTransaction({
-  add: [{ id: 9, name: "신규" }],     // 끝에 추가, I 마킹
-  addIndex: 0,                        // 선택 — 삽입 위치
-  update: [{ id: 1, age: 40 }],       // ID로 찾아 부분 패치, U 마킹
-  remove: ["3", rowObj],              // ID 문자열 또는 행 객체
+  add: [{ id: 9, name: "신규" }], // 끝에 추가, I 마킹
+  addIndex: 0, // 선택 — 삽입 위치
+  update: [{ id: 1, age: 40 }], // ID로 찾아 부분 패치, U 마킹
+  remove: ["3", rowObj], // ID 문자열 또는 행 객체
 });
 // res = { added, updated, removed } — 실제 적용된 것만
 ```

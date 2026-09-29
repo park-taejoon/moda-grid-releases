@@ -7,14 +7,16 @@
 ```ts
 // flat 모드 — data는 평면 배열, parentId로 연결
 new GridCore({
-  columns, data,
-  getRowId: (r) => r.id,                     // 노드 키의 기준
+  columns,
+  data,
+  getRowId: (r) => r.id, // 노드 키의 기준
   treeData: { getParentId: (r) => r.parentId },
 });
 
 // nested 모드 — 행 객체 안의 자식 배열 (기본 키 'children')
 new GridCore({
-  columns, data,
+  columns,
+  data,
   treeData: { childrenKey: "children" },
 });
 ```
@@ -25,20 +27,20 @@ new GridCore({
 ## 코어 API
 
 ```ts
-grid.toggleTreeExpanded(rowId);   // 노드 펼침/접힘
-grid.expandAllGroups();           // 전체 펼치기 (그룹화와 공유)
+grid.toggleTreeExpanded(rowId); // 노드 펼침/접힘
+grid.expandAllGroups(); // 전체 펼치기 (그룹화와 공유)
 grid.collapseAllGroups();
 
 // 레벨 펼침/접기 (타사 그리드 레벨 접기)
-grid.setTreeExpandLevel(0);       // 전체 접기 (루트만 표시)
-grid.setTreeExpandLevel(1);       // 루트 펼침 → 자식까지 표시
-grid.getTreeMaxDepth();           // 최대 깊이 (루트=0)
+grid.setTreeExpandLevel(0); // 전체 접기 (루트만 표시)
+grid.setTreeExpandLevel(1); // 루트 펼침 → 자식까지 표시
+grid.getTreeMaxDepth(); // 최대 깊이 (루트=0)
 
 // 노드 검색 — 조건 행의 상위를 모두 펼치고 활성 셀로 이동
 grid.revealTreeRow((row) => row.name === "Frontend"); // 찾으면 true
 
 // 트리 소계 — 부모 노드의 자손 리프 집계 (aggregationFn 컬럼별)
-grid.getTreeAggregates(row);      // { headcount: 16 } 또는 null (자식 없음)
+grid.getTreeAggregates(row); // { headcount: 16 } 또는 null (자식 없음)
 ```
 
 ## 사용자 조작 (DataGrid 기본 동작)
@@ -55,7 +57,8 @@ grid.getTreeAggregates(row);      // { headcount: 16 } 또는 null (자식 없�
 
 ```ts
 new GridCore({
-  columns, data: treeRows,
+  columns,
+  data: treeRows,
   treeData: { getParentId: (r) => r.parentId, selectsChildren: true },
 });
 ```

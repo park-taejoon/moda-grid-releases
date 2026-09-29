@@ -5,20 +5,20 @@
 
 ## 사용자 조작 (DataGrid 기본 동작)
 
-| 단축키 | 동작 |
-| ------ | ---- |
-| `Ctrl/Cmd + C` | 선택 범위(없으면 활성 셀)를 TSV로 복사 |
-| `Ctrl/Cmd + Shift + C` | 헤더 행 포함 복사 |
-| `Ctrl/Cmd + V` | 활성 셀부터 오른쪽/아래로 TSV 붙여넣기 |
+| 단축키                 | 동작                                   |
+| ---------------------- | -------------------------------------- |
+| `Ctrl/Cmd + C`         | 선택 범위(없으면 활성 셀)를 TSV로 복사 |
+| `Ctrl/Cmd + Shift + C` | 헤더 행 포함 복사                      |
+| `Ctrl/Cmd + V`         | 활성 셀부터 오른쪽/아래로 TSV 붙여넣기 |
 
 입력 요소 내부에서는 브라우저 기본 동작이 유지된다.
 
 ## 코어 API
 
 ```ts
-grid.getSelectionTsv();                          // 선택 범위 → TSV 문자열 (없으면 null)
-grid.getSelectionTsv({ includeHeaders: true });  // 첫 줄에 헤더 행 포함
-grid.pasteTsv(tsv);                              // 활성 셀부터 순차 쓰기 → PasteResult
+grid.getSelectionTsv(); // 선택 범위 → TSV 문자열 (없으면 null)
+grid.getSelectionTsv({ includeHeaders: true }); // 첫 줄에 헤더 행 포함
+grid.pasteTsv(tsv); // 활성 셀부터 순차 쓰기 → PasteResult
 grid.pasteTsv(tsv, { rowIndex: 0, columnIndex: 0 }); // 시작 위치 지정
 ```
 
@@ -66,10 +66,11 @@ new GridCore({ columns, data, pasteExtend: true });
 
 ```ts
 new GridCore({
-  columns, data,
+  columns,
+  data,
   beforePaste: ({ text, anchor }) => {
-    if (text.includes("금지어")) return false;        // 붙여넣기 취소
-    return text.replace(/,/g, "");                  // 천단위 쉼표 제거 후 진행
+    if (text.includes("금지어")) return false; // 붙여넣기 취소
+    return text.replace(/,/g, ""); // 천단위 쉼표 제거 후 진행
   },
 });
 ```
@@ -87,10 +88,11 @@ new GridCore({
 
 ```ts
 new GridCore({
-  columns, data,
+  columns,
+  data,
   beforeCopy: ({ tsv, cut, ranges }) => {
-    if (cut) return false;               // 잘라내기 금지 — 셀도 지워지지 않음
-    return `${tsv}\n(Copied)`;           // 복사본에 워터마크 줄 추가
+    if (cut) return false; // 잘라내기 금지 — 셀도 지워지지 않음
+    return `${tsv}\n(Copied)`; // 복사본에 워터마크 줄 추가
   },
 });
 ```
@@ -115,9 +117,9 @@ new GridCore({ columns, data, copyFormatted: true });
 grid.setCopyFormatted(false); // 런타임 토글
 
 // 호출별 덮어쓰기 — 옵션과 무관하게 동작
-grid.getSelectionTsv();                    // 옵션 따름
+grid.getSelectionTsv(); // 옵션 따름
 grid.getSelectionTsv({ formatted: true }); // 강제 포맷
-grid.getSelectionTsv({ formatted: false });// 강제 원시값
+grid.getSelectionTsv({ formatted: false }); // 강제 원시값
 ```
 
 - Ctrl+C/Ctrl+X(`cutSelectionTsv`)에도 동일하게 적용된다.
@@ -140,8 +142,9 @@ document.addEventListener("copy", ...);   // navigator.clipboard.writeText(grid.
 
 ```ts
 new GridCore({
-  columns, data,
-  clipboardDelimiter: ";",  // 복사: 1;Hana;admin;34 / 붙여넣기도 ; 기준
+  columns,
+  data,
+  clipboardDelimiter: ";", // 복사: 1;Hana;admin;34 / 붙여넣기도 ; 기준
 });
 grid.setClipboardDelimiter("|"); // 런타임 변경
 grid.setClipboardDelimiter(null); // 탭으로 복원

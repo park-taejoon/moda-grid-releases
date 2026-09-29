@@ -8,7 +8,9 @@
 grid.on("cellClick", (e) => {
   // { row, rowIndex, column, columnIndex, value }
 });
-grid.on("cellDblClick", (e) => { /* 편집 진입 직전 */ });
+grid.on("cellDblClick", (e) => {
+  /* 편집 진입 직전 */
+});
 grid.on("afterEdit", (e) => {
   // { row, rowIndex, column, oldValue, newValue } — 값이 실제로 바뀐 경우만
 });
@@ -21,7 +23,9 @@ grid.on("sortChange", (e) => {
 grid.on("filterChange", (e) => {
   // { filters: FilterMap } — 컬럼 필터·전역 검색 변경 모두
 });
-grid.on("rowReorder", (e) => { /* { fromIndex, toIndex, row } */ });
+grid.on("rowReorder", (e) => {
+  /* { fromIndex, toIndex, row } */
+});
 grid.on("rowAdd", (e) => {
   // { rows, index } — addRows/duplicateRows 후 (타사 그리드 OnRowAdd 대응)
 });
@@ -110,10 +114,16 @@ const un = grid.watch(
 );
 
 // 행 상태 맵 — U/I/D가 달라질 때
-grid.watch((s) => s.rowStates, (states) => markDirty(states));
+grid.watch(
+  (s) => s.rowStates,
+  (states) => markDirty(states),
+);
 
 // 활성 셀 위치
-grid.watch((s) => s.activeCell, (cell) => highlight(cell));
+grid.watch(
+  (s) => s.activeCell,
+  (cell) => highlight(cell),
+);
 
 un(); // 구독 해제
 ```
@@ -124,7 +134,11 @@ un(); // 구독 해제
 - `watch`는 `subscribe` 위의 얇은 래퍼라 렌더러 무관하게 코어에 동작한다.
 
 ```ts
-grid.watch((s) => s.editingCell, (c) => log(c), { immediate: true });
+grid.watch(
+  (s) => s.editingCell,
+  (c) => log(c),
+  { immediate: true },
+);
 ```
 
 ## 편집 여부 판정 규칙 (U 마킹)
@@ -188,8 +202,8 @@ React·Vue3·Vue2·Svelte 어댑터와 vanilla `mountGrid`(CDN 포함) 모두 �
 ```ts
 // 코어 직접 호출도 가능
 const filled = grid.fillRange(
-  { startRow: 0, startCol: 0, endRow: 0, endCol: 0 },  // 소스
-  { startRow: 0, startCol: 0, endRow: 5, endCol: 0 },  // 대상(소스 포함)
+  { startRow: 0, startCol: 0, endRow: 0, endCol: 0 }, // 소스
+  { startRow: 0, startCol: 0, endRow: 5, endCol: 0 }, // 대상(소스 포함)
 );
 ```
 
@@ -223,7 +237,7 @@ Ctrl+Enter(`fillActiveToSelection`)는 엑셀과 마찬가지로 항상 복사�
 
 ```ts
 // 코어 직접 호출 — 반환값은 실제로 지워진 셀 수
-grid.clearRange();                                   // 선택 범위/활성 셀
+grid.clearRange(); // 선택 범위/활성 셀
 grid.clearRange({ startRow: 0, startCol: 0, endRow: 2, endCol: 3 });
 ```
 
@@ -234,8 +248,8 @@ grid.clearRange({ startRow: 0, startCol: 0, endRow: 2, endCol: 3 });
 
 ```ts
 grid.moveRange(
-  { startRow: 0, startCol: 0, endRow: 0, endCol: 1 },  // 소스 A0:B0
-  { rowIndex: 3, columnIndex: 0 },                     // 타겟 앵커 A3
+  { startRow: 0, startCol: 0, endRow: 0, endCol: 1 }, // 소스 A0:B0
+  { rowIndex: 3, columnIndex: 0 }, // 타겟 앵커 A3
 );
 ```
 
@@ -250,14 +264,24 @@ grid.moveRange(
 
 ```ts
 new GridCore({
-  columns, data,
+  columns,
+  data,
   headerContextMenu: [
-    { id: "hide", label: (ctx) => `${ctx.column.header} 숨기기`,
-      onClick: (ctx) => grid.setColumnVisible(ctx.column.field, false) },
-    { id: "sort-asc", label: "오름차순",
-      onClick: (ctx) => grid.setSort(ctx.column.field, "asc") },
-    { id: "autofit", label: "너비 자동",
-      onClick: (ctx) => grid.autoSizeColumn(ctx.column.field) },
+    {
+      id: "hide",
+      label: (ctx) => `${ctx.column.header} 숨기기`,
+      onClick: (ctx) => grid.setColumnVisible(ctx.column.field, false),
+    },
+    {
+      id: "sort-asc",
+      label: "오름차순",
+      onClick: (ctx) => grid.setSort(ctx.column.field, "asc"),
+    },
+    {
+      id: "autofit",
+      label: "너비 자동",
+      onClick: (ctx) => grid.autoSizeColumn(ctx.column.field),
+    },
   ],
 });
 ```
@@ -270,8 +294,8 @@ new GridCore({
 표시 인덱스 기준으로 해당 행이 보이도록 스크롤한다 (타사 그리드 `showRow` 대응):
 
 ```ts
-grid.scrollToRow(150);              // 150번째 표시 행으로 이동
-grid.scrollToRow(match.rowIndex);   // findNext/findCells 결과와 조합
+grid.scrollToRow(150); // 150번째 표시 행으로 이동
+grid.scrollToRow(match.rowIndex); // findNext/findCells 결과와 조합
 ```
 
 - **가상 스크롤**: 코어가 `scrollTop`을 직접 보정 — 어댑터의 스크롤
@@ -286,8 +310,8 @@ grid.scrollToRow(match.rowIndex);   // findNext/findCells 결과와 조합
 `showColumn` 대응):
 
 ```ts
-grid.scrollToCell(150, 8);   // 행+열 — 수직·수평 스크롤 모두 보정
-grid.scrollToColumn(8);      // 수평만 — 활성 행(없으면 첫 행) 기준
+grid.scrollToCell(150, 8); // 행+열 — 수직·수평 스크롤 모두 보정
+grid.scrollToColumn(8); // 수평만 — 활성 행(없으면 첫 행) 기준
 ```
 
 - 수평 스크롤은 `scrollRequest`의 `columnIndex`로 전달 — 모든 어댑터가

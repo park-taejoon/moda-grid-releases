@@ -8,9 +8,9 @@
 
 ```ts
 const csv = grid.exportToCsv({
-  filename: "users.csv",        // 다운로드 파일명 (기본값 "grid.csv")
-  visibleColumnsOnly: true,     // 숨긴 컬럼 제외 (기본값)
-  selectedRowsOnly: false,      // true면 선택된 행만 (기본값)
+  filename: "users.csv", // 다운로드 파일명 (기본값 "grid.csv")
+  visibleColumnsOnly: true, // 숨긴 컬럼 제외 (기본값)
+  selectedRowsOnly: false, // true면 선택된 행만 (기본값)
 });
 ```
 
@@ -33,8 +33,12 @@ const csv = grid.exportToCsv({
 
 ```ts
 import {
-  escapeCsvCell, buildCsv, downloadCsv, CSV_BOM,
-  parseCsv, coerceCsvCell,
+  escapeCsvCell,
+  buildCsv,
+  downloadCsv,
+  CSV_BOM,
+  parseCsv,
+  coerceCsvCell,
 } from "@moda-grid/core";
 ```
 
@@ -44,8 +48,8 @@ import {
 
 ```ts
 const result = grid.importCsv(text, {
-  hasHeader: true,   // 첫 줄을 컬럼 매칭에 사용 (기본값)
-  replace: false,    // false=뒤에 추가, true=데이터 교체 (기본값)
+  hasHeader: true, // 첫 줄을 컬럼 매칭에 사용 (기본값)
+  replace: false, // false=뒤에 추가, true=데이터 교체 (기본값)
 });
 // result: { added: 2, skipped: 1, errors: ["3행: 나이 — 숫자가 아닙니다 (\"abc\")"] }
 ```
@@ -71,8 +75,8 @@ const result = grid.importCsv(text, {
 
 ```ts
 grid.getCsvTemplate({
-  filename: "users-template.csv",  // 기본값 "template.csv"
-  visibleColumnsOnly: false,       // 숨긴 컬럼 제외 (기본값 false — 전부 포함)
+  filename: "users-template.csv", // 기본값 "template.csv"
+  visibleColumnsOnly: false, // 숨긴 컬럼 제외 (기본값 false — 전부 포함)
 });
 ```
 
@@ -99,18 +103,34 @@ export와 같은 헤더 규칙(`header ?? field`)을 쓰므로 사용자가 채�
 />
 <button onClick={() => grid.getCsvTemplate()}>CSV 템플릿</button>
 ```
+
 ```vue
 <!-- Vue -->
 <button @click="grid.exportToCsv({ filename: 'users.csv' })">CSV보내기</button>
 <button @click="csvFile?.click()">CSV 가져오기</button>
-<input ref="csvFile" type="file" accept=".csv,text/csv" hidden @change="onCsvFile" />
+<input
+  ref="csvFile"
+  type="file"
+  accept=".csv,text/csv"
+  hidden
+  @change="onCsvFile"
+/>
 <button @click="grid.getCsvTemplate()">CSV 템플릿</button>
 ```
+
 ```svelte
 <!-- Svelte -->
-<button onclick={() => grid.exportToCsv({ filename: "users.csv" })}>CSV보내기</button>
+<button onclick={() => grid.exportToCsv({ filename: "users.csv" })}
+  >CSV보내기</button
+>
 <button onclick={() => csvFile?.click()}>CSV 가져오기</button>
-<input bind:this={csvFile} type="file" accept=".csv,text/csv" hidden onchange={onCsvFile} />
+<input
+  bind:this={csvFile}
+  type="file"
+  accept=".csv,text/csv"
+  hidden
+  onchange={onCsvFile}
+/>
 <button onclick={() => grid.getCsvTemplate()}>CSV 템플릿</button>
 ```
 

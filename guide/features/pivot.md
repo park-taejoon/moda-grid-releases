@@ -10,11 +10,11 @@ const grid = new GridCore({
   columns,
   data,
   pivot: {
-    rows: ["team"],                              // 행 디멘션 (피벗 행이 됨)
-    columns: ["quarter"],                        // 열 디멘션 (값 조합이 컬럼이 됨)
-    values: [{ field: "amount", agg: "sum" }],   // 측정값 (집계 함수 지정)
-    showColumnTotals: true,                      // 우측 합계 컬럼 (기본값)
-    showRowTotal: true,                          // 하단 합계 행 (기본값)
+    rows: ["team"], // 행 디멘션 (피벗 행이 됨)
+    columns: ["quarter"], // 열 디멘션 (값 조합이 컬럼이 됨)
+    values: [{ field: "amount", agg: "sum" }], // 측정값 (집계 함수 지정)
+    showColumnTotals: true, // 우측 합계 컬럼 (기본값)
+    showRowTotal: true, // 하단 합계 행 (기본값)
   },
 });
 ```
@@ -24,11 +24,11 @@ const grid = new GridCore({
 
 ## 결과 예시
 
-| 팀 | Q1 금액 | Q2 금액 | 합계 금액 |
-| -- | ------- | ------- | --------- |
-| A  | 15      | 20      | 35        |
-| B  | 30      | 40      | 70        |
-| 합계 | 45    | 60      | 105       |
+| 팀   | Q1 금액 | Q2 금액 | 합계 금액 |
+| ---- | ------- | ------- | --------- |
+| A    | 15      | 20      | 35        |
+| B    | 30      | 40      | 70        |
+| 합계 | 45      | 60      | 105       |
 
 - 행 디멘션은 원본 컬럼의 `header`/`format`을 그대로 물려받는다.
 - 측정값 컬럼 헤더는 `"열조합 라벨 측정값헤더"` 형태 — `values[].header`로
@@ -74,7 +74,7 @@ const { columns, rows } = buildPivot(rows, opts, sourceColumns, readValue);
 
 ```tsx
 // 어댑터 (React/Vue3/Vue2/Svelte)
-<DataGrid columns={cols} data={rows} pivotPanel />
+<DataGrid columns={cols} data={rows} pivotPanel />;
 
 // mountGrid
 mountGrid(el, { columns, data, pivotPanel: true });
@@ -94,13 +94,13 @@ mountGrid(el, { columns, data, pivotPanel: true });
 드래그 경로 없이 코드로 같은 작업을 할 수 있는 코어 API:
 
 ```ts
-grid.addPivotField("rows", "team");                    // 존에 추가/이동
+grid.addPivotField("rows", "team"); // 존에 추가/이동
 grid.addPivotField("columns", "quarter", { index: 0 }); // 위치 지정
 grid.addPivotField("values", "amount", { agg: "avg" }); // 기본 agg: sum
-grid.removePivotField("team");                         // 모든 존에서 제거
-grid.setPivotValueAgg("amount", "max");                // 집계 변경
-grid.getSnapshot().pivot;          // 현재 PivotOptions | null
-grid.getSnapshot().sourceColumns;  // 원본 컬럼(피벗 중에도 노출)
+grid.removePivotField("team"); // 모든 존에서 제거
+grid.setPivotValueAgg("amount", "max"); // 집계 변경
+grid.getSnapshot().pivot; // 현재 PivotOptions | null
+grid.getSnapshot().sourceColumns; // 원본 컬럼(피벗 중에도 노출)
 ```
 
 세 API 모두 `setPivot` 위의 얇은 래퍼 — 이벤트/스냅샷 갱신/Undo가 아닌

@@ -11,17 +11,17 @@ const dataSource: ServerSideDataSource<User> = {
   async getRows({ startRow, endRow, sortModel, filterModel }) {
     const res = await fetch(
       `/api/rows?start=${startRow}&end=${endRow}` +
-      `&sort=${encodeURIComponent(JSON.stringify(sortModel))}` +
-      `&filter=${encodeURIComponent(JSON.stringify(filterModel))}`,
+        `&sort=${encodeURIComponent(JSON.stringify(sortModel))}` +
+        `&filter=${encodeURIComponent(JSON.stringify(filterModel))}`,
     );
-    return res.json();   // { rows: TData[], lastRowIndex?: number }
+    return res.json(); // { rows: TData[], lastRowIndex?: number }
   },
 };
 
 const grid = new GridCore({
   columns,
-  data: [],                                          // 서버 모드에서는 무시
-  serverSide: { dataSource, cacheBlockSize: 50 },    // 기본 블록 50행
+  data: [], // 서버 모드에서는 무시
+  serverSide: { dataSource, cacheBlockSize: 50 }, // 기본 블록 50행
   virtualScroll: { rowHeight: 37, viewportHeight: 480 }, // 무한 스크롤은 가상 스크롤과 함께
 });
 ```
@@ -48,9 +48,9 @@ const grid = new GridCore({
 ## 코어 API
 
 ```ts
-grid.isServerSide();        // 서버 모드 여부
-grid.isRowLoaded(i);        // 해당 인덱스 로드 여부 (스켈레톤 판별)
-grid.refreshServerRows();   // 캐시 폐기 + 현재 뷰포트부터 재요청
+grid.isServerSide(); // 서버 모드 여부
+grid.isRowLoaded(i); // 해당 인덱스 로드 여부 (스켈레톤 판별)
+grid.refreshServerRows(); // 캐시 폐기 + 현재 뷰포트부터 재요청
 ```
 
 ## 스냅샷 필드
@@ -67,7 +67,7 @@ grid.refreshServerRows();   // 캐시 폐기 + 현재 뷰포트부터 재요청
 
 ```tsx
 // React / Vue / Svelte — prop
-<DataGrid loading={isFetching} />
+<DataGrid loading={isFetching} />;
 
 // vanilla — 옵션 또는 런타임 API
 const mounted = mountGrid(el, { columns, data, loading: true });
@@ -105,9 +105,9 @@ grid.on("serverError", (e) => toast(e.error));
 
 ```ts
 interface ServerSideGetRowsParams {
-  startRow: number;                          // inclusive
-  endRow: number;                            // exclusive
-  sortModel: SortSpec[];                     // 다중 정렬 (priority 순)
+  startRow: number; // inclusive
+  endRow: number; // exclusive
+  sortModel: SortSpec[]; // 다중 정렬 (priority 순)
   filterModel: Record<string, ColumnFilter>; // 컬럼 필터
 }
 // 반환: { rows: TData[]; lastRowIndex?: number }
@@ -129,11 +129,11 @@ const grid = new GridCore({
   appendScroll: {
     loadPage: async (page) => {
       const res = await fetch(`/api/rows?page=${page}&size=50`);
-      return res.json();             // TData[] — 빈 배열/짧은 페이지면 끝으로 간주
+      return res.json(); // TData[] — 빈 배열/짧은 페이지면 끝으로 간주
     },
-    pageSize: 50,                    // 기본값 50
-    startPage: 0,                    // 초기 데이터가 있으면 다음 페이지 번호
-    autoLoad: true,                  // 생성 시 첫 페이지 자동 로드 (기본값)
+    pageSize: 50, // 기본값 50
+    startPage: 0, // 초기 데이터가 있으면 다음 페이지 번호
+    autoLoad: true, // 생성 시 첫 페이지 자동 로드 (기본값)
   },
 });
 ```
@@ -145,8 +145,8 @@ const grid = new GridCore({
   로딩 인디케이터와 버튼 disabled를 연동한다.
 
 ```ts
-await grid.loadMore();        // 다음 페이지 로드. 요청했으면 true
-grid.hasMoreRows();           // 추가 데이터 가능 여부
+await grid.loadMore(); // 다음 페이지 로드. 요청했으면 true
+grid.hasMoreRows(); // 추가 데이터 가능 여부
 grid.maybeLoadMore(scrollTop, clientHeight, scrollHeight); // 어댑터 내부용
 ```
 
@@ -155,4 +155,3 @@ grid.maybeLoadMore(scrollTop, clientHeight, scrollHeight); // 어댑터 내부�
   더 요청하지 않는다.
 - `serverSide`와 동시 지정할 수 없다 — 누적 방식이면 `appendScroll`,
   블록 캐시 방식이면 `serverSide`를 선택한다.
-

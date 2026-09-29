@@ -8,13 +8,14 @@
 ```ts
 // 초기 옵션
 new GridCore({
-  columns, data,
+  columns,
+  data,
   pinnedTopRows: [{ name: "주의", role: "-", age: null }],
   pinnedBottomRows: [{ name: "합계", age: 1234 }],
 });
 
 // 런타임
-grid.setPinnedTopRows(rows);      // null로 해제
+grid.setPinnedTopRows(rows); // null로 해제
 grid.setPinnedBottomRows(rows);
 ```
 

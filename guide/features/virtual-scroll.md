@@ -19,14 +19,15 @@ GridCore 통합 API로 구성된다.
 
 ```ts
 const grid = new GridCore({
-  columns, data,
+  columns,
+  data,
   virtualScroll: { rowHeight: 40, viewportHeight: 600 },
 });
 
-grid.setVirtualScroll(configOrNull);   // 런타임 활성/비활성 + 설정 변경
-grid.setViewportHeight(800);           // 컨테이너 리사이즈 대응
+grid.setVirtualScroll(configOrNull); // 런타임 활성/비활성 + 설정 변경
+grid.setViewportHeight(800); // 컨테이너 리사이즈 대응
 grid.handleScroll(container.scrollTop); // 스크롤 이벤트 → 코어
-grid.getVirtualState();                // 현재 VirtualScrollState (비활성 시 null)
+grid.getVirtualState(); // 현재 VirtualScrollState (비활성 시 null)
 ```
 
 스냅샷 추가 필드: `virtual`, `virtualRows`
@@ -51,7 +52,7 @@ const v = computeVirtualScroll({
   rowHeight: 40,
   viewportHeight: 600,
   scrollTop: 52_000,
-  overscan: 5,           // 기본값 5
+  overscan: 5, // 기본값 5
 });
 // v = { startIndex, endIndex, startOffset, totalHeight }
 // 렌더링: rows.slice(v.startIndex, v.endIndex)
@@ -64,8 +65,10 @@ const v = computeVirtualScroll({
 ## 렌더링 패턴 (커스텀/바닐라 JS)
 
 ```html
-<div style="height:600px; overflow:auto"
-     onscroll="grid.handleScroll(this.scrollTop)">
+<div
+  style="height:600px; overflow:auto"
+  onscroll="grid.handleScroll(this.scrollTop)"
+>
   <div style="height: {virtual.totalHeight}px; position: relative;">
     <div style="transform: translateY({virtual.startOffset}px)">
       <!-- virtualRows를 rowHeight 고정 높이로 렌더링 -->

@@ -13,10 +13,15 @@ npm install @moda-grid/vue   # peer: vue >= 3.3
 ```vue
 <script setup lang="ts">
 import { DataGrid, useGrid } from "@moda-grid/vue";
-import "@moda-grid/vue/styles.css";       // 필수 — 공통 스타일
+import "@moda-grid/vue/styles.css"; // 필수 — 공통 스타일
 import type { ColumnDef } from "@moda-grid/vue";
 
-interface User { id: number; name: string; role: string; age: number; }
+interface User {
+  id: number;
+  name: string;
+  role: string;
+  age: number;
+}
 
 const columns: ColumnDef<User>[] = [
   { field: "id", header: "ID", width: 60 },
@@ -31,7 +36,9 @@ const { grid, state } = useGrid<User>({ columns, data: users });
 
 <template>
   <input placeholder="검색…" @input="grid.setSearch($event.target.value)" />
-  <button @click="grid.exportToCsv({ filename: 'users.csv' })">CSV보내기</button>
+  <button @click="grid.exportToCsv({ filename: 'users.csv' })">
+    CSV보내기
+  </button>
 
   <DataGrid
     :grid="grid"
@@ -71,10 +78,10 @@ React 어댑터와 동일하다 (kebab-case로 전달): `columns` `data` `grid`
 
 ## Composables
 
-| 함수 | 반환 | 용도 |
-| ---- | ---- | ---- |
-| `useGrid(options)` | `{ grid, state, unsubscribe }` | GridCore 생성 + 스냅샷 `ShallowRef` |
-| `useGridState(grid)` | `{ state, unsubscribe }` | 외부 GridCore의 스냅샷만 구독 |
+| 함수                 | 반환                           | 용도                                |
+| -------------------- | ------------------------------ | ----------------------------------- |
+| `useGrid(options)`   | `{ grid, state, unsubscribe }` | GridCore 생성 + 스냅샷 `ShallowRef` |
+| `useGridState(grid)` | `{ state, unsubscribe }`       | 외부 GridCore의 스냅샷만 구독       |
 
 - 컴포넌트/이펙트 스코프 안에서 호출하면 `onScopeDispose`로 자동 구독 해제.
 - `state`는 `ShallowRef` — 스냅샷이 통째로 교체되는 구조라 deep 반응형이
@@ -112,7 +119,10 @@ React 어댑터와 동일하다 (kebab-case로 전달): `columns` `data` `grid`
 ## 스냅샷으로 보조 UI 만들기
 
 ```vue
-<button :disabled="state.pageIndex === 0" @click="grid.setPage(state.pageIndex - 1)">
+<button
+  :disabled="state.pageIndex === 0"
+  @click="grid.setPage(state.pageIndex - 1)"
+>
   이전
 </button>
 <span>{{ state.filteredRowCount }} / {{ state.totalRowCount }}행</span>

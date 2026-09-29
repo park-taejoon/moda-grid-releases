@@ -25,24 +25,24 @@
 
   const mounted = mountGrid(document.getElementById("grid"), {
     columns: [
-      { field: "id",   header: "ID",   width: 60 },
+      { field: "id", header: "ID", width: 60 },
       { field: "name", header: "이름", filterable: true },
       { field: "role", header: "역할", filterable: true, filterType: "set" },
-      { field: "age",  header: "나이", filterable: true },
+      { field: "age", header: "나이", filterable: true },
       { field: "done", header: "완료", cellEditor: "checkbox" },
     ],
     data: [
-      { id: 1, name: "Hana",  role: "admin",  age: 42, done: true },
+      { id: 1, name: "Hana", role: "admin", age: 42, done: true },
       { id: 2, name: "Daeho", role: "editor", age: 36, done: false },
     ],
-    height: 460,          // 가상 스크롤 (rowHeight와 함께)
+    height: 460, // 가상 스크롤 (rowHeight와 함께)
     rowHeight: 36,
-    rowNumbers: true,     // 행 번호 컬럼
-    rowCheckboxes: true,  // 행 체크박스 + 헤더 전체선택
-    rowStatus: true,      // I/U/D 상태 컬럼
-    searchBox: true,      // 상단 검색 입력 (데이터 필터)
-    findBox: true,        // 찾기 바 — 셀 텍스트 검색 후 매치로 이동
-    pager: true,          // 하단 페이저/행수
+    rowNumbers: true, // 행 번호 컬럼
+    rowCheckboxes: true, // 행 체크박스 + 헤더 전체선택
+    rowStatus: true, // I/U/D 상태 컬럼
+    searchBox: true, // 상단 검색 입력 (데이터 필터)
+    findBox: true, // 찾기 바 — 셀 텍스트 검색 후 매치로 이동
+    pager: true, // 하단 페이저/행수
     pageSize: 20,
     // 행 상세 패널 — 첫 셀에 ▸ 토글, 펼친 행 아래 전체 너비 패널
     detailRenderer: (row) => `${row.name} 상세 내용`, // Node도 가능
@@ -90,7 +90,7 @@
 - `findBox`: 셀 찾기 바 — Enter 다음/Shift+Enter 이전 매치 이동 (어댑터 `findBox` prop과 동일)
   (`findCells`/`findNext` 기반, `searchBox`의 데이터 필터와는 별개)
 - `columnController`: 우상단 컬럼 관리 도구 — 표시/숨김 체크박스 팝오버
-  + 전체 선택/해제
+  - 전체 선택/해제
 - `filterToggle`: 필터 행 표시/숨김 토글 버튼 (filterable 컬럼이 있을 때만)
 - `headerFilters`: filterable 컬럼 헤더에 ▾ 값 체크리스트 드롭다운
   (엑셀 autofilter — 어댑터 `headerFilters` prop과 동일)
@@ -122,7 +122,9 @@
       <table class="mg-table">
         <thead><tr>
           ${snap.visibleColumns
-            .map((c) => `<th data-field="${c.field}">${c.header ?? c.field}</th>`)
+            .map(
+              (c) => `<th data-field="${c.field}">${c.header ?? c.field}</th>`,
+            )
             .join("")}
         </tr></thead>
         <tbody>
@@ -161,16 +163,17 @@
 ## 표시 텍스트/클래스 헬퍼
 
 ```js
-grid.getCellText(row, col);          // formatter/valueGetter 적용 문자열
+grid.getCellText(row, col); // formatter/valueGetter 적용 문자열
 grid.getCellClass(row, rowIndex, c); // cellClass 해석 결과
-grid.getRowClass(row, rowIndex);     // rowClass 해석 결과
+grid.getRowClass(row, rowIndex); // rowClass 해석 결과
 ```
 
 ## 가상 스크롤 (순수 JS, 수동 렌더링)
 
 ```js
 const grid = new GridCore({
-  columns, data,
+  columns,
+  data,
   virtualScroll: { rowHeight: 40, viewportHeight: 600 },
 });
 

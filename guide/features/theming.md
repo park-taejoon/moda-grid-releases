@@ -12,7 +12,7 @@
 
 ```tsx
 // 어댑터 (React/Vue3/Vue2/Svelte)
-<DataGrid columns={cols} data={rows} theme="dark" />
+<DataGrid columns={cols} data={rows} theme="dark" />;
 
 // mountGrid
 mountGrid(el, { columns, data, theme: "dark" });
@@ -28,8 +28,10 @@ mountGrid(el, { columns, data, theme: "dark" });
 상속되므로 페이지 어디에 걸어도 된다):
 
 ```html
-<body class="grid-theme-dark">   <!-- 페이지 전체 다크 -->
-  <div class="grid-theme-dark">  <!-- 이 그리드만 다크 -->
+<body class="grid-theme-dark">
+  <!-- 페이지 전체 다크 -->
+  <div class="grid-theme-dark"><!-- 이 그리드만 다크 --></div>
+</body>
 ```
 
 클래스를 지정하지 않으면 `:root`의 라이트 팔레트가 기본 적용된다.
@@ -39,9 +41,9 @@ mountGrid(el, { columns, data, theme: "dark" });
 zebra 줄무늬(짝수 표시 행 배경)를 켠다 — 타사 그리드 `Alternate` 스타일 대응:
 
 ```tsx
-<DataGrid columns={cols} data={rows} striped />   // 어댑터 prop
+<DataGrid columns={cols} data={rows} striped />; // 어댑터 prop
 mountGrid(el, { columns, data, striped: true }); // mountGrid 옵션
-grid.setStriped(true);                            // 런타임 토글
+grid.setStriped(true); // 런타임 토글
 ```
 
 - `tbody tr:nth-child(even)`에 `--grid-stripe-bg`를 적용한다 — 정렬/필터/
@@ -60,7 +62,8 @@ grid.setStriped(true);                            // 런타임 토글
 ## CSS 변수
 
 ```css
-:root, .grid-theme-light {
+:root,
+.grid-theme-light {
   --grid-bg-color: #ffffff;
   --grid-border-color: #e2e2e2;
   --grid-header-bg: #f7f7f8;
@@ -100,15 +103,23 @@ const columns = [
 
 // 모든 행에 공통 적용 — GridOptions.rowClass
 createGrid({
-  columns, data,
+  columns,
+  data,
   rowClass: ({ rowIndex }) => (rowIndex % 2 ? "row-odd" : ""),
 });
 ```
 
 ```css
-.cell-senior { font-weight: 600; color: #b45309; }
-.row-admin   { background: #fff7ed; }
-.row-odd     { background: #fafafa; }
+.cell-senior {
+  font-weight: 600;
+  color: #b45309;
+}
+.row-admin {
+  background: #fff7ed;
+}
+.row-odd {
+  background: #fafafa;
+}
 ```
 
 - `rowIndex`는 `visibleData` 기준 — 필터/정렬 후 인덱스가 함수에 전달된다.
@@ -162,18 +173,18 @@ createGrid({
 
 ## 주요 구조 클래스 (커스텀 스타일링 대상)
 
-| 클래스 | 대상 |
-| ------ | ---- |
-| `.mg-table` | 그리드 테이블 |
-| `.mg-group-row` | 그룹 헤더 행 |
-| `.mg-cell-active` / `.mg-cell-selected` | 활성 셀 / 선택 범위 |
-| `.mg-cell-editing` / `.mg-edit-error` | 편집 중 셀 / 에러 |
-| `.mg-pinned` / `.mg-pin-left-edge` / `.mg-pin-right-edge` | 고정 컬럼 |
-| `.mg-pinned-top-row` / `.mg-pinned-bottom-row` | 고정 행 |
-| `.mg-total-row` | 총계 `<tfoot>` 행 |
-| `.mg-skeleton-row` / `.mg-loading` | 서버 모드 스켈레톤/로딩 |
-| `.mg-loading-host` / `.mg-loading-overlay` | 로딩 오버레이 활성 루트 / 오버레이 (`loading` 옵션·prop) |
-| `.mg-statusbar` / `.mg-colctl-panel` | 상태바 / 컬럼 관리 팝오버 |
-| `.mg-row-drag-handle` / `.mg-drop-before` / `.mg-drop-after` | 행 드래그 |
-| `.mg-empty` | 빈 그리드 행 |
-| `.mg-striped` | 줄무늬 활성 루트 (`striped` 옵션) |
+| 클래스                                                       | 대상                                                     |
+| ------------------------------------------------------------ | -------------------------------------------------------- |
+| `.mg-table`                                                  | 그리드 테이블                                            |
+| `.mg-group-row`                                              | 그룹 헤더 행                                             |
+| `.mg-cell-active` / `.mg-cell-selected`                      | 활성 셀 / 선택 범위                                      |
+| `.mg-cell-editing` / `.mg-edit-error`                        | 편집 중 셀 / 에러                                        |
+| `.mg-pinned` / `.mg-pin-left-edge` / `.mg-pin-right-edge`    | 고정 컬럼                                                |
+| `.mg-pinned-top-row` / `.mg-pinned-bottom-row`               | 고정 행                                                  |
+| `.mg-total-row`                                              | 총계 `<tfoot>` 행                                        |
+| `.mg-skeleton-row` / `.mg-loading`                           | 서버 모드 스켈레톤/로딩                                  |
+| `.mg-loading-host` / `.mg-loading-overlay`                   | 로딩 오버레이 활성 루트 / 오버레이 (`loading` 옵션·prop) |
+| `.mg-statusbar` / `.mg-colctl-panel`                         | 상태바 / 컬럼 관리 팝오버                                |
+| `.mg-row-drag-handle` / `.mg-drop-before` / `.mg-drop-after` | 행 드래그                                                |
+| `.mg-empty`                                                  | 빈 그리드 행                                             |
+| `.mg-striped`                                                | 줄무늬 활성 루트 (`striped` 옵션)                        |

@@ -2,14 +2,14 @@
 
 ## 패키지 선택
 
-| 사용 환경 | 설치할 것 |
-| --------- | --------- |
-| React 앱 | `@moda-grid/react` |
-| Vue 3 앱 | `@moda-grid/vue` |
-| Vue 2.7 앱 | `@moda-grid/vue2` (Vue 2.6 이하 미지원) |
-| Svelte 5 앱 | `@moda-grid/svelte` |
-| 빌드 도구 없는 페이지 / CSP 제약 환경 | CDN `moda-grid.js` + `style.css` |
-| 프레임워크 없이 직접 렌더링 | `@moda-grid/core` |
+| 사용 환경                             | 설치할 것                               |
+| ------------------------------------- | --------------------------------------- |
+| React 앱                              | `@moda-grid/react`                      |
+| Vue 3 앱                              | `@moda-grid/vue`                        |
+| Vue 2.7 앱                            | `@moda-grid/vue2` (Vue 2.6 이하 미지원) |
+| Svelte 5 앱                           | `@moda-grid/svelte`                     |
+| 빌드 도구 없는 페이지 / CSP 제약 환경 | CDN `moda-grid.js` + `style.css`        |
+| 프레임워크 없이 직접 렌더링           | `@moda-grid/core`                       |
 
 어댑터 패키지는 `@moda-grid/core`를 자동으로 포함한다.
 
@@ -29,7 +29,11 @@
 ```ts
 import { GridCore } from "@moda-grid/core";
 
-interface User { id: number; name: string; age: number; }
+interface User {
+  id: number;
+  name: string;
+  age: number;
+}
 
 const grid = new GridCore<User>({
   columns: [

@@ -6,11 +6,11 @@
 ## 코어 API
 
 ```ts
-new GridCore({ columns, data, pageSize: 20 });   // 초기 페이지 크기
+new GridCore({ columns, data, pageSize: 20 }); // 초기 페이지 크기
 // 또는 런타임:
-grid.setPage(0, 20);        // pageIndex 0, 크기 20 (size=0이면 비활성)
-grid.setPage(2);            // 3페이지로 이동
-grid.setPage(snapshot.pageIndex + 1);  // 다음 페이지 — 스냅샷 기준 계산
+grid.setPage(0, 20); // pageIndex 0, 크기 20 (size=0이면 비활성)
+grid.setPage(2); // 3페이지로 이동
+grid.setPage(snapshot.pageIndex + 1); // 다음 페이지 — 스냅샷 기준 계산
 ```
 
 ## 스냅샷 필드
@@ -36,19 +36,29 @@ const { grid, snapshot } = useGridCore({ columns, data, pageSize: 20 });
   <button
     disabled={snapshot.pageIndex === 0}
     onClick={() => grid.setPage(snapshot.pageIndex - 1)}
-  >‹</button>
-  <span>{snapshot.pageIndex + 1} / {snapshot.pageCount}</span>
+  >
+    ‹
+  </button>
+  <span>
+    {snapshot.pageIndex + 1} / {snapshot.pageCount}
+  </span>
   <button
     disabled={snapshot.pageIndex + 1 >= snapshot.pageCount}
     onClick={() => grid.setPage(snapshot.pageIndex + 1)}
-  >›</button>
+  >
+    ›
+  </button>
   <select
     value={snapshot.pageSize}
     onChange={(e) => grid.setPage(0, Number(e.target.value))}
   >
-    {[10, 20, 50, 100].map((n) => <option key={n} value={n}>{n}행</option>)}
+    {[10, 20, 50, 100].map((n) => (
+      <option key={n} value={n}>
+        {n}행
+      </option>
+    ))}
   </select>
-</div>
+</div>;
 ```
 
 Vue/Svelte도 동일 — `state.value.pageIndex`(Vue) / `$store.pageIndex`
@@ -63,7 +73,8 @@ Vue/Svelte도 동일 — `state.value.pageIndex`(Vue) / `$store.pageIndex`
 
 ```ts
 mountGrid(el, {
-  columns, data,
+  columns,
+  data,
   pager: true,
   pageSize: 20,
   pageSizeOptions: [10, 20, 50, 100],
@@ -78,11 +89,12 @@ mountGrid(el, {
 
 ```ts
 mountGrid(el, {
-  columns, data,
+  columns,
+  data,
   height: 480,
   rowHeight: 37,
   pager: true,
-  autoPageSize: true,   // pageSize = floor((480 - 헤더 - 페이저) / 37)
+  autoPageSize: true, // pageSize = floor((480 - 헤더 - 페이저) / 37)
 });
 ```
 
@@ -98,7 +110,8 @@ mountGrid(el, {
 
 ```ts
 mountGrid(el, {
-  columns, data,
+  columns,
+  data,
   domLayout: "autoHeight",
   pager: true,
   autoPageSize: false, // pageSize 미지정 시 전체 행이 한 화면에 펼쳐진다

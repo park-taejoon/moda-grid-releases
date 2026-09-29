@@ -15,14 +15,14 @@
 ## 코어 API
 
 ```ts
-grid.setFilter("name", "hana");                    // 문자열 → contains
+grid.setFilter("name", "hana"); // 문자열 → contains
 grid.setFilter("age", { operator: "greaterThan", value: "30" });
 grid.setFilter("age", { operator: "inRange", value: "20", valueTo: "40" });
 grid.setFilter("role", { operator: "set", values: ["admin"], value: "" });
-grid.setFilter("name", null);                      // 해제
-grid.clearFilters();                               // 전체 해제
+grid.setFilter("name", null); // 해제
+grid.clearFilters(); // 전체 해제
 
-grid.setSearch("hana");                            // 전역 검색
+grid.setSearch("hana"); // 전역 검색
 
 // 필터 입력 행 표시/숨김 (UI 표시 상태 — 필터 조건과 무관)
 grid.setFilterRowVisible(false);
@@ -54,12 +54,12 @@ grid.resetView();
 
 ## 연산자 목록 (`filterType`별)
 
-| 타입 | 연산자 | 의미 |
-| ---- | ------ | ---- |
-| `text` (기본) | `contains` `equals` `startsWith` `endsWith` | 문자열 비교 (대소문자 무시) |
-| `number` | `equals` `greaterThan` `lessThan` `inRange` | `Number()` 변환, `inRange`는 `value~valueTo` |
-| `date` | `equals` `before` `after` | "일" 단위 비교 (`equals`=같은 날) |
-| `set` | `set` | `values` 배열에 포함된 값만 통과 |
+| 타입          | 연산자                                      | 의미                                         |
+| ------------- | ------------------------------------------- | -------------------------------------------- |
+| `text` (기본) | `contains` `equals` `startsWith` `endsWith` | 문자열 비교 (대소문자 무시)                  |
+| `number`      | `equals` `greaterThan` `lessThan` `inRange` | `Number()` 변환, `inRange`는 `value~valueTo` |
+| `date`        | `equals` `before` `after`                   | "일" 단위 비교 (`equals`=같은 날)            |
+| `set`         | `set`                                       | `values` 배열에 포함된 값만 통과             |
 
 - `equals`는 스마트 판별: 양쪽 숫자면 숫자 비교, 양쪽 날짜면 같은 날 비교,
   아니면 문자열 동일 비교.
@@ -72,9 +72,9 @@ grid.resetView();
 ## Set 필터 (값 체크리스트)
 
 ```ts
-grid.getUniqueValues("role");  // ["admin", "editor", ...] — 체크리스트 항목
+grid.getUniqueValues("role"); // ["admin", "editor", ...] — 체크리스트 항목
 grid.setFilter("role", { operator: "set", value: "", values: ["admin"] });
-grid.setFilter("role", null);  // 전체 선택과 동일 = 해제
+grid.setFilter("role", null); // 전체 선택과 동일 = 해제
 ```
 
 - 비교는 셀 값의 문자열 표현(`String(value)`) 기준.
@@ -114,11 +114,12 @@ UI(체크박스/기간 선택/권한 규칙 등)로 표시 범위를 제어할 �
 
 ```ts
 new GridCore({
-  columns, data,
+  columns,
+  data,
   externalFilter: (row) => row.age >= 30, // false면 행을 숨긴다
 });
-grid.setExternalFilter(fn);    // 런타임 교체 — filterChange 이벤트 발행
-grid.setExternalFilter(null);  // 해제
+grid.setExternalFilter(fn); // 런타임 교체 — filterChange 이벤트 발행
+grid.setExternalFilter(null); // 해제
 ```
 
 - 컬럼 필터/검색 이후 마지막 단계에 적용 — 결과는 `filteredRowCount`·집계·

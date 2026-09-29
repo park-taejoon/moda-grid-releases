@@ -14,11 +14,15 @@ const columns: ColumnDef<Order>[] = [
   {
     field: "total",
     header: "합계",
-    formula: "price * qty",                    // 다른 필드를 변수로 참조
-    format: { type: "currency" },              // 내장 포맷터와 조합 가능
-    aggregationFn: "sum",                      // 그룹 집계에도 반영됨
+    formula: "price * qty", // 다른 필드를 변수로 참조
+    format: { type: "currency" }, // 내장 포맷터와 조합 가능
+    aggregationFn: "sum", // 그룹 집계에도 반영됨
   },
-  { field: "taxed", header: "세금포함", formula: "Math.round(price * qty * 1.1)" },
+  {
+    field: "taxed",
+    header: "세금포함",
+    formula: "Math.round(price * qty * 1.1)",
+  },
 ];
 ```
 
@@ -45,7 +49,12 @@ evaluateFormula("price * qty", row, ["price", "qty"]); // 직접 평가
 const columns: ColumnDef<Sale>[] = [
   { field: "date", header: "일자" },
   { field: "amount", header: "금액" },
-  { field: "cum", header: "누계", cumulative: "amount", format: { type: "number" } },
+  {
+    field: "cum",
+    header: "누계",
+    cumulative: "amount",
+    format: { type: "number" },
+  },
 ];
 // 10 → 30 → 60 → 100 처럼 표시
 ```

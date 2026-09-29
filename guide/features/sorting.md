@@ -4,18 +4,18 @@
 
 ## 사용자 조작 (DataGrid 기본 동작)
 
-| 조작 | 동작 |
-| ---- | ---- |
-| 헤더 클릭 | `asc → desc → 해제` 순환 (기존 조건 전부 교체) |
+| 조작              | 동작                                                                                |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| 헤더 클릭         | `asc → desc → 해제` 순환 (기존 조건 전부 교체)                                      |
 | Shift + 헤더 클릭 | 다중 정렬 조건 추가/순환/제거 — 화살표 옆에 우선순위 배지(`.mg-sort-priority`) 표시 |
 
 ## 코어 API
 
 ```ts
-grid.toggleSort("age");          // 단일 정렬 (기존 조건 교체)
-grid.toggleSort("age", true);    // additive — 다중 정렬에 추가
-grid.setSort("name", "desc");    // 단일 조건으로 교체 ("asc" | "desc" | null)
-grid.clearSorts();               // 전체 해제
+grid.toggleSort("age"); // 단일 정렬 (기존 조건 교체)
+grid.toggleSort("age", true); // additive — 다중 정렬에 추가
+grid.setSort("name", "desc"); // 단일 조건으로 교체 ("asc" | "desc" | null)
+grid.clearSorts(); // 전체 해제
 ```
 
 ## 다중 정렬 규칙
@@ -24,10 +24,10 @@ grid.clearSorts();               // 전체 해제
 `priority` 순으로 체인 비교한다 (앞 조건이 같으면 다음 조건으로).
 
 ```ts
-grid.toggleSort("role");         // priority 1
-grid.toggleSort("age", true);    // priority 2
-grid.toggleSort("age", true);    // → desc
-grid.toggleSort("age", true);    // → 조건 제거, priority 재정규화
+grid.toggleSort("role"); // priority 1
+grid.toggleSort("age", true); // priority 2
+grid.toggleSort("age", true); // → desc
+grid.toggleSort("age", true); // → 조건 제거, priority 재정규화
 ```
 
 `snapshot.sort`는 첫 번째 조건만 노출해 단일 정렬 코드와 호환된다.
@@ -49,12 +49,15 @@ grid.toggleSort("age", true);    // → 조건 제거, priority 재정규화
 
 ```ts
 new GridCore({
-  columns, data,
+  columns,
+  data,
   // admin 행을 정렬과 무관하게 항상 맨 위로
   postSort: (rows) =>
-    rows.sort((a, b) => Number(b.role === "admin") - Number(a.role === "admin")),
+    rows.sort(
+      (a, b) => Number(b.role === "admin") - Number(a.role === "admin"),
+    ),
 });
-grid.setPostSort(fn);   // 런타임 교체
+grid.setPostSort(fn); // 런타임 교체
 grid.setPostSort(null); // 해제
 ```
 

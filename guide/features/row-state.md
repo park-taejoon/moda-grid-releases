@@ -4,12 +4,12 @@
 
 ## 개요
 
-| 상태 | 의미 | 발생 시점 |
-| ---- | ---- | --------- |
-| `I` | Insert — 새로 입력된 행 | `addRows()`, `importCsv()`로 추가된 행 |
-| `U` | Update — 수정된 행 | 셀 편집, `pasteTsv`로 값이 바뀐 행 |
-| `D` | Delete — 삭제 예정 행 | `deleteRowsByIds()`로 마킹된 행 (화면에는 남아 있음) |
-| 없음 | 변경 없음 | 초기 로드 상태, `commitChanges()` 후 |
+| 상태 | 의미                    | 발생 시점                                            |
+| ---- | ----------------------- | ---------------------------------------------------- |
+| `I`  | Insert — 새로 입력된 행 | `addRows()`, `importCsv()`로 추가된 행               |
+| `U`  | Update — 수정된 행      | 셀 편집, `pasteTsv`로 값이 바뀐 행                   |
+| `D`  | Delete — 삭제 예정 행   | `deleteRowsByIds()`로 마킹된 행 (화면에는 남아 있음) |
+| 없음 | 변경 없음               | 초기 로드 상태, `commitChanges()` 후                 |
 
 > `addRows(rows, index)`에 위치를 주면 rawData 기준 해당 인덱스에
 > 삽입한다 (타사 그리드 `addRow(index)` 대응). 생략하면 끝에 추가한다.
@@ -30,33 +30,33 @@
 
 ```ts
 // 상태 조회
-grid.getRowState(row);            // "I" | "U" | "D" | undefined
-grid.getChanges();                // { inserted, updated, deleted } — JSON 직렬화 가능
-grid.hasChanges();                // 변경분 존재 여부
+grid.getRowState(row); // "I" | "U" | "D" | undefined
+grid.getChanges(); // { inserted, updated, deleted } — JSON 직렬화 가능
+grid.hasChanges(); // 변경분 존재 여부
 
 // 삭제 마킹 / 복원
 grid.deleteRowsByIds(["3", "7"]); // 기존 행 → D 마킹, I 행 → 즉시 제거
-grid.restoreRowsByIds(["3"]);     // D 마킹 해제
+grid.restoreRowsByIds(["3"]); // D 마킹 해제
 
 // 행 복제
-grid.duplicateRows([row1, row2]);      // 각 원본 바로 뒤에 얕은 복사본 삽입 — 복제본은 I 마킹
-grid.duplicateRowsByIds(["3", "7"]);   // ID 기반 — snapshot.selectedRowIds와 함께 쓰기 좋다
+grid.duplicateRows([row1, row2]); // 각 원본 바로 뒤에 얕은 복사본 삽입 — 복제본은 I 마킹
+grid.duplicateRowsByIds(["3", "7"]); // ID 기반 — snapshot.selectedRowIds와 함께 쓰기 좋다
 
 // 확정 / 취소
-grid.commitChanges();             // D 행 실제 제거 + 모든 마킹 해제 (서버 저장 성공 후)
-grid.clearChanges();              // 마킹만 해제 (D 행은 화면에 복귀)
+grid.commitChanges(); // D 행 실제 제거 + 모든 마킹 해제 (서버 저장 성공 후)
+grid.clearChanges(); // 마킹만 해제 (D 행은 화면에 복귀)
 
 // 상태 필터 — 지정 상태의 행만 표시 (저장 전 변경분 검토용)
-grid.setRowStatusFilter(["I","U","D"]);  // 변경된 행만
-grid.setRowStatusFilter(["D"]);          // 삭제 예정 행만
-grid.setRowStatusFilter(null);           // 해제
-grid.getRowStatusFilter();               // 현재 필터 (없으면 null)
+grid.setRowStatusFilter(["I", "U", "D"]); // 변경된 행만
+grid.setRowStatusFilter(["D"]); // 삭제 예정 행만
+grid.setRowStatusFilter(null); // 해제
+grid.getRowStatusFilter(); // 현재 필터 (없으면 null)
 // snapshot.rowStatusFilter로 UI 상태 표시, getState/applyState에 포함됨
 
 // 유효성 검사 (저장 전)
-grid.validateChanges();           // I/U 행의 required/validate 에러 목록
-grid.validateRow(row);            // 행 하나의 에러 목록
-grid.getCellError(row, col);      // 셀 하나의 에러 메시지 (없으면 null)
+grid.validateChanges(); // I/U 행의 required/validate 에러 목록
+grid.validateRow(row); // 행 하나의 에러 목록
+grid.getCellError(row, col); // 셀 하나의 에러 메시지 (없으면 null)
 ```
 
 스냅샷에는 `rowStates: Record<string, RowState>`가 포함되어 어댑터가 행 클래스/상태 셀에 사용합니다.
@@ -105,22 +105,35 @@ async function save() {
 
 상태별 클래스가 자동으로 부여되므로 CSS만 추가하면 됩니다.
 
-| 대상 | 클래스 |
-| ---- | ------ |
-| 행 전체 | `mg-row-I`, `mg-row-U`, `mg-row-D` |
-| 상태 셀 | `mg-status-cell` + `mg-status-I`, `mg-status-U`, `mg-status-D` |
-| 검증 실패 셀 | `mg-cell-invalid` (변경 행에서 required/validate 실패 시) |
+| 대상         | 클래스                                                         |
+| ------------ | -------------------------------------------------------------- |
+| 행 전체      | `mg-row-I`, `mg-row-U`, `mg-row-D`                             |
+| 상태 셀      | `mg-status-cell` + `mg-status-I`, `mg-status-U`, `mg-status-D` |
+| 검증 실패 셀 | `mg-cell-invalid` (변경 행에서 required/validate 실패 시)      |
 
 ```css
 /* 예: 수정된 행 전체를 노랗게, 삭제 예정 행은 취소선 */
-.mg-row-U > td { background: #fef9c3; }
-.mg-row-D > td { background: #fee2e2; text-decoration: line-through; }
-.mg-row-I > td { background: #dcfce7; }
+.mg-row-U > td {
+  background: #fef9c3;
+}
+.mg-row-D > td {
+  background: #fee2e2;
+  text-decoration: line-through;
+}
+.mg-row-I > td {
+  background: #dcfce7;
+}
 
 /* 상태 배지만 색상 */
-.mg-status-I { color: #16a34a; }
-.mg-status-U { color: #d97706; }
-.mg-status-D { color: #dc2626; }
+.mg-status-I {
+  color: #16a34a;
+}
+.mg-status-U {
+  color: #d97706;
+}
+.mg-status-D {
+  color: #dc2626;
+}
 ```
 
 `getRowClass` 옵션으로도 `snapshot.rowStates`를 참조해 커스텀 클래스를 줄 수 있습니다.
@@ -139,13 +152,13 @@ async function save() {
 잡히지 않습니다.
 
 ```ts
-grid.setRowHidden("42", true);          // 행 1개 숨기기
-grid.setRowHidden(["1", "2"], true);    // 여러 행
-grid.setRowHidden("42", false);         // 다시 표시
-grid.setHiddenRows(["1", "2"]);         // 목록 통째로 교체 (prop 동기화용)
-grid.setHiddenRows(null);               // 전부 해제
-grid.isRowHidden("42");                 // boolean
-grid.getHiddenRowIds();                 // string[]
+grid.setRowHidden("42", true); // 행 1개 숨기기
+grid.setRowHidden(["1", "2"], true); // 여러 행
+grid.setRowHidden("42", false); // 다시 표시
+grid.setHiddenRows(["1", "2"]); // 목록 통째로 교체 (prop 동기화용)
+grid.setHiddenRows(null); // 전부 해제
+grid.isRowHidden("42"); // boolean
+grid.getHiddenRowIds(); // string[]
 ```
 
 ```tsx
@@ -153,9 +166,9 @@ grid.getHiddenRowIds();                 // string[]
 <DataGrid hiddenRowIds={["3", "7"]} />
 ```
 
-| 동작 | 규칙 |
-| ---- | ---- |
-| ID 기준 | `getRowId` 결과와 비교 — 없으면 `row.id` → 자동 ID 순으로 해석 |
+| 동작       | 규칙                                                                                  |
+| ---------- | ------------------------------------------------------------------------------------- |
+| ID 기준    | `getRowId` 결과와 비교 — 없으면 `row.id` → 자동 ID 순으로 해석                        |
 | 파이프라인 | 필터 적용 **후** 제외 — `filteredRowCount`, 정렬, 집계(grandTotals/소계)에서도 빠진다 |
-| 영속성 | `getState()`/`applyState()`에 `hiddenRowIds`가 포함되어 저장/복원된다 |
-| 스냅샷 | `snapshot.hiddenRowIds: ReadonlySet<string>` |
+| 영속성     | `getState()`/`applyState()`에 `hiddenRowIds`가 포함되어 저장/복원된다                 |
+| 스냅샷     | `snapshot.hiddenRowIds: ReadonlySet<string>`                                          |

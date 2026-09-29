@@ -10,9 +10,10 @@
 ```ts
 // vanilla
 mountGrid(el, {
-  columns, data,
+  columns,
+  data,
   detailRenderer: (row, rowIndex) => Node | string | null,
-  detailHeight: 120,              // 선택 — 미지정 시 내용에 맞춤
+  detailHeight: 120, // 선택 — 미지정 시 내용에 맞춤
 });
 ```
 
@@ -21,9 +22,7 @@ mountGrid(el, {
 <DataGrid
   columns={columns}
   data={data}
-  detailRenderer={(row, rowIndex) => (
-    <div>{row.name} 상세 내용</div>
-  )}
+  detailRenderer={(row, rowIndex) => <div>{row.name} 상세 내용</div>}
   detailHeight={120}
 />
 ```
@@ -49,10 +48,10 @@ mountGrid(el, {
 ## 코어 API
 
 ```ts
-grid.toggleRowDetail(rowOrId);          // 펼침/접힘 토글
-grid.isDetailExpanded(rowOrId);         // 펼침 여부
-grid.setDetailExpanded(rowOrId, true);  // 상태 지정 (같은 값이면 무시)
-grid.getDetailExpandedIds();            // 펼친 행 ID 목록
+grid.toggleRowDetail(rowOrId); // 펼침/접힘 토글
+grid.isDetailExpanded(rowOrId); // 펼침 여부
+grid.setDetailExpanded(rowOrId, true); // 상태 지정 (같은 값이면 무시)
+grid.getDetailExpandedIds(); // 펼친 행 ID 목록
 ```
 
 `rowOrId`는 `getRowId` 기준 행 ID 문자열 또는 행 객체 모두 받는다.
@@ -83,11 +82,11 @@ grid.on("rowDetailExpand", ({ id, row, expanded }) => {
 
 ## 스타일링
 
-| 클래스 | 대상 |
-| ------ | ---- |
-| `.mg-detail-toggle` | 첫 셀의 ▸/▾ 버튼 |
-| `.mg-detail-row` | 상세 `<tr>` |
-| `.mg-detail-cell` | 전체 너비 `<td>` |
+| 클래스               | 대상                     |
+| -------------------- | ------------------------ |
+| `.mg-detail-toggle`  | 첫 셀의 ▸/▾ 버튼         |
+| `.mg-detail-row`     | 상세 `<tr>`              |
+| `.mg-detail-cell`    | 전체 너비 `<td>`         |
 | `.mg-detail-content` | 내용 래퍼 (기본 padding) |
 
 `--grid-detail-bg-color` 변수로 상세 행 배경을 바꿀 수 있다.

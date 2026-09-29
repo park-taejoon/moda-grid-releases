@@ -13,10 +13,15 @@ npm install @moda-grid/react   # peer: react, react-dom
 
 ```tsx
 import { DataGrid, useGridCore } from "@moda-grid/react";
-import "@moda-grid/react/styles.css";   // 필수 — 공통 스타일
+import "@moda-grid/react/styles.css"; // 필수 — 공통 스타일
 import type { ReactColumnDef } from "@moda-grid/react";
 
-interface User { id: number; name: string; role: string; age: number; }
+interface User {
+  id: number;
+  name: string;
+  role: string;
+  age: number;
+}
 
 const columns: ReactColumnDef<User>[] = [
   { field: "id", header: "ID", width: 60 },
@@ -61,11 +66,11 @@ function App({ users }: { users: User[] }) {
 
 ```tsx
 // 1) 내부 인스턴스 모드 — GridCore를 컴포넌트가 생성/관리
-<DataGrid columns={columns} data={users} height={480} rowHeight={37} />
+<DataGrid columns={columns} data={users} height={480} rowHeight={37} />;
 
 // 2) 제어 모드 — 툴바/버튼에서 grid API를 써야 할 때
 const { grid, snapshot } = useGridCore({ columns, data: users });
-<DataGrid grid={grid} columns={columns} height={480} rowHeight={37} />
+<DataGrid grid={grid} columns={columns} height={480} rowHeight={37} />;
 ```
 
 `serverSide`, `treeData` 옵션은 **내부 생성 모드에서만** prop으로 받는다.
@@ -73,36 +78,36 @@ const { grid, snapshot } = useGridCore({ columns, data: users });
 
 ## Props
 
-| prop | 타입 | 기본값 | 설명 |
-| ---- | ---- | ------ | ---- |
-| `columns` | `ReactColumnDef[]` | 필수 | 컬럼 정의 (`renderCell`/`renderEditor` 확장) |
-| `data` | `TData[]` | — | 행 데이터 (`grid` 제어 모드면 생략 가능) |
-| `grid` | `Grid<TData>` | — | 외부 GridCore. 생략 시 내부 생성 |
-| `height` / `rowHeight` | `number` | — | 가상 스크롤 (함께 지정) |
-| `overscan` | `number` | `5` | 가상 스크롤 여유분 |
-| `resizable` | `boolean` | `true` | 컬럼 리사이즈 핸들 |
-| `reorderable` | `boolean` | `true` | 헤더 DnD 재배치 |
-| `selectable` | `boolean` | `true` | 행 클릭 선택 |
-| `selectionMode` | `SelectionMode` | `single-cell` | `single-cell`/`multi-cell`/`row` |
-| `serverSide` | `ServerSideOptions` | — | 무한 스크롤 데이터 소스 |
-| `treeData` | `TreeDataOptions` | — | 계층 데이터 |
-| `columnController` | `boolean` | `false` | 우상단 컬럼 관리 팝오버 |
-| `filterToggle` | `boolean` | `false` | 우상단 필터 행 표시/숨김 버튼 |
-| `rowCheckboxes` | `boolean` | `false` | 행 체크박스 + 헤더 전체선택 |
-| `statusBar` | `boolean` | `true` | 선택 범위 집계 상태바 |
-| `getRowId` | `(row) => string` | — | 행 ID 함수 |
-| `detailRenderer` | `(row, rowIndex) => ReactNode` | — | 행 상세 패널 — 지정 시 첫 셀에 ▸ 토글 ([master-detail](../features/master-detail.md)) |
-| `detailHeight` | `number` | — | 상세 패널 높이(px) — 미지정 시 내용에 맞춤 |
-| `domLayout` | `"normal" \| "autoHeight"` | `normal` | 내용 높이 레이아웃 — 가상 스크롤 무시 |
-| `autoPageSize` | `boolean` | `false` | 뷰포트÷행 높이로 pageSize 자동 계산 |
-| `className` | `string` | — | 추가 클래스 |
+| prop                   | 타입                           | 기본값        | 설명                                                                                  |
+| ---------------------- | ------------------------------ | ------------- | ------------------------------------------------------------------------------------- |
+| `columns`              | `ReactColumnDef[]`             | 필수          | 컬럼 정의 (`renderCell`/`renderEditor` 확장)                                          |
+| `data`                 | `TData[]`                      | —             | 행 데이터 (`grid` 제어 모드면 생략 가능)                                              |
+| `grid`                 | `Grid<TData>`                  | —             | 외부 GridCore. 생략 시 내부 생성                                                      |
+| `height` / `rowHeight` | `number`                       | —             | 가상 스크롤 (함께 지정)                                                               |
+| `overscan`             | `number`                       | `5`           | 가상 스크롤 여유분                                                                    |
+| `resizable`            | `boolean`                      | `true`        | 컬럼 리사이즈 핸들                                                                    |
+| `reorderable`          | `boolean`                      | `true`        | 헤더 DnD 재배치                                                                       |
+| `selectable`           | `boolean`                      | `true`        | 행 클릭 선택                                                                          |
+| `selectionMode`        | `SelectionMode`                | `single-cell` | `single-cell`/`multi-cell`/`row`                                                      |
+| `serverSide`           | `ServerSideOptions`            | —             | 무한 스크롤 데이터 소스                                                               |
+| `treeData`             | `TreeDataOptions`              | —             | 계층 데이터                                                                           |
+| `columnController`     | `boolean`                      | `false`       | 우상단 컬럼 관리 팝오버                                                               |
+| `filterToggle`         | `boolean`                      | `false`       | 우상단 필터 행 표시/숨김 버튼                                                         |
+| `rowCheckboxes`        | `boolean`                      | `false`       | 행 체크박스 + 헤더 전체선택                                                           |
+| `statusBar`            | `boolean`                      | `true`        | 선택 범위 집계 상태바                                                                 |
+| `getRowId`             | `(row) => string`              | —             | 행 ID 함수                                                                            |
+| `detailRenderer`       | `(row, rowIndex) => ReactNode` | —             | 행 상세 패널 — 지정 시 첫 셀에 ▸ 토글 ([master-detail](../features/master-detail.md)) |
+| `detailHeight`         | `number`                       | —             | 상세 패널 높이(px) — 미지정 시 내용에 맞춤                                            |
+| `domLayout`            | `"normal" \| "autoHeight"`     | `normal`      | 내용 높이 레이아웃 — 가상 스크롤 무시                                                 |
+| `autoPageSize`         | `boolean`                      | `false`       | 뷰포트÷행 높이로 pageSize 자동 계산                                                   |
+| `className`            | `string`                       | —             | 추가 클래스                                                                           |
 
 ## Hooks
 
-| 훅 | 반환 | 용도 |
-| -- | ---- | ---- |
-| `useGridCore(options)` | `{ grid, snapshot }` | GridCore 생성 + 스냅샷 구독. `options.data`/`columns` 참조 변경 시 자동 반영 |
-| `useGridSnapshot(grid)` | `GridSnapshot` | 외부에서 만든 그리드만 구독 |
+| 훅                      | 반환                 | 용도                                                                         |
+| ----------------------- | -------------------- | ---------------------------------------------------------------------------- |
+| `useGridCore(options)`  | `{ grid, snapshot }` | GridCore 생성 + 스냅샷 구독. `options.data`/`columns` 참조 변경 시 자동 반영 |
+| `useGridSnapshot(grid)` | `GridSnapshot`       | 외부에서 만든 그리드만 구독                                                  |
 
 ## 커스텀 셀 / 에디터
 
@@ -144,7 +149,7 @@ const { grid, snapshot } = useGridCore({ columns, data });
   onClick={() => grid.setPage(snapshot.pageIndex - 1)}
 >
   이전
-</button>
+</button>;
 ```
 
 ## 자주 묻는 것

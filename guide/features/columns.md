@@ -61,11 +61,11 @@ nowrap 셀 내용이 컬럼을 밀어내지 않으므로 좁히는 리사이즈�
 스크롤이 생긴다 — 리사이즈 결과가 임의로 뭉개지지 않는다.
 
 ```ts
-grid.setColumnWidth("name", 180);            // min/max 클램프 적용
-grid.autoSizeColumn("name");                 // 내용 기준 자동 너비 (단일)
-grid.autoSizeAllColumns();                   // 전체 표시 컬럼
-grid.autoSizeAllColumns((t) => ctx.measureText(t).width);  // canvas 정확 측정
-grid.resetColumnLayout();                    // 너비/순서를 정의 기본값으로
+grid.setColumnWidth("name", 180); // min/max 클램프 적용
+grid.autoSizeColumn("name"); // 내용 기준 자동 너비 (단일)
+grid.autoSizeAllColumns(); // 전체 표시 컬럼
+grid.autoSizeAllColumns((t) => ctx.measureText(t).width); // canvas 정확 측정
+grid.resetColumnLayout(); // 너비/순서를 정의 기본값으로
 ```
 
 `measureText` 미지정 시 문자 길이 기반 추정(`length * 8 + 패딩`)이라
@@ -77,7 +77,7 @@ DOM 없이도 동작한다.
 드롭 대상은 `.mg-col-dragover`로 표시.
 
 ```ts
-grid.reorderColumn("name", "role");   // draggedId → targetId 위치로
+grid.reorderColumn("name", "role"); // draggedId → targetId 위치로
 ```
 
 컬럼에 `movable: false`를 주면 그 컬럼은 드래그할 수 없고
@@ -102,8 +102,8 @@ grid.reorderColumn("name", "role");   // draggedId → targetId 위치로
 ## 표시/숨김 + 컬럼 관리 UI
 
 ```ts
-grid.setColumnVisible("age", false);   // = setColumnVisibility
-grid.setAllColumnsVisible(true);       // 전체 토글 (전부 숨김도 허용)
+grid.setColumnVisible("age", false); // = setColumnVisibility
+grid.setAllColumnsVisible(true); // 전체 토글 (전부 숨김도 허용)
 ```
 
 `columnController` prop을 주면 그리드 우상단에 `컬럼 ▾` 버튼이 오버레이되고,
@@ -115,12 +115,12 @@ grid.setAllColumnsVisible(true);       // 전체 토글 (전부 숨김도 허용
 ```ts
 new GridCore({
   columns: [
-    { field: "name", header: "이름" },                  // 그룹 없음 → rowspan=2
-    { field: "kor",  header: "국어", group: "score" },
-    { field: "eng",  header: "영어", group: "score" },
+    { field: "name", header: "이름" }, // 그룹 없음 → rowspan=2
+    { field: "kor", header: "국어", group: "score" },
+    { field: "eng", header: "영어", group: "score" },
     { field: "math", header: "수학", group: "score" },
   ],
-  columnGroups: [{ id: "score", header: "성적" }],     // 생략 시 ID가 라벨
+  columnGroups: [{ id: "score", header: "성적" }], // 생략 시 ID가 라벨
   data,
 });
 ```
@@ -139,9 +139,9 @@ new GridCore({
 각 행 30px).
 
 ```tsx
-<DataGrid headerHeight={48} />          // prop (React/Vue/Svelte 공통)
+<DataGrid headerHeight={48} />; // prop (React/Vue/Svelte 공통)
 mountGrid(el, { columns, data, headerHeight: 48 });
-grid.setHeaderHeight(80);               // 런타임 변경 (null이면 기본값)
+grid.setHeaderHeight(80); // 런타임 변경 (null이면 기본값)
 ```
 
 스냅샷에 `snapshot.headerHeight: number | null`로 노출되며, 각 헤더
@@ -163,7 +163,7 @@ grid.setHeaderHeight(80);               // 런타임 변경 (null이면 기본�
 ## 런타임 컬럼 교체
 
 ```ts
-grid.setColumns(newColumns);   // 너비/순서 상태 유지, 새 컬럼은 끝에 추가
+grid.setColumns(newColumns); // 너비/순서 상태 유지, 새 컬럼은 끝에 추가
 
 // 부분 수정 — 나머지 속성은 유지한 채 필요한 것만 갱신
 grid.updateColumn("name", { header: "성명", editable: false });
@@ -176,9 +176,9 @@ grid.updateColumn("name", { header: "성명", editable: false });
 ### 컬럼 추가/제거
 
 ```ts
-grid.addColumn({ field: "memo", header: "비고" });      // 끝에 추가
-grid.addColumn({ field: "memo", header: "비고" }, 0);   // 첫 위치에 삽입
-grid.removeColumn("name");                             // false = 없는 컬럼
+grid.addColumn({ field: "memo", header: "비고" }); // 끝에 추가
+grid.addColumn({ field: "memo", header: "비고" }, 0); // 첫 위치에 삽입
+grid.removeColumn("name"); // false = 없는 컬럼
 ```
 
 `addColumn(def, index)`의 index는 **표시 순서**에도 반영된다 — 기존 컬럼의

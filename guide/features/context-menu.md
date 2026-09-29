@@ -9,7 +9,11 @@ const grid = new GridCore({
   columns,
   data,
   contextMenu: [
-    { id: "copy", label: "복사", onClick: (ctx) => navigator.clipboard.writeText(String(ctx.value ?? "")) },
+    {
+      id: "copy",
+      label: "복사",
+      onClick: (ctx) => navigator.clipboard.writeText(String(ctx.value ?? "")),
+    },
     { id: "sep1", label: "", separator: true },
     {
       id: "delete",
@@ -17,7 +21,11 @@ const grid = new GridCore({
       disabled: (ctx) => ctx.row.id === lockedId,
       onClick: (ctx) => grid.deleteRows([ctx.rowIndex]),
     },
-    { id: "admin-only", label: "권한 변경", visible: (ctx) => isAdmin(ctx.row) },
+    {
+      id: "admin-only",
+      label: "권한 변경",
+      visible: (ctx) => isAdmin(ctx.row),
+    },
   ],
 });
 ```
@@ -43,31 +51,35 @@ contextMenu: (grid) => [
 타사 그리드 기본 우클릭 메뉴에 해당하는 항목을 코어가 제공한다:
 
 ```ts
-import { defaultContextMenuItems, defaultHeaderContextMenuItems } from "@moda-grid/core";
+import {
+  defaultContextMenuItems,
+  defaultHeaderContextMenuItems,
+} from "@moda-grid/core";
 
 new GridCore({
-  columns, data,
-  contextMenu: defaultContextMenuItems,              // 함수를 그대로 넘겨도 됨
+  columns,
+  data,
+  contextMenu: defaultContextMenuItems, // 함수를 그대로 넘겨도 됨
   headerContextMenu: defaultHeaderContextMenuItems,
 });
 ```
 
 `defaultContextMenuItems(grid)`가 반환하는 항목:
 
-| id | 동작 |
-| -- | ---- |
-| `undo` / `redo` | 실행 취소/다시 실행 — 이력 없으면 disabled |
-| `copy` | 선택 영역/활성 셀을 TSV로 클립보드에 복사 |
-| `copyHeaders` | 헤더 행 포함 복사 |
-| `paste` | 클립보드 TSV를 우클릭한 셀에 붙여넣기 |
-| `insertAbove` / `insertBelow` | 우클릭한 행 위/아래에 빈 행 삽입 (`addRows` + I 마킹) |
-| `clear` | 선택 영역 내용 지우기 (`clearRange`) |
-| `duplicateRow` | 선택 행(없으면 우클릭 행) 복제 — `duplicateRowsByIds`, 원본 뒤에 I 마킹 삽입 |
-| `deleteRow` | 선택 행 삭제 — 다중 선택이면 라벨이 "선택한 N행 삭제" |
-| `hideRow` | 선택 행(없으면 우클릭 행) 숨기기 — `setRowHidden` |
-| `unhideRows` | 숨긴 행 전체 표시 — 숨긴 행이 있을 때만 표시됨 |
-| `exportCsv` | `exportToCsv()` 실행 |
-| `print` | `grid.print()` — 브라우저 인쇄 |
+| id                            | 동작                                                                         |
+| ----------------------------- | ---------------------------------------------------------------------------- |
+| `undo` / `redo`               | 실행 취소/다시 실행 — 이력 없으면 disabled                                   |
+| `copy`                        | 선택 영역/활성 셀을 TSV로 클립보드에 복사                                    |
+| `copyHeaders`                 | 헤더 행 포함 복사                                                            |
+| `paste`                       | 클립보드 TSV를 우클릭한 셀에 붙여넣기                                        |
+| `insertAbove` / `insertBelow` | 우클릭한 행 위/아래에 빈 행 삽입 (`addRows` + I 마킹)                        |
+| `clear`                       | 선택 영역 내용 지우기 (`clearRange`)                                         |
+| `duplicateRow`                | 선택 행(없으면 우클릭 행) 복제 — `duplicateRowsByIds`, 원본 뒤에 I 마킹 삽입 |
+| `deleteRow`                   | 선택 행 삭제 — 다중 선택이면 라벨이 "선택한 N행 삭제"                        |
+| `hideRow`                     | 선택 행(없으면 우클릭 행) 숨기기 — `setRowHidden`                            |
+| `unhideRows`                  | 숨긴 행 전체 표시 — 숨긴 행이 있을 때만 표시됨                               |
+| `exportCsv`                   | `exportToCsv()` 실행                                                         |
+| `print`                       | `grid.print()` — 브라우저 인쇄                                               |
 
 `defaultHeaderContextMenuItems(grid)`는 컬럼 숨기기·너비 자동 조정·
 그룹화/해제·오름차순/내림차순/정렬 해제·모든 필터 지우기·컬럼 고정/해제
@@ -78,14 +90,14 @@ new GridCore({
 
 ## ContextMenuItem 필드
 
-| 필드 | 타입 | 설명 |
-| ---- | ---- | ---- |
-| `id` | `string` | 고유 식별자 |
-| `label` | `string \| (ctx) => string` | 메뉴 라벨 — 함수면 행/셀 컨텍스트로 동적 생성 |
-| `onClick` | `(ctx) => void` | 클릭 핸들러 |
-| `visible` | `(ctx) => boolean` | false면 해당 셀에서 항목 숨김 |
-| `disabled` | `(ctx) => boolean` | true면 비활성 렌더링 |
-| `separator` | `boolean` | true면 구분선 (label/onClick 무시) |
+| 필드        | 타입                        | 설명                                          |
+| ----------- | --------------------------- | --------------------------------------------- |
+| `id`        | `string`                    | 고유 식별자                                   |
+| `label`     | `string \| (ctx) => string` | 메뉴 라벨 — 함수면 행/셀 컨텍스트로 동적 생성 |
+| `onClick`   | `(ctx) => void`             | 클릭 핸들러                                   |
+| `visible`   | `(ctx) => boolean`          | false면 해당 셀에서 항목 숨김                 |
+| `disabled`  | `(ctx) => boolean`          | true면 비활성 렌더링                          |
+| `separator` | `boolean`                   | true면 구분선 (label/onClick 무시)            |
 
 `ctx`(ContextMenuContext)에는 `row`, `rowIndex`(visibleData 기준),
 `column`, `value`가 들어 있다.
@@ -95,7 +107,7 @@ new GridCore({
 ```ts
 grid.openContextMenu(x, y, rowIndex, columnKey); // 표시 항목 없으면 false
 grid.closeContextMenu();
-grid.runContextMenuItem(id);                     // 실행 후 자동으로 닫힘
+grid.runContextMenuItem(id); // 실행 후 자동으로 닫힘
 ```
 
 - `snapshot.contextMenu`가 `{ x, y, ctx, items }` 또는 `null` — 어댑터가

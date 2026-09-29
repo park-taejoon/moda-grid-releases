@@ -8,10 +8,10 @@ SheetJS(`xlsx` 패키지)를 **첫 호출 시 지연 로드(dynamic import)**하
 
 ```ts
 const buf = await grid.exportToXlsx({
-  filename: "users.xlsx",        // 다운로드 파일명 (기본값 "grid.xlsx")
-  sheetName: "사용자",            // 시트명 (기본값 "Sheet1")
-  visibleColumnsOnly: true,      // 숨긴 컬럼 제외 (기본값)
-  selectedRowsOnly: false,       // true면 선택 행만 (기본값)
+  filename: "users.xlsx", // 다운로드 파일명 (기본값 "grid.xlsx")
+  sheetName: "사용자", // 시트명 (기본값 "Sheet1")
+  visibleColumnsOnly: true, // 숨긴 컬럼 제외 (기본값)
+  selectedRowsOnly: false, // true면 선택 행만 (기본값)
 });
 ```
 
@@ -54,9 +54,9 @@ await grid.exportToXlsx({ styled: true, filename: "report.xlsx" });
 
 ```ts
 const result = await grid.importXlsx(fileOrBuffer, {
-  hasHeader: true,   // 첫 행을 header ?? field / field로 매칭 (기본값)
-  replace: false,    // true면 데이터 교체
-  sheet: "Sheet2",   // 또는 인덱스 (기본 첫 시트)
+  hasHeader: true, // 첫 행을 header ?? field / field로 매칭 (기본값)
+  replace: false, // true면 데이터 교체
+  sheet: "Sheet2", // 또는 인덱스 (기본 첫 시트)
 });
 // result: { added, skipped, errors } — importCsv와 동일 형태
 ```

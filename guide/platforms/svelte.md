@@ -13,10 +13,15 @@ npm install @moda-grid/svelte   # peer: svelte ^5
 ```svelte
 <script lang="ts">
   import { createGridStore, DataGrid } from "@moda-grid/svelte";
-  import "@moda-grid/svelte/styles.css";      // 필수 — 공통 스타일
+  import "@moda-grid/svelte/styles.css"; // 필수 — 공통 스타일
   import type { ColumnDef } from "@moda-grid/svelte";
 
-  interface User { id: number; name: string; role: string; age: number; }
+  interface User {
+    id: number;
+    name: string;
+    role: string;
+    age: number;
+  }
 
   const columns: ColumnDef<User>[] = [
     { field: "id", header: "ID", width: 60 },
@@ -26,12 +31,17 @@ npm install @moda-grid/svelte   # peer: svelte ^5
   ];
 
   const store = createGridStore<User>({ columns, data: users });
-  const { grid } = store;   // 액션 호출용
+  const { grid } = store; // 액션 호출용
   // $store === GridSnapshot<User> (스토어 자동 구독)
 </script>
 
-<input placeholder="검색…" oninput={(e) => grid.setSearch(e.currentTarget.value)} />
-<button onclick={() => grid.exportToCsv({ filename: "users.csv" })}>CSV보내기</button>
+<input
+  placeholder="검색…"
+  oninput={(e) => grid.setSearch(e.currentTarget.value)}
+/>
+<button onclick={() => grid.exportToCsv({ filename: "users.csv" })}
+  >CSV보내기</button
+>
 
 <DataGrid
   {store}
@@ -55,10 +65,10 @@ npm install @moda-grid/svelte   # peer: svelte ^5
 
 ## API
 
-| 함수 | 반환 | 용도 |
-| ---- | ---- | ---- |
+| 함수                       | 반환        | 용도                            |
+| -------------------------- | ----------- | ------------------------------- |
 | `createGridStore(options)` | `GridStore` | GridCore 생성 + `readable` 래핑 |
-| `toGridStore(grid)` | `GridStore` | 기존 GridCore를 스토어로 래핑 |
+| `toGridStore(grid)`        | `GridStore` | 기존 GridCore를 스토어로 래핑   |
 
 `GridStore` = `Readable<GridSnapshot>` + `{ grid: Grid }`.
 
@@ -80,7 +90,7 @@ Svelte 5의 named snippet으로 위임한다:
     {#if column.field === "role"}
       <span class="badge role-{value}">{value}</span>
     {:else}
-      {text}   <!-- formatter 적용 폴백 문자열 -->
+      {text} <!-- formatter 적용 폴백 문자열 -->
     {/if}
   {/snippet}
 
@@ -106,7 +116,10 @@ Svelte 5의 named snippet으로 위임한다:
 ## 스냅샷으로 보조 UI 만들기
 
 ```svelte
-<button disabled={$store.pageIndex === 0} onclick={() => grid.setPage($store.pageIndex - 1)}>
+<button
+  disabled={$store.pageIndex === 0}
+  onclick={() => grid.setPage($store.pageIndex - 1)}
+>
   이전
 </button>
 <span>{$store.filteredRowCount} / {$store.totalRowCount}행</span>

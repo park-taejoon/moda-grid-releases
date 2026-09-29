@@ -8,34 +8,50 @@
 ```ts
 const columns: ColumnDef<Product>[] = [
   // 이미지 — 셀 값을 src로 <img> 렌더링
-  { field: "thumb", header: "이미지", cellType: "image",
-    cellOptions: { alt: (row) => row.name } },
+  {
+    field: "thumb",
+    header: "이미지",
+    cellType: "image",
+    cellOptions: { alt: (row) => row.name },
+  },
 
   // 버튼 — 셀 값을 라벨로 렌더링, 클릭 시 onClick
-  { field: "action", header: "실행", cellType: "button",
-    cellOptions: { onClick: (row) => runJob(row) } },
+  {
+    field: "action",
+    header: "실행",
+    cellType: "button",
+    cellOptions: { onClick: (row) => runJob(row) },
+  },
 
   // 링크 — 셀 값 또는 href() 결과로 <a> 렌더링 (기본 target=_blank)
-  { field: "url", header: "링크", cellType: "link",
-    cellOptions: { href: (row) => `/products/${row.id}`, target: "_self" } },
+  {
+    field: "url",
+    header: "링크",
+    cellType: "link",
+    cellOptions: { href: (row) => `/products/${row.id}`, target: "_self" },
+  },
 
   // 프로그레스 — 숫자 값을 진행 바로 렌더링 (role=progressbar)
-  { field: "progress", header: "진척", cellType: "progress",
-    cellOptions: { max: 100 } },   // 기본값 100
+  {
+    field: "progress",
+    header: "진척",
+    cellType: "progress",
+    cellOptions: { max: 100 },
+  }, // 기본값 100
 
   // HTML — 셀 값을 innerHTML로 렌더링 (아래 XSS 주의 참고)
   { field: "desc", header: "설명", cellType: "html" },
 ];
 ```
 
-| cellType | 렌더링 | cellOptions |
-| -------- | ------ | ----------- |
-| `text` (기본) | 문자열 | — |
-| `image` | `<img src={value}>` | `alt(row)` |
-| `button` | `<button>` | `onClick(row)` |
-| `link` | `<a href>` | `href(row)`, `target` |
-| `progress` | 진행 바 + % 텍스트 | `max` (기본값 100) |
-| `html` | `innerHTML` (raw HTML) | — |
+| cellType      | 렌더링                 | cellOptions           |
+| ------------- | ---------------------- | --------------------- |
+| `text` (기본) | 문자열                 | —                     |
+| `image`       | `<img src={value}>`    | `alt(row)`            |
+| `button`      | `<button>`             | `onClick(row)`        |
+| `link`        | `<a href>`             | `href(row)`, `target` |
+| `progress`    | 진행 바 + % 텍스트     | `max` (기본값 100)    |
+| `html`        | `innerHTML` (raw HTML) | —                     |
 
 > **⚠️ `html` 셀 타입은 XSS 주의**: 셀 값을 이스케이프 없이
 > `innerHTML`로 주입한다. `<script>`/인라인 이벤트가 그대로 실행되므로

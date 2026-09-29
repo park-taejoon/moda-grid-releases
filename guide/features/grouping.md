@@ -6,9 +6,9 @@
 ## 코어 API
 
 ```ts
-grid.setGroupBy(["dept", "role"]);   // 다단계 그룹화 기준 필드
-grid.setGroupBy(null);               // 해제
-grid.toggleGroupExpanded(key);       // 그룹 펼침/접힘
+grid.setGroupBy(["dept", "role"]); // 다단계 그룹화 기준 필드
+grid.setGroupBy(null); // 해제
+grid.toggleGroupExpanded(key); // 그룹 펼침/접힘
 grid.expandAllGroups();
 grid.collapseAllGroups();
 grid.isGroupExpanded(key);
@@ -48,7 +48,7 @@ grid.isGroupExpanded(key);
 모두 지원:
 
 ```tsx
-<DataGrid groupPanel />                 // React / Vue / Svelte 동일
+<DataGrid groupPanel />; // React / Vue / Svelte 동일
 mountGrid(el, { columns, data, groupPanel: true });
 ```
 
@@ -79,8 +79,13 @@ mountGrid(el, { columns, data, groupPanel: true });
 ## 순수 함수 (커스텀 렌더링용)
 
 ```ts
-import { buildGroupTree, flattenGroupTree, collectGroupKeys,
-         aggregateRows, formatAggregate } from "@moda-grid/core";
+import {
+  buildGroupTree,
+  flattenGroupTree,
+  collectGroupKeys,
+  aggregateRows,
+  formatAggregate,
+} from "@moda-grid/core";
 ```
 
 ## 그룹 소계 행 (groupSubtotals)

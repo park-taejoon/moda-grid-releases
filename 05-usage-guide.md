@@ -18,31 +18,31 @@
 
 ```ts
 interface ColumnDef<TData> {
-  field: keyof TData & string;             // 컬럼 키 (필수)
-  header?: string;                         // 헤더 텍스트 (기본값: field)
-  width?: number;                          // 고정 너비(px)
-  minWidth?: number;                       // 리사이즈 최소 (기본 40)
-  maxWidth?: number;                       // 리사이즈 최대
-  resizable?: boolean;                     // 기본값 true
-  sortable?: boolean;                      // 기본값 true
-  visible?: boolean;                       // 기본값 true
-  pinned?: "left" | "right" | null;        // 좌/우 고정
-  filterable?: boolean;                    // 헤더 필터 입력 (기본값 false)
-  filterType?: "text"|"number"|"date"|"set"; // 연산자 목록 (set=값 체크리스트)
-  group?: string;                          // 컬럼 그룹 ID — 다단계 헤더
-  comparator?: (a, b) => number;           // 커스텀 정렬 비교
-  valueGetter?: (row) => unknown;          // 셀 값 추출 (기본값 row[field])
-  formatter?: (value, row) => string;      // 표시 문자열 변환
+  field: keyof TData & string; // 컬럼 키 (필수)
+  header?: string; // 헤더 텍스트 (기본값: field)
+  width?: number; // 고정 너비(px)
+  minWidth?: number; // 리사이즈 최소 (기본 40)
+  maxWidth?: number; // 리사이즈 최대
+  resizable?: boolean; // 기본값 true
+  sortable?: boolean; // 기본값 true
+  visible?: boolean; // 기본값 true
+  pinned?: "left" | "right" | null; // 좌/우 고정
+  filterable?: boolean; // 헤더 필터 입력 (기본값 false)
+  filterType?: "text" | "number" | "date" | "set"; // 연산자 목록 (set=값 체크리스트)
+  group?: string; // 컬럼 그룹 ID — 다단계 헤더
+  comparator?: (a, b) => number; // 커스텀 정렬 비교
+  valueGetter?: (row) => unknown; // 셀 값 추출 (기본값 row[field])
+  formatter?: (value, row) => string; // 표시 문자열 변환
   filterPredicate?: (value, row, filter) => boolean; // 커스텀 필터 판별
-  aggregationFn?: "sum"|"avg"|"min"|"max"|"count";   // 그룹 행 집계
-  editable?: boolean;                      // 기본값 true
-  cellEditor?: "text"|"number"|"select"|"date"|"custom";
-  editorOptions?: readonly string[];       // select 옵션
-  valueSetter?: (row, value) => void;      // 기본값 row[field] = value
+  aggregationFn?: "sum" | "avg" | "min" | "max" | "count"; // 그룹 행 집계
+  editable?: boolean; // 기본값 true
+  cellEditor?: "text" | "number" | "select" | "date" | "custom";
+  editorOptions?: readonly string[]; // select 옵션
+  valueSetter?: (row, value) => void; // 기본값 row[field] = value
   validate?: (value, row) => boolean | string;
-  rowDrag?: boolean;                       // 이 컬럼에 행 드래그 핸들
-  cellClass?: string | ((p: CellClassParams) => string);   // 셀 클래스
-  rowClass?: string | ((p: RowClassParams) => string);     // 행 클래스(합산)
+  rowDrag?: boolean; // 이 컬럼에 행 드래그 핸들
+  cellClass?: string | ((p: CellClassParams) => string); // 셀 클래스
+  rowClass?: string | ((p: RowClassParams) => string); // 행 클래스(합산)
 }
 ```
 
@@ -52,17 +52,18 @@ interface ColumnDef<TData> {
 interface GridOptions<TData> {
   columns: ColumnDef<TData>[];
   data: TData[];
-  getRowId?: (row) => string;              // 기본값 row.id ?? 자동 부여
-  pageSize?: number;                       // 0이면 페이징 없음 (기본값 0)
-  virtualScroll?: { rowHeight, viewportHeight, overscan? };
+  getRowId?: (row) => string; // 기본값 row.id ?? 자동 부여
+  pageSize?: number; // 0이면 페이징 없음 (기본값 0)
+  virtualScroll?: { rowHeight; viewportHeight; overscan? };
   selectionMode?: "single-cell" | "multi-cell" | "row";
-  serverSide?: ServerSideOptions<TData>;   // 서버 사이드 + 무한 스크롤
-  treeData?: TreeDataOptions<TData>;       // 계층형 데이터
+  serverSide?: ServerSideOptions<TData>; // 서버 사이드 + 무한 스크롤
+  treeData?: TreeDataOptions<TData>; // 계층형 데이터
   rowClass?: string | ((p: RowClassParams) => string); // 전체 행 클래스
-  undoLimit?: number;                      // 편집 이력 깊이 (기본값 100, 0=비활성)
-  pinnedTopRows?: TData[];                 // 상단 고정 행
-  pinnedBottomRows?: TData[];              // 하단 고정 행
-  columnGroups?: ColumnGroupDef[];         // 컬럼 그룹 헤더 라벨 ({ id, header })
+  undoLimit?: number; // 편집 이력 깊이 (기본값 100, 0=비활성)
+  pinnedTopRows?: TData[]; // 상단 고정 행
+  pinnedBottomRows?: TData[]; // 하단 고정 행
+  columnGroups?: ColumnGroupDef[]; // 컬럼 그룹 헤더 라벨 ({ id, header })
+  loading?: boolean; // 초기 로딩 오버레이 (런타임: setLoading)
 }
 ```
 
@@ -102,15 +103,19 @@ CDN 번들은 **헤드리스 코어만** 포함한다 — DOM 렌더링은 직�
       <table class="mg-table">
         <thead><tr>
           ${snap.visibleColumns
-            .map((c, i) => `<th data-field="${c.field}">${c.header ?? c.field}</th>`)
+            .map(
+              (c, i) =>
+                `<th data-field="${c.field}">${c.header ?? c.field}</th>`,
+            )
             .join("")}
         </tr></thead>
         <tbody>
           ${snap.rows
             .map(
-              (row) => `<tr>${snap.visibleColumns
-                .map((c) => `<td>${grid.getCellText(row, c)}</td>`)
-                .join("")}</tr>`,
+              (row) =>
+                `<tr>${snap.visibleColumns
+                  .map((c) => `<td>${grid.getCellText(row, c)}</td>`)
+                  .join("")}</tr>`,
             )
             .join("")}
         </tbody>
@@ -151,7 +156,9 @@ const columns: ReactColumnDef<User>[] = [
     field: "role",
     header: "역할",
     // 커스텀 셀 렌더러 (React 전용 ColumnDef 확장)
-    renderCell: (value) => <span className={`badge role-${value}`}>{value}</span>,
+    renderCell: (value) => (
+      <span className={`badge role-${value}`}>{value}</span>
+    ),
     // 커스텀 에디터 (선택)
     // renderEditor: (ctx) => <select value={ctx.value} onChange={...} />,
   },
@@ -167,12 +174,12 @@ function App() {
         CSV보내기
       </button>
       <DataGrid
-        grid={grid}              // 외부 GridCore (생략 시 내부 생성)
+        grid={grid} // 외부 GridCore (생략 시 내부 생성)
         columns={columns}
-        height={480}             // 가상 스크롤 뷰포트
-        rowHeight={37}           // 가상 스크롤 행 높이
+        height={480} // 가상 스크롤 뷰포트
+        rowHeight={37} // 가상 스크롤 행 높이
         selectionMode="multi-cell"
-        columnController         // 우상단 컬럼 관리 팝오버
+        columnController // 우상단 컬럼 관리 팝오버
       />
     </>
   );
@@ -181,23 +188,23 @@ function App() {
 
 ### props
 
-| prop | 타입 | 기본값 | 설명 |
-| ---- | ---- | ------ | ---- |
-| `columns` | `ReactColumnDef[]` | 필수 | 컬럼 정의 (`renderCell`/`renderEditor` 확장) |
-| `data` | `TData[]` | — | 행 데이터 (`grid` 제어 모드면 생략 가능) |
-| `grid` | `Grid<TData>` | — | 외부 GridCore. 생략 시 내부 생성 |
-| `height` / `rowHeight` | `number` | — | 가상 스크롤 (함께 지정) |
-| `overscan` | `number` | `5` | 가상 스크롤 여유분 |
-| `resizable` / `reorderable` / `selectable` | `boolean` | `true` | 리사이즈/재배치/행 클릭 선택 |
-| `selectionMode` | `SelectionMode` | `single-cell` | 셀 선택 모드 |
-| `serverSide` | `ServerSideOptions` | — | 서버 데이터 소스 (내부 생성 모드만) |
-| `treeData` | `TreeDataOptions` | — | 트리 데이터 (내부 생성 모드만) |
-| `columnController` | `boolean` | `false` | 컬럼 관리 팝오버 |
-| `filterToggle` | `boolean` | `false` | 필터 행 표시/숨김 버튼 (filterable 컬럼 있을 때만) |
-| `rowCheckboxes` | `boolean` | `false` | 행 체크박스 선택 컬럼 (헤더 전체선택 포함) |
-| `statusBar` | `boolean` | `true` | 선택 영역 집계 상태바 |
-| `getRowId` | `(row) => string` | — | 행 ID 함수 |
-| `className` | `string` | — | 추가 클래스 |
+| prop                                       | 타입                | 기본값        | 설명                                               |
+| ------------------------------------------ | ------------------- | ------------- | -------------------------------------------------- |
+| `columns`                                  | `ReactColumnDef[]`  | 필수          | 컬럼 정의 (`renderCell`/`renderEditor` 확장)       |
+| `data`                                     | `TData[]`           | —             | 행 데이터 (`grid` 제어 모드면 생략 가능)           |
+| `grid`                                     | `Grid<TData>`       | —             | 외부 GridCore. 생략 시 내부 생성                   |
+| `height` / `rowHeight`                     | `number`            | —             | 가상 스크롤 (함께 지정)                            |
+| `overscan`                                 | `number`            | `5`           | 가상 스크롤 여유분                                 |
+| `resizable` / `reorderable` / `selectable` | `boolean`           | `true`        | 리사이즈/재배치/행 클릭 선택                       |
+| `selectionMode`                            | `SelectionMode`     | `single-cell` | 셀 선택 모드                                       |
+| `serverSide`                               | `ServerSideOptions` | —             | 서버 데이터 소스 (내부 생성 모드만)                |
+| `treeData`                                 | `TreeDataOptions`   | —             | 트리 데이터 (내부 생성 모드만)                     |
+| `columnController`                         | `boolean`           | `false`       | 컬럼 관리 팝오버                                   |
+| `filterToggle`                             | `boolean`           | `false`       | 필터 행 표시/숨김 버튼 (filterable 컬럼 있을 때만) |
+| `rowCheckboxes`                            | `boolean`           | `false`       | 행 체크박스 선택 컬럼 (헤더 전체선택 포함)         |
+| `statusBar`                                | `boolean`           | `true`        | 선택 영역 집계 상태바                              |
+| `getRowId`                                 | `(row) => string`   | —             | 행 ID 함수                                         |
+| `className`                                | `string`            | —             | 추가 클래스                                        |
 
 ---
 
@@ -296,28 +303,28 @@ props/슬롯/동작은 Vue 3 어댑터와 동일. props 선언이 런타임(`Pro
 
 ### 정렬 / 다중 정렬
 
-| 사용법 | 동작 |
-| ------ | ---- |
-| 헤더 클릭 | `grid.toggleSort(field)` — asc → desc → 해제 |
-| Shift+헤더 클릭 | `grid.toggleSort(field, true)` — 조건 추가 (priority 부여) |
-| `grid.setSort(field, dir)` | 단일 조건으로 교체 |
-| `grid.clearSorts()` | 전체 해제 |
-| `sortable: false` | 해당 컬럼 정렬 비활성 |
+| 사용법                     | 동작                                                       |
+| -------------------------- | ---------------------------------------------------------- |
+| 헤더 클릭                  | `grid.toggleSort(field)` — asc → desc → 해제               |
+| Shift+헤더 클릭            | `grid.toggleSort(field, true)` — 조건 추가 (priority 부여) |
+| `grid.setSort(field, dir)` | 단일 조건으로 교체                                         |
+| `grid.clearSorts()`        | 전체 해제                                                  |
+| `sortable: false`          | 해당 컬럼 정렬 비활성                                      |
 
 기본 비교: `Intl.Collator(numeric: true)` — 숫자/날짜 자연 비교.
 `comparator`로 컬럼별 교체 가능. 스냅샷: `sort`(첫 조건), `sortState`(전체 배열).
 
 ### 필터 / 검색
 
-| 사용법 | 동작 |
-| ------ | ---- |
-| `filterable: true` | 헤더 아래 연산자+입력 필터 행 표시 |
-| `grid.setFilter(field, filter \| string)` | 컬럼 필터 설정 (문자열이면 contains) |
-| `grid.clearFilters()` | 모든 필터 해제 |
-| `grid.setSearch(text)` | 전역 검색 (표시 컬럼 전체, 대소문자 무시) |
-| `filterType: "number" \| "date"` | 타입별 연산자 목록 |
-| `filterType: "set"` | 값 체크리스트 필터 — `grid.getUniqueValues(field)`로 항목 구성, `operator: "set"` + `values`로 지정 |
-| `filterPredicate` | 커스텀 판별 함수 |
+| 사용법                                    | 동작                                                                                                |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `filterable: true`                        | 헤더 아래 연산자+입력 필터 행 표시                                                                  |
+| `grid.setFilter(field, filter \| string)` | 컬럼 필터 설정 (문자열이면 contains)                                                                |
+| `grid.clearFilters()`                     | 모든 필터 해제                                                                                      |
+| `grid.setSearch(text)`                    | 전역 검색 (표시 컬럼 전체, 대소문자 무시)                                                           |
+| `filterType: "number" \| "date"`          | 타입별 연산자 목록                                                                                  |
+| `filterType: "set"`                       | 값 체크리스트 필터 — `grid.getUniqueValues(field)`로 항목 구성, `operator: "set"` + `values`로 지정 |
+| `filterPredicate`                         | 커스텀 판별 함수                                                                                    |
 
 복수 필터는 AND 결합. 연산자: text=`contains/equals/startsWith/endsWith`,
 number=`equals/greaterThan/lessThan/inRange`, date=`equals/before/after`,
@@ -332,16 +339,16 @@ set=`values` 배열 포함 여부.
 
 ### 선택 (행/셀/범위)
 
-| 사용법 | 동작 |
-| ------ | ---- |
-| `selectionMode` prop | `single-cell` / `multi-cell` / `row` |
-| 행 클릭 | `toggleRowSelection(id)` (`selectable: false`로 비활성) |
-| 셀 클릭 | `setActiveCell(row, col)` — 활성 셀 아웃라인 |
-| 방향키 / Tab / Shift+방향키 | 셀 네비게이션 / 범위 확장 |
-| `grid.setCellRange({start,end})` | 범위 선택 직접 지정 |
-| `rowCheckboxes` prop | 행 체크박스 컬럼 — 헤더 전체선택 (`toggleAllRows`/`isAllSelected`/`isSomeSelected`) |
-| `snapshot.selectedRowIds` / `selectedRange` | 선택 상태 |
-| `snapshot.selectionAggregates` | 선택 범위 집계 `{cells,count,sum,avg,min,max}` — `statusBar` prop으로 표시 |
+| 사용법                                      | 동작                                                                                |
+| ------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `selectionMode` prop                        | `single-cell` / `multi-cell` / `row`                                                |
+| 행 클릭                                     | `toggleRowSelection(id)` (`selectable: false`로 비활성)                             |
+| 셀 클릭                                     | `setActiveCell(row, col)` — 활성 셀 아웃라인                                        |
+| 방향키 / Tab / Shift+방향키                 | 셀 네비게이션 / 범위 확장                                                           |
+| `grid.setCellRange({start,end})`            | 범위 선택 직접 지정                                                                 |
+| `rowCheckboxes` prop                        | 행 체크박스 컬럼 — 헤더 전체선택 (`toggleAllRows`/`isAllSelected`/`isSomeSelected`) |
+| `snapshot.selectedRowIds` / `selectedRange` | 선택 상태                                                                           |
+| `snapshot.selectionAggregates`              | 선택 범위 집계 `{cells,rows,count,sum,avg,min,max}` — `statusBar` prop으로 표시     |
 
 ### 가상 스크롤
 
@@ -351,18 +358,18 @@ set=`values` 배열 포함 여부.
 
 ### 컬럼 조작
 
-| 기능 | API / UI |
-| ---- | -------- |
-| 너비 리사이즈 | `resizable` prop (기본 on) — 헤더 경계 드래그, `setColumnWidth(field, px)` |
-| 순서 변경 | `reorderable` prop (기본 on) — 헤더 드래그, `reorderColumn(from, to)` |
-| 고정 | `pinned: "left"\|"right"` — sticky + 경계 그림자, `setColumnPinned` |
-| 표시/숨김 | `visible: false`, `setColumnVisible(field, bool)` |
-| 전체 표시/숨김 | `setAllColumnsVisible(bool)` |
-| 레이아웃 초기화 | `resetColumnLayout()` |
-| 자동 너비 | `autoSizeColumn(field, measureText?)` / `autoSizeAllColumns(measureText?)` — 내용 기준 |
-| 그룹 헤더 | `ColumnDef.group` + `GridOptions.columnGroups` — `snapshot.headerGroups`의 2단 헤더 |
-| 컬럼 관리 UI | `columnController` prop — 우상단 `컬럼 ▾` 팝오버 (체크박스 + 전체 선택/해제) |
-| 필터 행 토글 | `filterToggle` prop — 우상단 `필터 ▾/▸` 버튼, `setFilterRowVisible()`/`toggleFilterRow()`. 숨겨도 적용된 필터는 유지 |
+| 기능            | API / UI                                                                                                             |
+| --------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 너비 리사이즈   | `resizable` prop (기본 on) — 헤더 경계 드래그, `setColumnWidth(field, px)`                                           |
+| 순서 변경       | `reorderable` prop (기본 on) — 헤더 드래그, `reorderColumn(from, to)`                                                |
+| 고정            | `pinned: "left"\|"right"` — sticky + 경계 그림자, `setColumnPinned`                                                  |
+| 표시/숨김       | `visible: false`, `setColumnVisible(field, bool)`                                                                    |
+| 전체 표시/숨김  | `setAllColumnsVisible(bool)`                                                                                         |
+| 레이아웃 초기화 | `resetColumnLayout()`                                                                                                |
+| 자동 너비       | `autoSizeColumn(field, measureText?)` / `autoSizeAllColumns(measureText?)` — 내용 기준                               |
+| 그룹 헤더       | `ColumnDef.group` + `GridOptions.columnGroups` — `snapshot.headerGroups`의 2단 헤더                                  |
+| 컬럼 관리 UI    | `columnController` prop — 우상단 `컬럼 ▾` 팝오버 (체크박스 + 전체 선택/해제)                                         |
+| 필터 행 토글    | `filterToggle` prop — 우상단 `필터 ▾/▸` 버튼, `setFilterRowVisible()`/`toggleFilterRow()`. 숨겨도 적용된 필터는 유지 |
 
 ### 인라인 편집
 
@@ -399,10 +406,10 @@ grid.applyState(JSON.parse(localStorage.getItem("grid")!));
 ### 행 그룹화 + 집계
 
 ```ts
-grid.setGroupBy(["role", "name"]);   // 다단계 그룹화
-grid.toggleGroupExpanded(key);       // 접기/펼치기
-grid.expandAllGroups();              // 전체 펼치기
-grid.collapseAllGroups();            // 전체 접기
+grid.setGroupBy(["role", "name"]); // 다단계 그룹화
+grid.toggleGroupExpanded(key); // 접기/펼치기
+grid.expandAllGroups(); // 전체 펼치기
+grid.collapseAllGroups(); // 전체 접기
 ```
 
 - 그룹 행에 `aggregationFn` 지정 컬럼의 집계 값 표시
@@ -413,9 +420,13 @@ grid.collapseAllGroups();            // 전체 접기
 
 ```ts
 // flat parentId
-treeData: { getParentId: (row) => row.parentId }
+treeData: {
+  getParentId: (row) => row.parentId;
+}
 // nested children
-treeData: { childrenKey: "children" }   // 기본값 'children'
+treeData: {
+  childrenKey: "children";
+} // 기본값 'children'
 ```
 
 첫 컬럼에 토글 화살표(`.mg-tree-toggle`) + depth 들여쓰기. 펼침 상태는
@@ -425,9 +436,9 @@ treeData: { childrenKey: "children" }   // 기본값 'children'
 
 ```ts
 grid.exportToCsv({
-  filename: "users.csv",        // 브라우저 다운로드 파일명
-  visibleColumnsOnly: true,     // 숨김 컬럼 제외 (기본값)
-  selectedRowsOnly: false,      // 선택 행만
+  filename: "users.csv", // 브라우저 다운로드 파일명
+  visibleColumnsOnly: true, // 숨김 컬럼 제외 (기본값)
+  selectedRowsOnly: false, // 선택 행만
 });
 ```
 
@@ -440,8 +451,8 @@ grid.exportToCsv({
 ```ts
 grid.getCsvTemplate({ filename: "users-template.csv" }); // 컬럼에 맞는 헤더 행 다운로드
 const result = grid.importCsv(csvText, {
-  hasHeader: true,  // 첫 줄 헤더 → 컬럼 이름 매칭 (기본값)
-  replace: false,   // false=추가 / true=교체 (기본값)
+  hasHeader: true, // 첫 줄 헤더 → 컬럼 이름 매칭 (기본값)
+  replace: false, // false=추가 / true=교체 (기본값)
 });
 // result: { added, skipped, errors }
 ```
@@ -493,6 +504,42 @@ serverSide: {
 - 커스텀 테마: `.my-theme { --grid-primary-color: #9333ea; }` 식으로 변수 재정의
 - `ColumnDef.cellClass` / `rowClass`, `GridOptions.rowClass`로 조건부 클래스
   (함수 형태는 `{value,row,rowIndex,column}`/`{row,rowIndex}` 파라미터)
+
+### 그리드 편의 API (IBSheet/AG-Grid 대응)
+
+엔터프라이즈 그리드의 조회·모델·스크롤 패턴과 동일한 헬퍼 모음.
+전체 목록과 매핑 표는 `guide/features/grid-api.md` 참조.
+
+```ts
+// 행 수·순회 — 표시(visibleData) / 필터 후 전체 / 원본 전체 구분
+grid.getDisplayedRowCount();
+grid.getFilteredRowCount();
+grid.getTotalRowCount();
+grid.getDisplayedRowAt(i);
+grid.getDisplayedRowIndex(id);
+grid.forEachDisplayedRow(fn);
+grid.forEachRow(fn);
+grid.getColumn(field);
+grid.getColumnIndex(field);
+
+// 정렬·필터 모델 일괄 get/set — 외부 UI·URL 동기화용
+grid.getSortModel();
+grid.setSortModel(specs);
+grid.getFilterModel();
+grid.setFilterModel(map);
+grid.getSearchText();
+
+// 선택·갱신·수정분
+grid.setRowSelection(ids); // 일괄 선택 (isRowSelectable 적용)
+grid.refreshCells(); // 강제 재계산 — 외부 제자리 수정 후
+grid.getModifiedRows(); // {row, status: "I"|"U"|"D"}[] — 저장 페이로드용
+
+// 스크롤·로딩
+grid.ensureRowVisible(id); // 행 ID 기준 (없으면 false)
+grid.scrollToTop();
+grid.scrollToBottom();
+grid.setLoading(true); // 코어 로딩 상태 → snapshot.loading 오버레이
+```
 
 ---
 

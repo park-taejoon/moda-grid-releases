@@ -5,15 +5,15 @@ Undo/Redo로 되돌릴 수 있다.
 
 ## 사용자 조작 (DataGrid 기본 동작)
 
-| 조작 | 동작 |
-| ---- | ---- |
-| 셀 더블클릭 | 편집 진입 (`singleClickEdit: true`면 한 번 클릭) |
-| 활성 셀에서 Enter / F2 | 기존 값으로 편집 진입 |
-| 활성 셀에서 문자 입력 | 입력값으로 교체하며 편집 진입 |
-| Enter | 저장 + 아래 셀로 이동 |
-| Tab / Shift+Tab | 저장 + 오른쪽/왼쪽 이동 — 행 끝/처음에서 다음/이전 행으로 wrap |
-| Escape | 취소 (저장 안 함) |
-| Ctrl/Cmd+Z | Undo, Ctrl/Cmd+Y·Ctrl/Cmd+Shift+Z | Redo |
+| 조작                   | 동작                                                           |
+| ---------------------- | -------------------------------------------------------------- |
+| 셀 더블클릭            | 편집 진입 (`singleClickEdit: true`면 한 번 클릭)               |
+| 활성 셀에서 Enter / F2 | 기존 값으로 편집 진입                                          |
+| 활성 셀에서 문자 입력  | 입력값으로 교체하며 편집 진입                                  |
+| Enter                  | 저장 + 아래 셀로 이동                                          |
+| Tab / Shift+Tab        | 저장 + 오른쪽/왼쪽 이동 — 행 끝/처음에서 다음/이전 행으로 wrap |
+| Escape                 | 취소 (저장 안 함)                                              |
+| Ctrl/Cmd+Z             | Undo, Ctrl/Cmd+Y·Ctrl/Cmd+Shift+Z                              | Redo |
 
 편집 중 셀은 `.mg-cell-editing`, 에러는 `.mg-edit-error`로 셀 아래 표시되고
 입력 테두리가 빨간색이 된다. 에디터 내부 키는 `stopPropagation`으로
@@ -47,14 +47,14 @@ new GridCore({ columns, data, editType: "fullRow" });
 grid.setEditType("fullRow"); // 런타임 전환 — 편집 중이면 취소 후 전환
 ```
 
-| 항목 | 동작 |
-| ---- | ---- |
-| 진입 | 더블클릭/F2/타이핑/`startEditing` — 행 전체가 편집 모드 |
-| 탭 이동 | Tab/Shift+Tab = **행 안** 다음·이전 편집 셀로 포커스 이동. 끝에서 커밋 후 이동 |
-| 커밋 | Enter·행 밖 클릭 — 행의 모든 보류 값을 **한 Undo 단위**로 적용 |
-| 검증 | 셀 하나라도 실패하면 아무것도 쓰지 않고 첫 오류 셀로 포커스 |
-| 취소 | Escape — 행의 모든 보류 값 폐기 |
-| 제외 | `editable:false`·`editable` 함수 거부·수식 컬럼은 일반 셀로 표시. `cellEditor:"checkbox"`는 즉시 토글 유지 |
+| 항목    | 동작                                                                                                       |
+| ------- | ---------------------------------------------------------------------------------------------------------- |
+| 진입    | 더블클릭/F2/타이핑/`startEditing` — 행 전체가 편집 모드                                                    |
+| 탭 이동 | Tab/Shift+Tab = **행 안** 다음·이전 편집 셀로 포커스 이동. 끝에서 커밋 후 이동                             |
+| 커밋    | Enter·행 밖 클릭 — 행의 모든 보류 값을 **한 Undo 단위**로 적용                                             |
+| 검증    | 셀 하나라도 실패하면 아무것도 쓰지 않고 첫 오류 셀로 포커스                                                |
+| 취소    | Escape — 행의 모든 보류 값 폐기                                                                            |
+| 제외    | `editable:false`·`editable` 함수 거부·수식 컬럼은 일반 셀로 표시. `cellEditor:"checkbox"`는 즉시 토글 유지 |
 
 - 스냅샷: `editingValues`(field→보류 값 맵)·`editingErrors`(field→에러),
   `editingCell`은 행 안 포커스된 셀을 가리킨다.
@@ -147,7 +147,7 @@ grid.canUndo(); grid.canRedo();
 
 ```ts
 new GridCore({ columns, data, cellFlash: true });
-grid.setCellFlash(true);           // 런타임 토글
+grid.setCellFlash(true); // 런타임 토글
 ```
 
 - `setCellValue`/`updateRow`/`applyTransaction`/붙여넣기/채우기/바꾸기 등
@@ -172,20 +172,23 @@ grid.setCellFlash(true);           // 런타임 토글
 - `headerCheckbox: true`면 헤더에 삼중 상태(전체/일부/없음) 체크박스가
   표시되고, 클릭 시 **필터링된 모든 편집 가능 행**을 일괄 체크/해제한다 —
   `editable: false`/`editable(row)`가 거부하는 행은 건너뛰며, 전체가 하나의
-  Undo 단위로 기록된다.
+  Undo 단위로 기록된다. 삼중 상태도 편집 가능 행 기준으로 계산되므로
+  읽기 전용 행만 미체크여도 헤더가 `일부` 상태로 멈추지 않는다.
+  편집 가능 행이 하나도 없으면 헤더 체크박스는 `disabled`로 렌더링된다.
 - `validate`/`required` 검증을 통과하지 못하면 토글이 거부된다.
 
 ```ts
-grid.isCellChecked(row, col);            // 셀의 체크 여부
-grid.toggleCellChecked(row, col);        // 즉시 토글 (검증 실패 시 false)
-grid.setCellChecked(row, col, true);     // 명시적 설정 (토글 아님)
-grid.checkboxColumnState(col);           // "all" | "some" | "none"
-grid.toggleAllChecked(col);              // 헤더 체크박스 토글과 동일
+grid.isCellChecked(row, col); // 셀의 체크 여부
+grid.toggleCellChecked(row, col); // 즉시 토글 (검증 실패 시 false)
+grid.setCellChecked(row, col, true); // 명시적 설정 (토글 아님)
+grid.checkboxColumnState(col); // "all" | "some" | "none" — 편집 가능 행 기준
+grid.isCheckboxColumnEditable(col); // 토글 가능한 편집 가능 행이 있는지
+grid.toggleAllChecked(col); // 헤더 체크박스 토글과 동일
 
 // 행 ID / 데이터 기준 API — 인덱스와 무관
-grid.getCheckedRows();                   // 체크된 행 데이터[] (첫 checkbox 컬럼 기준)
-grid.getCheckedRows("done");             // 지정 필드 기준
-grid.setRowChecked("42", true);          // ID로 체크 설정 — checkedValue 자동 매핑
+grid.getCheckedRows(); // 체크된 행 데이터[] (첫 checkbox 컬럼 기준)
+grid.getCheckedRows("done"); // 지정 필드 기준
+grid.setRowChecked("42", true); // ID로 체크 설정 — checkedValue 자동 매핑
 grid.setRowChecked("42", false, "done"); // 필드 지정 + 해제
 ```
 
@@ -235,7 +238,7 @@ select보다 한 클릭 빠르다 (타사 그리드 `Type:"Radio"` 대응). 선�
 `multiLine` 셀의 줄 수에 맞춰 행 높이를 자동 확장한다:
 
 ```tsx
-<DataGrid autoRowHeight columns={[ { field: "memo", multiLine: true } ]} />
+<DataGrid autoRowHeight columns={[{ field: "memo", multiLine: true }]} />
 ```
 
 - 코어 `grid.getRowHeight(row)`가 컬럼 너비로 줄 수를 추정해 필요 높이를
@@ -253,7 +256,7 @@ select보다 한 클릭 빠르다 (타사 그리드 `Type:"Radio"` 대응). 선�
 
 ```ts
 grid.setRowHeight(grid.getRowId(row), 80); // px
-grid.setRowHeight(id, null);               // 해제 → 기본/autoRowHeight 계산
+grid.setRowHeight(id, null); // 해제 → 기본/autoRowHeight 계산
 ```
 
 `getRowHeight`는 오버라이드를 `autoRowHeight` 추정보다 **우선 적용**한다.
@@ -334,7 +337,7 @@ mountGrid(el, { rowNumbers: true, rowResizable: true, ... });
 
 ```ts
 const errors = grid.validateChanges(); // [{ row, rowId, field, message }]
-if (errors.length) return;             // 서버 전송 중단
+if (errors.length) return; // 서버 전송 중단
 ```
 
 ## 편집 진입 차단 — `beforeEdit`
@@ -368,11 +371,11 @@ if (errors.length) return;             // 서버 전송 중단
 `CellEditorContext`(`{ row, column, value, editValue, error, setValue,
 commit, cancel }`)를 제공한다. 어댑터별 연결:
 
-| 프레임워크 | 확장점 |
-| ---------- | ------ |
-| React | `ReactColumnDef.renderEditor(ctx)` |
-| Vue / Vue2 | `#editor-{field}` 슬롯 |
-| Svelte | `{#snippet editor}` |
+| 프레임워크 | 확장점                             |
+| ---------- | ---------------------------------- |
+| React      | `ReactColumnDef.renderEditor(ctx)` |
+| Vue / Vue2 | `#editor-{field}` 슬롯             |
+| Svelte     | `{#snippet editor}`                |
 
 예시는 각 플랫폼 가이드 참고.
 

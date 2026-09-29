@@ -10,7 +10,11 @@ DOM을 모르며, 정렬·컬럼 필터·전역 검색·페이징·행 선택 �
 import { GridCore } from "@moda-grid/core";
 // 팩토리 함수도 제공: createGrid(options) === new GridCore(options)
 
-interface User { id: number; name: string; age: number; }
+interface User {
+  id: number;
+  name: string;
+  age: number;
+}
 
 const grid = new GridCore<User>({
   columns: [
@@ -20,7 +24,7 @@ const grid = new GridCore<User>({
   ],
   data: users,
   getRowId: (row) => String(row.id), // 생략 시 row.id → WeakMap 자동 ID
-  pageSize: 20,                      // 초기 페이지 크기 (기본값 0 = 비활성)
+  pageSize: 20, // 초기 페이지 크기 (기본값 0 = 비활성)
   // 선택: serverSide(무한 스크롤), treeData(계층 데이터),
   //       selectionMode, virtualScroll — 각 섹션 참고
 });
@@ -28,11 +32,11 @@ const grid = new GridCore<User>({
 
 ## 핵심 데이터 필드
 
-| 필드 | 타입 | 설명 |
-| ---- | ---- | ---- |
-| `rawData` | `TData[]` | 원본 데이터 (`setData`로 교체) |
-| `visibleData` | `TData[]` | **필터 → 검색 → 정렬 → 페이징 적용 후 출력 데이터** |
-| `columns` | `ColumnDef[]` | 컬럼 정의 배열 (`field`/`header`/`width`/`sortable`/`filterable` 등) |
+| 필드          | 타입          | 설명                                                                 |
+| ------------- | ------------- | -------------------------------------------------------------------- |
+| `rawData`     | `TData[]`     | 원본 데이터 (`setData`로 교체)                                       |
+| `visibleData` | `TData[]`     | **필터 → 검색 → 정렬 → 페이징 적용 후 출력 데이터**                  |
+| `columns`     | `ColumnDef[]` | 컬럼 정의 배열 (`field`/`header`/`width`/`sortable`/`filterable` 등) |
 
 `visibleData`는 매번 `notify()` 시점에 파이프라인 전체를 다시 계산해
 공개 필드로 갱신된다.
@@ -43,9 +47,9 @@ const grid = new GridCore<User>({
 const unsubscribe = grid.subscribe(() => {
   console.log(grid.visibleData.length, "rows");
 });
-grid.notify();   // 수동으로 재계산 + 알림 발행
-unsubscribe();   // 구독 해제
-grid.destroy();  // 리스너 전체 해제
+grid.notify(); // 수동으로 재계산 + 알림 발행
+unsubscribe(); // 구독 해제
+grid.destroy(); // 리스너 전체 해제
 ```
 
 - 모든 뮤테이션 메서드(`setData`, `setSort`, `setFilter`, `setPage` …)는
@@ -57,12 +61,12 @@ grid.destroy();  // 리스너 전체 해제
 
 ## 주요 기능 API
 
-| 메서드 | 시그니처 | 동작 |
-| ------ | -------- | ---- |
-| `setData` | `(data: TData[])` | rawData 교체 (방어적 복사) |
-| `setSort` | `(field, direction: "asc" \| "desc" \| null)` | 단일 정렬 지정/해제 (기존 조건 전부 교체) |
+| 메서드      | 시그니처                                                      | 동작                                                                                   |
+| ----------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `setData`   | `(data: TData[])`                                             | rawData 교체 (방어적 복사)                                                             |
+| `setSort`   | `(field, direction: "asc" \| "desc" \| null)`                 | 단일 정렬 지정/해제 (기존 조건 전부 교체)                                              |
 | `setFilter` | `(field, value: string \| ColumnFilter \| null \| undefined)` | 컬럼별 필터. 문자열이면 contains, 객체면 연산자 조건. 빈 값이면 해제, pageIndex 0 리셋 |
-| `setPage` | `(pageIndex: number, pageSize?: number)` | 페이지 이동. `size=0`이면 페이징 비활성 |
+| `setPage`   | `(pageIndex: number, pageSize?: number)`                      | 페이지 이동. `size=0`이면 페이징 비활성                                                |
 
 ## 반응형 어댑터 계약 (getSnapshot)
 
@@ -76,112 +80,125 @@ grid.subscribe(() => render(grid.getSnapshot()));
 
 `GridSnapshot` 필드:
 
-| 필드 | 설명 |
-| ---- | ---- |
-| `columns` / `visibleColumns` | 전체 / 표시 컬럼 |
-| `rows` | `visibleData`와 동일한 최종 출력 행 |
-| `totalRowCount` / `filteredRowCount` | 필터 전 전체 수 / 페이징 전 수 |
-| `sort` / `sortState` | 첫 번째 정렬 조건(호환) / 다중 정렬 조건 `SortSpec[]` |
-| `groupBy` / `expandedRowKeys` | 그룹화 필드 목록 / 펼친 그룹 키 집합 |
-| `displayRows` | 그룹화 시 평탄 렌더 목록 `DisplayRow[]` (아니면 `null`) |
-| `searchText` / `filters` | 전역 검색어 / 컬럼 필터 `Record<field, ColumnFilter>` |
-| `filterRowVisible` | 필터 입력 행 표시 여부 (기본값 `true` — 숨겨도 필터 조건은 유지) |
-| `pageIndex` / `pageSize` / `pageCount` | 페이징 상태 |
-| `selectedRowIds` | 선택된 행 ID 집합 |
-| `rowDrag` | 행 드래그 진행 상태 `{ draggingIndex, dropIndex }` (아니면 `null`) |
-| `pinnedTopRows` / `pinnedBottomRows` | 상단/하단 고정 행 데이터 (`TData[]`) |
-| `grandTotals` | `aggregationFn` 컬럼의 전체 집계 (해당 컬럼 없으면 `null`) |
-| `selectionAggregates` | 선택 범위 집계 `{ cells, count, sum, avg, min, max }` (선택 없으면 `null`) |
-| `headerGroups` | 상단 그룹 헤더 스팬 `HeaderGroupSpan[]` (`ColumnDef.group` 없으면 `null`) |
+| 필드                                   | 설명                                                                                           |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `columns` / `visibleColumns`           | 전체 / 표시 컬럼                                                                               |
+| `rows`                                 | `visibleData`와 동일한 최종 출력 행                                                            |
+| `totalRowCount` / `filteredRowCount`   | 필터 전 전체 수 / 페이징 전 수                                                                 |
+| `sort` / `sortState`                   | 첫 번째 정렬 조건(호환) / 다중 정렬 조건 `SortSpec[]`                                          |
+| `groupBy` / `expandedRowKeys`          | 그룹화 필드 목록 / 펼친 그룹 키 집합                                                           |
+| `displayRows`                          | 그룹화 시 평탄 렌더 목록 `DisplayRow[]` (아니면 `null`)                                        |
+| `searchText` / `filters`               | 전역 검색어 / 컬럼 필터 `Record<field, ColumnFilter>`                                          |
+| `filterRowVisible`                     | 필터 입력 행 표시 여부 (기본값 `true` — 숨겨도 필터 조건은 유지)                               |
+| `pageIndex` / `pageSize` / `pageCount` | 페이징 상태                                                                                    |
+| `selectedRowIds`                       | 선택된 행 ID 집합                                                                              |
+| `rowDrag`                              | 행 드래그 진행 상태 `{ draggingIndex, dropIndex }` (아니면 `null`)                             |
+| `pinnedTopRows` / `pinnedBottomRows`   | 상단/하단 고정 행 데이터 (`TData[]`)                                                           |
+| `grandTotals`                          | `aggregationFn` 컬럼의 전체 집계 (해당 컬럼 없으면 `null`)                                     |
+| `selectionAggregates`                  | 선택 범위 집계 `{ cells, rows, count, sum, avg, min, max }` (선택 없으면 `null`)               |
+| `headerGroups`                         | 상단 그룹 헤더 스팬 `HeaderGroupSpan[]` (`ColumnDef.group` 없으면 `null`)                      |
+| `loading`                              | 로딩 오버레이 표시 여부 (`setLoading`/`GridOptions.loading` 제어, `serverSide.loading`과 별개) |
 
 ## 확장 API (어댑터·앱 공용)
 
-| 메서드 | 동작 |
-| ------ | ---- |
-| `setColumns(cols)` | 컬럼 정의 교체 |
-| `toggleSort(field, additive?)` | `asc → desc → 해제` 순환. `additive=true`(Shift+클릭)이면 다중 정렬 조건에 추가/제거 |
-| `clearSorts()` | 모든 정렬 조건 해제 |
-| `setGroupBy(fields \| null)` | 행 그룹화 기준 필드 목록 설정 (`['dept','role']`) |
-| `toggleGroupExpanded(key)` | 그룹 행 펼침/접힘 토글 |
-| `expandAllGroups()` / `collapseAllGroups()` | 전체 펼치기/접기 |
-| `isGroupExpanded(key)` | 그룹 키 펼침 여부 |
-| `exportToCsv(options?)` | 표시 상태 데이터를 CSV 문자열로 반환 + 브라우저면 다운로드 |
-| `getCsvTemplate(options?)` | 그리드 컬럼에 맞는 CSV 템플릿(헤더 행) 반환 + 다운로드 |
-| `importCsv(csvText, options?)` | CSV 문자열 파싱 → 행 추가/교체. `CsvImportResult {added, skipped, errors}` 반환 |
-| `getSelectionTsv(options?)` | 선택 범위(없으면 활성 셀)를 TSV 문자열로 변환 (없으면 null). `{ includeHeaders: true }`면 첫 줄에 헤더 행 포함 |
-| `pasteTsv(tsv, start?)` | TSV를 활성 셀부터 순차 쓰기 → `PasteResult` 반환 (편집 이력에 1개 단위로 기록) |
-| `setSearch(text)` | 전역 검색 (표시 컬럼 전체, 대소문자 무시) |
-| `clearFilters()` | 모든 컬럼 필터 해제 |
-| `setFilterRowVisible(visible)` / `toggleFilterRow()` | 필터 입력 행 표시/숨김 — 데이터 파이프라인 재계산 없이 스냅샷만 갱신 |
-| `toggleRowSelection(id)` / `clearSelection()` / `isSelected(id)` | 행 선택 |
-| `toggleAllRows()` / `isAllSelected()` / `isSomeSelected()` | 전체 행 선택 토글 / 전체·일부 선택 여부 (헤더 체크박스용) |
-| `setColumnVisibility(field, visible)` / `setColumnVisible(columnId, visible)` | 컬럼 표시/숨김 (동일 동작 — columnId는 `field`와 같음) |
-| `setAllColumnsVisible(visible)` | 전체 컬럼 일괄 표시/숨김 (Column Controller의 전체 선택/해제) |
-| `setColumnWidth(field, width)` | 컬럼 너비 변경 (minWidth/maxWidth 클램프) |
-| `autoSizeColumn(field, measureText?)` / `autoSizeAllColumns(measureText?)` | 내용 기준 자동 너비. `measureText` 미지정 시 문자 길이 기반 추정 (DOM 없이 동작) |
-| `reorderColumn(draggedId, targetId)` | 컬럼 순서 변경 (숨김 포함 전체 순서 기준) |
-| `resetColumnLayout()` | 너비/순서를 컬럼 정의 기본값으로 초기화 |
-| `setColumnPinned(field, pinned)` | 컬럼 고정 위치 변경 (`'left'`/`'right'`/`null`) |
-| `isServerSide()` / `isRowLoaded(i)` | 서버 모드 여부 / 해당 인덱스 로드 여부 (스켈레톤 판별) |
-| `refreshServerRows()` | 서버 캐시 폐기 + 현재 뷰포트부터 재요청 |
-| `moveRow(from, to)` | 행 순서 이동 + `rowReorder` 이벤트 발행 |
-| `beginRowDrag` / `updateRowDropPosition` / `endRowDrag` | 행 드래그 라이프사이클 (어댑터 연결용) |
-| `on(event, cb)` | 타입 이벤트 구독 (`rowReorder` 등) |
-| `setSelectionMode(mode)` | 셀 선택 모드 (`'single-cell'`/`'multi-cell'`/`'row'`) |
-| `setActiveCell(row, col)` | 활성 셀 지정 (범위 해제 + 클램프 + scrollIntoView) |
-| `setCellRange(range \| null)` | 선택 범위 직접 지정 (정규화 적용) |
-| `navigateCell(dir, extend?)` | 키보드 셀 네비게이션 (아래 셀 선택 참고) |
-| `clearCellSelection()` | 활성 셀/범위 해제 |
-| `isActiveCell(r, c)` / `isCellInRange(r, c)` | 렌더링 시 셀 상태 조회 |
-| `getScrollTop()` | 현재 스크롤 위치 (DOM 동기화용) |
-| `startEditing(row, col, initial?)` | 편집 진입 (`editable: false`면 false) |
-| `updateEditValue(v)` | 임시 입력 값 갱신 (에러 해제 포함) |
-| `commitEditing()` | 검증 후 rawData에 저장. 실패 시 false + 편집 유지 |
-| `cancelEditing()` | 저장 없이 편집 종료 |
-| `isEditing(r, c)` / `isCellEditable(r, c)` | 렌더링 시 편집 상태 조회 |
-| `getEditorContext(r, c)` | 커스텀 편집기용 컨텍스트 (`CellEditorContext`) |
-| `undo()` / `redo()` / `canUndo()` / `canRedo()` | 편집·붙여넣기 이력 되돌리기/다시 실행 (아래 Undo/Redo 참고) |
-| `getRowState(row)` / `getChanges()` / `hasChanges()` | 행 상태(I/U/D) 조회 / 변경분 수집 / 변경 여부 (아래 행 상태 추적 참고) |
-| `deleteRowsByIds(ids)` / `restoreRowsByIds(ids)` | 삭제 마킹(D) / 삭제 마킹 해제 |
-| `commitChanges()` / `clearChanges()` | D 행 실제 제거 + 마킹 초기화 / 마킹만 초기화 |
-| `validateChanges()` / `validateRow(row)` / `getCellError(row, col)` | I/U 행의 required·validate 검사 (저장 전 유효성 확인) |
-| `setPinnedTopRows(rows)` / `setPinnedBottomRows(rows)` | 상단/하단 고정 행 데이터 설정 (`null`로 해제) |
-| `getUniqueValues(field)` | 컬럼의 고유 표시 값 목록 — Set 필터 체크리스트용 |
-| `getState()` / `applyState(state)` | 직렬화 가능한 그리드 상태 저장/복원 (`GridPersistedState`) |
-| `getRowId(row)` | 행 고유 ID (렌더 key용) |
-| `getCellText(row, col)` | `formatter`/`valueGetter` 적용된 표시 문자열 |
-| `getCellClass(row, rowIndex, col)` / `getRowClass(row, rowIndex)` | `cellClass`/`rowClass` 해석된 커스텀 클래스 문자열 |
+| 메서드                                                                        | 동작                                                                                                           |
+| ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `setColumns(cols)`                                                            | 컬럼 정의 교체                                                                                                 |
+| `toggleSort(field, additive?)`                                                | `asc → desc → 해제` 순환. `additive=true`(Shift+클릭)이면 다중 정렬 조건에 추가/제거                           |
+| `clearSorts()`                                                                | 모든 정렬 조건 해제                                                                                            |
+| `setGroupBy(fields \| null)`                                                  | 행 그룹화 기준 필드 목록 설정 (`['dept','role']`)                                                              |
+| `toggleGroupExpanded(key)`                                                    | 그룹 행 펼침/접힘 토글                                                                                         |
+| `expandAllGroups()` / `collapseAllGroups()`                                   | 전체 펼치기/접기                                                                                               |
+| `isGroupExpanded(key)`                                                        | 그룹 키 펼침 여부                                                                                              |
+| `exportToCsv(options?)`                                                       | 표시 상태 데이터를 CSV 문자열로 반환 + 브라우저면 다운로드                                                     |
+| `getCsvTemplate(options?)`                                                    | 그리드 컬럼에 맞는 CSV 템플릿(헤더 행) 반환 + 다운로드                                                         |
+| `importCsv(csvText, options?)`                                                | CSV 문자열 파싱 → 행 추가/교체. `CsvImportResult {added, skipped, errors}` 반환                                |
+| `getSelectionTsv(options?)`                                                   | 선택 범위(없으면 활성 셀)를 TSV 문자열로 변환 (없으면 null). `{ includeHeaders: true }`면 첫 줄에 헤더 행 포함 |
+| `pasteTsv(tsv, start?)`                                                       | TSV를 활성 셀부터 순차 쓰기 → `PasteResult` 반환 (편집 이력에 1개 단위로 기록)                                 |
+| `setSearch(text)`                                                             | 전역 검색 (표시 컬럼 전체, 대소문자 무시)                                                                      |
+| `clearFilters()`                                                              | 모든 컬럼 필터 해제                                                                                            |
+| `setFilterRowVisible(visible)` / `toggleFilterRow()`                          | 필터 입력 행 표시/숨김 — 데이터 파이프라인 재계산 없이 스냅샷만 갱신                                           |
+| `toggleRowSelection(id)` / `clearSelection()` / `isSelected(id)`              | 행 선택                                                                                                        |
+| `toggleAllRows()` / `isAllSelected()` / `isSomeSelected()`                    | 전체 행 선택 토글 / 전체·일부 선택 여부 (헤더 체크박스용)                                                      |
+| `setColumnVisibility(field, visible)` / `setColumnVisible(columnId, visible)` | 컬럼 표시/숨김 (동일 동작 — columnId는 `field`와 같음)                                                         |
+| `setAllColumnsVisible(visible)`                                               | 전체 컬럼 일괄 표시/숨김 (Column Controller의 전체 선택/해제)                                                  |
+| `setColumnWidth(field, width)`                                                | 컬럼 너비 변경 (minWidth/maxWidth 클램프)                                                                      |
+| `autoSizeColumn(field, measureText?)` / `autoSizeAllColumns(measureText?)`    | 내용 기준 자동 너비. `measureText` 미지정 시 문자 길이 기반 추정 (DOM 없이 동작)                               |
+| `reorderColumn(draggedId, targetId)`                                          | 컬럼 순서 변경 (숨김 포함 전체 순서 기준)                                                                      |
+| `resetColumnLayout()`                                                         | 너비/순서를 컬럼 정의 기본값으로 초기화                                                                        |
+| `setColumnPinned(field, pinned)`                                              | 컬럼 고정 위치 변경 (`'left'`/`'right'`/`null`)                                                                |
+| `isServerSide()` / `isRowLoaded(i)`                                           | 서버 모드 여부 / 해당 인덱스 로드 여부 (스켈레톤 판별)                                                         |
+| `refreshServerRows()`                                                         | 서버 캐시 폐기 + 현재 뷰포트부터 재요청                                                                        |
+| `moveRow(from, to)`                                                           | 행 순서 이동 + `rowReorder` 이벤트 발행                                                                        |
+| `beginRowDrag` / `updateRowDropPosition` / `endRowDrag`                       | 행 드래그 라이프사이클 (어댑터 연결용)                                                                         |
+| `on(event, cb)`                                                               | 타입 이벤트 구독 (`rowReorder` 등)                                                                             |
+| `setSelectionMode(mode)`                                                      | 셀 선택 모드 (`'single-cell'`/`'multi-cell'`/`'row'`)                                                          |
+| `setActiveCell(row, col)`                                                     | 활성 셀 지정 (범위 해제 + 클램프 + scrollIntoView)                                                             |
+| `setCellRange(range \| null)`                                                 | 선택 범위 직접 지정 (정규화 적용)                                                                              |
+| `navigateCell(dir, extend?)`                                                  | 키보드 셀 네비게이션 (아래 셀 선택 참고)                                                                       |
+| `clearCellSelection()`                                                        | 활성 셀/범위 해제                                                                                              |
+| `isActiveCell(r, c)` / `isCellInRange(r, c)`                                  | 렌더링 시 셀 상태 조회                                                                                         |
+| `getScrollTop()`                                                              | 현재 스크롤 위치 (DOM 동기화용)                                                                                |
+| `startEditing(row, col, initial?)`                                            | 편집 진입 (`editable: false`면 false)                                                                          |
+| `updateEditValue(v)`                                                          | 임시 입력 값 갱신 (에러 해제 포함)                                                                             |
+| `commitEditing()`                                                             | 검증 후 rawData에 저장. 실패 시 false + 편집 유지                                                              |
+| `cancelEditing()`                                                             | 저장 없이 편집 종료                                                                                            |
+| `isEditing(r, c)` / `isCellEditable(r, c)`                                    | 렌더링 시 편집 상태 조회                                                                                       |
+| `getEditorContext(r, c)`                                                      | 커스텀 편집기용 컨텍스트 (`CellEditorContext`)                                                                 |
+| `undo()` / `redo()` / `canUndo()` / `canRedo()`                               | 편집·붙여넣기 이력 되돌리기/다시 실행 (아래 Undo/Redo 참고)                                                    |
+| `getRowState(row)` / `getChanges()` / `hasChanges()`                          | 행 상태(I/U/D) 조회 / 변경분 수집 / 변경 여부 (아래 행 상태 추적 참고)                                         |
+| `deleteRowsByIds(ids)` / `restoreRowsByIds(ids)`                              | 삭제 마킹(D) / 삭제 마킹 해제                                                                                  |
+| `commitChanges()` / `clearChanges()`                                          | D 행 실제 제거 + 마킹 초기화 / 마킹만 초기화                                                                   |
+| `validateChanges()` / `validateRow(row)` / `getCellError(row, col)`           | I/U 행의 required·validate 검사 (저장 전 유효성 확인)                                                          |
+| `setPinnedTopRows(rows)` / `setPinnedBottomRows(rows)`                        | 상단/하단 고정 행 데이터 설정 (`null`로 해제)                                                                  |
+| `getUniqueValues(field)`                                                      | 컬럼의 고유 표시 값 목록 — Set 필터 체크리스트용                                                               |
+| `getState()` / `applyState(state)`                                            | 직렬화 가능한 그리드 상태 저장/복원 (`GridPersistedState`)                                                     |
+| `getRowId(row)`                                                               | 행 고유 ID (렌더 key용)                                                                                        |
+| `getCellText(row, col)`                                                       | `formatter`/`valueGetter` 적용된 표시 문자열                                                                   |
+| `getCellClass(row, rowIndex, col)` / `getRowClass(row, rowIndex)`             | `cellClass`/`rowClass` 해석된 커스텀 클래스 문자열                                                             |
+| `getDisplayedRowCount()` / `getFilteredRowCount()` / `getTotalRowCount()`     | 행 수 — 현재 표시(페이지 반영) / 필터+검색 후(페이징 전) / 원본 전체                                           |
+| `getDisplayedRowAt(i)` / `getDisplayedRowIndex(id)`                           | 표시 인덱스 ↔ 행/ID 변환 (그룹화 시 displayRows 리프 기준)                                                     |
+| `forEachDisplayedRow(fn)` / `forEachRow(fn)`                                  | 표시 순서 / 원본 순서 행 순회                                                                                  |
+| `getColumn(field)` / `getColumnIndex(field)`                                  | 컬럼 정의 조회 / 표시 컬럼 인덱스 (숨김·없으면 -1)                                                             |
+| `getSortModel()` / `setSortModel(specs)`                                      | 정렬 조건 모델 일괄 get/set — priority 순 정규화, 서버 모드 재요청                                             |
+| `getFilterModel()` / `setFilterModel(map)`                                    | 컬럼 필터 맵 일괄 get/set — 기존 필터 전체 교체, 첫 페이지 이동                                                |
+| `getSearchText()`                                                             | 현재 전역 검색어 (snapshot.searchText와 동일)                                                                  |
+| `setRowSelection(ids)`                                                        | 행 ID 목록 일괄 선택 — isRowSelectable 제외 적용, null은 전체 해제                                             |
+| `refreshCells()`                                                              | 파이프라인 강제 재계산 + 재렌더 — 외부 제자리 수정/formatter 참조 변경 후                                      |
+| `getModifiedRows()`                                                           | I/U/D 마킹 행을 `{row, status}[]` flat 배열로 반환 (저장 페이로드용)                                           |
+| `ensureRowVisible(id)` / `scrollToTop()` / `scrollToBottom()`                 | 행 ID 기준 스크롤 / 첫·마지막 표시 행으로                                                                      |
+| `setLoading(bool)` / `isLoading()`                                            | 로딩 오버레이 상태 — `snapshot.loading`으로 노출, 어댑터가 오버레이 렌더링                                     |
 
 ## ColumnDef
 
 ```ts
 interface ColumnDef<TData> {
-  field: keyof TData & string;             // 컬럼 키 (명세의 key)
-  header?: string;                         // 헤더 텍스트 (명세의 title)
+  field: keyof TData & string; // 컬럼 키 (명세의 key)
+  header?: string; // 헤더 텍스트 (명세의 title)
   width?: number;
-  minWidth?: number;                       // 리사이즈 최소 (기본값 DEFAULT_MIN_COLUMN_WIDTH=40)
-  maxWidth?: number;                       // 리사이즈 최대 (기본값 무제한)
-  resizable?: boolean;                     // 기본값 true
-  sortable?: boolean;                      // 기본값 true
-  visible?: boolean;                       // 기본값 true
-  pinned?: 'left' | 'right' | null;        // 좌/우 고정 (기본값: 고정 없음)
-  filterable?: boolean;                    // 기본값 false — 헤더 필터 입력 표시
-  filterType?: 'text'|'number'|'date'|'set'; // 기본값 'text' — 연산자 목록 결정 ('set'은 값 체크리스트)
-  group?: string;                          // 컬럼 그룹 ID — 다단계 헤더 (GridOptions.columnGroups 참고)
+  minWidth?: number; // 리사이즈 최소 (기본값 DEFAULT_MIN_COLUMN_WIDTH=40)
+  maxWidth?: number; // 리사이즈 최대 (기본값 무제한)
+  resizable?: boolean; // 기본값 true
+  sortable?: boolean; // 기본값 true
+  visible?: boolean; // 기본값 true
+  pinned?: "left" | "right" | null; // 좌/우 고정 (기본값: 고정 없음)
+  filterable?: boolean; // 기본값 false — 헤더 필터 입력 표시
+  filterType?: "text" | "number" | "date" | "set"; // 기본값 'text' — 연산자 목록 결정 ('set'은 값 체크리스트)
+  group?: string; // 컬럼 그룹 ID — 다단계 헤더 (GridOptions.columnGroups 참고)
   comparator?: (a: TData, b: TData) => number;
   valueGetter?: (row: TData) => unknown;
   formatter?: (value: unknown, row: TData) => string;
   filterPredicate?: (value, row, filter: ColumnFilter) => boolean; // 커스텀 필터 판별
-  aggregationFn?: 'sum'|'avg'|'min'|'max'|'count'; // 그룹 행 집계
-  editable?: boolean;                      // 기본값 true — 인라인 편집 허용
-  cellEditor?: 'text'|'number'|'select'|'date'|'custom'; // 기본값 'text'
-  editorOptions?: readonly string[];       // select 편집기 옵션
-  valueSetter?: (row, value) => void;      // 기본값: row[field] = value
-  required?: boolean;                      // 필수 입력 — 빈 값이면 저장/가져오기/붙여넣기 거부 + 헤더 * 표시
+  aggregationFn?: "sum" | "avg" | "min" | "max" | "count"; // 그룹 행 집계
+  editable?: boolean; // 기본값 true — 인라인 편집 허용
+  cellEditor?: "text" | "number" | "select" | "date" | "custom"; // 기본값 'text'
+  editorOptions?: readonly string[]; // select 편집기 옵션
+  valueSetter?: (row, value) => void; // 기본값: row[field] = value
+  required?: boolean; // 필수 입력 — 빈 값이면 저장/가져오기/붙여넣기 거부 + 헤더 * 표시
   validate?: (value, row) => boolean | string; // 편집 저장 전 검증
-  rowDrag?: boolean;                       // 이 컬럼 셀에 행 드래그 핸들 표시
+  rowDrag?: boolean; // 이 컬럼 셀에 행 드래그 핸들 표시
   cellClass?: ClassSource<CellClassParams>; // 셀 커스텀 클래스 (문자열 | 함수)
-  rowClass?: ClassSource<RowClassParams>;   // 행 커스텀 클래스 — 여러 컬럼이 합산
+  rowClass?: ClassSource<RowClassParams>; // 행 커스텀 클래스 — 여러 컬럼이 합산
 }
 ```
 
@@ -196,10 +213,10 @@ interface ColumnDef<TData> {
 관리되며, `priority` 순으로 체인 비교한다 (앞 조건이 같으면 다음 조건).
 
 ```ts
-grid.toggleSort("role");          // 일반 클릭: 단일 정렬 (기존 조건 교체)
-grid.toggleSort("age", true);     // Shift+클릭: 조건 추가 → priority 2
-grid.toggleSort("age", true);     // 다시 Shift+클릭: desc
-grid.toggleSort("age", true);     // 한 번 더: 조건 제거, priority 재정규화
+grid.toggleSort("role"); // 일반 클릭: 단일 정렬 (기존 조건 교체)
+grid.toggleSort("age", true); // Shift+클릭: 조건 추가 → priority 2
+grid.toggleSort("age", true); // 다시 Shift+클릭: desc
+grid.toggleSort("age", true); // 한 번 더: 조건 제거, priority 재정규화
 ```
 
 - `setSort(field, dir)`는 모든 조건을 단일 조건으로 교체한다.
@@ -211,12 +228,12 @@ grid.toggleSort("age", true);     // 한 번 더: 조건 제거, priority 재정
 `setFilter`는 `ColumnFilter` 객체 — `{ operator, value, valueTo? }` — 를 받는다.
 평가는 순수 함수 `matchFilterValue(value, filter)`(`filtering.ts`)가 담당한다.
 
-| 종류 | 연산자 | 의미 |
-| ---- | ------ | ---- |
-| text | `contains` `equals` `startsWith` `endsWith` | 문자열 비교 (대소문자 무시) |
-| number | `equals` `greaterThan` `lessThan` `inRange` | `Number()` 변환 비교, `inRange`는 `value~valueTo` |
-| date | `equals` `before` `after` | 날짜 파싱 후 "일" 단위 비교 (`equals`=같은 날) |
-| set | `set` | `values` 배열에 포함된 값만 통과 — 엑셀식 체크박스 필터 |
+| 종류   | 연산자                                      | 의미                                                    |
+| ------ | ------------------------------------------- | ------------------------------------------------------- |
+| text   | `contains` `equals` `startsWith` `endsWith` | 문자열 비교 (대소문자 무시)                             |
+| number | `equals` `greaterThan` `lessThan` `inRange` | `Number()` 변환 비교, `inRange`는 `value~valueTo`       |
+| date   | `equals` `before` `after`                   | 날짜 파싱 후 "일" 단위 비교 (`equals`=같은 날)          |
+| set    | `set`                                       | `values` 배열에 포함된 값만 통과 — 엑셀식 체크박스 필터 |
 
 - `equals`는 스마트 판별: 양쪽이 숫자면 숫자 비교, 양쪽이 날짜면 같은 날
   비교, 아니면 문자열 동일 비교.
@@ -250,12 +267,12 @@ grid.setFilter("role", null);   // 전체 선택 = 필터 해제
 계층 구조로 변환한다 — `grouping.ts`의 순수 함수가 담당한다.
 
 ```ts
-buildGroupTree(leafRows, keys, columns, readValue) // GroupNode[] 트리
-flattenGroupTree(tree, expandedRowKeys)            // DisplayRow[] 평탄화
+buildGroupTree(leafRows, keys, columns, readValue); // GroupNode[] 트리
+flattenGroupTree(tree, expandedRowKeys); // DisplayRow[] 평탄화
 ```
 
 - `GroupNode`: `{ type:'group', key, field, value, depth, rowCount,
-  aggregates, expanded, children }` — `children`에 하위 그룹/리프가 재귀로 들어간다
+aggregates, expanded, children }` — `children`에 하위 그룹/리프가 재귀로 들어간다
 - `DisplayRow` = `GroupNode | LeafDisplayRow` (리프는 `row`, `rowIndex`,
   `depth` 보유 — `rowIndex`는 `visibleData` 기준이라 기존 선택/편집 API와 호환)
 - 그룹 `key`는 전체 경로를 JSON 직렬화한 고유 문자열
@@ -277,14 +294,16 @@ flattenGroupTree(tree, expandedRowKeys)            // DisplayRow[] 평탄화
 ```ts
 // flat 모드 — data는 평면 배열, parentId로 연결
 new GridCore({
-  columns, data,
-  getRowId: (r) => r.id,                     // 노드 키의 기준
+  columns,
+  data,
+  getRowId: (r) => r.id, // 노드 키의 기준
   treeData: { getParentId: (r) => r.parentId },
 });
 
 // nested 모드 — 행 객체 안에 자식 배열 (기본 키 'children')
 new GridCore({
-  columns, data,
+  columns,
+  data,
   treeData: { childrenKey: "children" },
 });
 ```
@@ -310,8 +329,8 @@ new GridCore({
 - 트리 모드에서는 `groupBy`와 행 드래그(`isRowDraggable() === false`)가
   비활성화된다.
 
-| 메서드 | 동작 |
-| ------ | ---- |
+| 메서드                      | 동작                     |
+| --------------------------- | ------------------------ |
 | `toggleTreeExpanded(rowId)` | 트리 노드 펼침/접힘 토글 |
 
 ## CSV보내기 / 가져오기 / 템플릿
@@ -321,9 +340,9 @@ new GridCore({
 
 ```ts
 grid.exportToCsv({
-  filename: "users.csv",        // 다운로드 파일명 (기본값 "grid.csv")
-  visibleColumnsOnly: true,     // 숨긴 컬럼 제외 (기본값)
-  selectedRowsOnly: false,      // true면 선택된 행만 (기본값)
+  filename: "users.csv", // 다운로드 파일명 (기본값 "grid.csv")
+  visibleColumnsOnly: true, // 숨긴 컬럼 제외 (기본값)
+  selectedRowsOnly: false, // true면 선택된 행만 (기본값)
 });
 ```
 
@@ -340,8 +359,8 @@ grid.exportToCsv({
 
 ```ts
 grid.importCsv(text, {
-  hasHeader: true,   // 첫 줄을 header ?? field / field 이름으로 컬럼 매칭
-  replace: false,    // false면 기존 데이터 뒤에 추가, true면 교체
+  hasHeader: true, // 첫 줄을 header ?? field / field 이름으로 컬럼 매칭
+  replace: false, // false면 기존 데이터 뒤에 추가, true면 교체
 });
 ```
 
@@ -386,18 +405,18 @@ TSV로 변환한다. 어댑터가 `Ctrl/Cmd+C`에서 `navigator.clipboard.writeT
 ```ts
 interface ServerSideDataSource<TData> {
   getRows(params: {
-    startRow: number;                  // inclusive
-    endRow: number;                    // exclusive
-    sortModel: SortSpec[];             // 현재 다중 정렬 (priority 순)
+    startRow: number; // inclusive
+    endRow: number; // exclusive
+    sortModel: SortSpec[]; // 현재 다중 정렬 (priority 순)
     filterModel: Record<string, ColumnFilter>;
   }): Promise<{ rows: TData[]; lastRowIndex?: number }>;
 }
 
 new GridCore({
   columns,
-  data: [],                                        // 서버 모드에서는 무시
-  serverSide: { dataSource, cacheBlockSize: 50 },  // 기본 블록 50행
-  virtualScroll: { rowHeight, viewportHeight },    // 무한 스크롤은 가상 스크롤과 함께
+  data: [], // 서버 모드에서는 무시
+  serverSide: { dataSource, cacheBlockSize: 50 }, // 기본 블록 50행
+  virtualScroll: { rowHeight, viewportHeight }, // 무한 스크롤은 가상 스크롤과 함께
 });
 ```
 
@@ -423,9 +442,9 @@ GridCore는 `columnStates: Map<field, ColumnState>`를 유지한다:
 
 ```ts
 interface ColumnState {
-  id: string;      // = ColumnDef.field
-  width?: number;  // 현재 너비 (undefined면 자동)
-  order: number;   // 표시 순서 (숨김 포함)
+  id: string; // = ColumnDef.field
+  width?: number; // 현재 너비 (undefined면 자동)
+  order: number; // 표시 순서 (숨김 포함)
 }
 ```
 
@@ -463,9 +482,9 @@ interface ColumnState {
 ```ts
 new GridCore({
   columns: [
-    { field: "name", header: "이름" },                          // 그룹 없음 → rowspan=2
-    { field: "kor",  header: "국어", group: "score" },
-    { field: "eng",  header: "영어", group: "score" },
+    { field: "name", header: "이름" }, // 그룹 없음 → rowspan=2
+    { field: "kor", header: "국어", group: "score" },
+    { field: "eng", header: "영어", group: "score" },
     { field: "math", header: "수학", group: "score" },
   ],
   columnGroups: [{ id: "score", header: "성적" }],
@@ -502,8 +521,8 @@ grid.applyState(JSON.parse(localStorage.getItem("grid-state")!));
 ## 컬럼 자동 너비 (Auto-Size)
 
 ```ts
-grid.autoSizeColumn("name");                    // 단일 컬럼
-grid.autoSizeAllColumns();                      // 전체 표시 컬럼
+grid.autoSizeColumn("name"); // 단일 컬럼
+grid.autoSizeAllColumns(); // 전체 표시 컬럼
 grid.autoSizeAllColumns((t) => ctx.measureText(t).width); // 정확한 측정
 ```
 
@@ -531,12 +550,12 @@ selectionMode: 'single-cell' | 'multi-cell' | 'row';
 
 어댑터는 `KeyboardEvent.key`를 `CellNavigation`으로 매핑해 호출한다:
 
-| 키 | `dir` | 동작 |
-| -- | ----- | ---- |
-| ArrowUp/Down/Left/Right | `up`/`down`/`left`/`right` | 인접 셀로 이동 (경계 클램프) |
-| Home / End | `home`/`end` | 행의 첫/마지막 컬럼으로 이동 |
-| PageUp / PageDown | `pageUp`/`pageDown` | 뷰포트 행 수 단위 이동 (`floor(viewportHeight/rowHeight)`, 비가상은 10) |
-| Shift + 위 키 | `extend=true` | 앵커부터 범위 확장 (`single-cell` 모드 제외) |
+| 키                      | `dir`                      | 동작                                                                    |
+| ----------------------- | -------------------------- | ----------------------------------------------------------------------- |
+| ArrowUp/Down/Left/Right | `up`/`down`/`left`/`right` | 인접 셀로 이동 (경계 클램프)                                            |
+| Home / End              | `home`/`end`               | 행의 첫/마지막 컬럼으로 이동                                            |
+| PageUp / PageDown       | `pageUp`/`pageDown`        | 뷰포트 행 수 단위 이동 (`floor(viewportHeight/rowHeight)`, 비가상은 10) |
+| Shift + 위 키           | `extend=true`              | 앵커부터 범위 확장 (`single-cell` 모드 제외)                            |
 
 동작 규칙:
 
@@ -560,11 +579,15 @@ selectionMode: 'single-cell' | 'multi-cell' | 'row';
 `selectionAggregates`에 스프레드시트 상태바식 집계가 들어간다:
 
 ```ts
-{ cells: 6, count: 4, sum: 152, avg: 38, min: 12, max: 90 }
-// cells: 범위 내 셀 수, count: 숫자 해석 가능 셀 수, 나머지는 숫자 없으면 null
+{ cells: 6, rows: 0, count: 4, sum: 152, avg: 38, min: 12, max: 90 }
+// cells: 범위 내 셀 수, rows: 행 선택 모드의 선택 행 수 (셀 범위면 0)
+// count: 숫자 해석 가능 셀 수, 나머지는 숫자 없으면 null
 ```
 
 선택이 없으면 `null`. 어댑터는 이를 하단 상태바(`mg-statusbar`)로 표시한다.
+명시적 셀 범위가 없고 행 선택(`selectedRowIds`)이 있으면 선택 행 전체를
+집계하고 `rows`에 선택 행 수가 들어간다 — 행 선택은 `activeCell`
+폴백보다 우선한다.
 
 ## 인라인 셀 편집 (Inline Cell Editing)
 
@@ -613,9 +636,10 @@ Svelte `{#snippet editor}`에 전달한다.
 기록된다. 붙여넣기는 여러 셀이 바뀌어도 **1개 단위**로 기록된다:
 
 ```ts
-grid.undo();    // 마지막 변경 되돌리기 → 성공 시 true
-grid.redo();    // 다시 실행
-grid.canUndo(); grid.canRedo();
+grid.undo(); // 마지막 변경 되돌리기 → 성공 시 true
+grid.redo(); // 다시 실행
+grid.canUndo();
+grid.canRedo();
 ```
 
 - 되돌리기/다시 실행도 `valueSetter` 경로를 거친다 — 편집 커밋과 동일한
@@ -639,11 +663,11 @@ CRUD 패턴용:
   즉시 제거된다.
 
 ```ts
-grid.deleteRowsByIds(["3", "7"]);       // → D 마킹
-const changes = grid.getChanges();      // { inserted, updated, deleted } — JSON 직렬화 가능
+grid.deleteRowsByIds(["3", "7"]); // → D 마킹
+const changes = grid.getChanges(); // { inserted, updated, deleted } — JSON 직렬화 가능
 await fetch("/api/users", { method: "POST", body: JSON.stringify(changes) });
-grid.commitChanges();                   // D 행 실제 제거 + 마킹 초기화
-grid.clearChanges();                    // (또는) 마킹만 초기화 — D 행 복귀
+grid.commitChanges(); // D 행 실제 제거 + 마킹 초기화
+grid.clearChanges(); // (또는) 마킹만 초기화 — D 행 복귀
 ```
 
 어댑터는 `rowStatus` prop으로 맨 왼쪽 상태 컬럼(배지 + 행별
@@ -681,7 +705,7 @@ tbody 맨 위/맨 아래에 `getCellText`로 렌더링한다
 관리하고, 어댑터가 HTML5 Drag and Drop 이벤트를 연결한다.
 
 ```ts
-grid.moveRow(fromIndex, toIndex);        // visibleData 기준 인덱스 이동
+grid.moveRow(fromIndex, toIndex); // visibleData 기준 인덱스 이동
 grid.on("rowReorder", (e) => {
   // e = { fromIndex, toIndex, row } — 데이터 파이프라인 재계산 후 발행
 });
@@ -689,14 +713,14 @@ grid.on("rowReorder", (e) => {
 
 드래그 라이프사이클 API (어댑터가 HTML5 DnD 이벤트에 연결):
 
-| 메서드 | 동작 |
-| ------ | ---- |
-| `isRowDraggable()` | 드래그 가능 여부 — 정렬/그룹화/서버 사이드 모드에서는 `false` (표시 순서가 rawData와 무관하므로) |
-| `beginRowDrag(rowIndex)` | 드래그 시작. 불가 상태/범위 밖이면 `false` |
-| `updateRowDropPosition(gapIndex)` | 드롭 갭 갱신. `i`면 i번 행 위, `행 수`면 마지막 행 아래. 어댑터가 dragover의 포인터 Y로 계산 |
-| `endRowDrag(commit)` | 종료. `true`면 갭을 최종 인덱스로 변환해 `moveRow` 실행, `false`면 취소 |
-| `moveRow(from, to)` | 행 이동 + `rowReorder` 이벤트 발행. 성공 시 `true` |
-| `getRowDragState()` | `{ draggingIndex, dropIndex }` 또는 `null` |
+| 메서드                            | 동작                                                                                             |
+| --------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `isRowDraggable()`                | 드래그 가능 여부 — 정렬/그룹화/서버 사이드 모드에서는 `false` (표시 순서가 rawData와 무관하므로) |
+| `beginRowDrag(rowIndex)`          | 드래그 시작. 불가 상태/범위 밖이면 `false`                                                       |
+| `updateRowDropPosition(gapIndex)` | 드롭 갭 갱신. `i`면 i번 행 위, `행 수`면 마지막 행 아래. 어댑터가 dragover의 포인터 Y로 계산     |
+| `endRowDrag(commit)`              | 종료. `true`면 갭을 최종 인덱스로 변환해 `moveRow` 실행, `false`면 취소                          |
+| `moveRow(from, to)`               | 행 이동 + `rowReorder` 이벤트 발행. 성공 시 `true`                                               |
+| `getRowDragState()`               | `{ draggingIndex, dropIndex }` 또는 `null`                                                       |
 
 - 인덱스는 **visibleData 기준** — 필터가 걸려 있어도 화면에 보이는
   순서 관계가 유지되도록 rawData에서 목표 행 기준으로 재삽입한다.
@@ -732,22 +756,22 @@ DOM에 의존하지 않는 순수 계산기 + GridCore 통합 API로 구성된�
 import { computeVirtualScroll } from "@moda-grid/core";
 
 const v = computeVirtualScroll({
-  totalCount: 100_000,  // 전체 행 수
-  rowHeight: 40,        // 행 높이 px
-  viewportHeight: 600,  // 보이는 영역 높이 px
-  scrollTop: 52_000,    // 현재 스크롤 위치 px
-  overscan: 5,          // 상/하 여유분 행 수 (기본값 5)
+  totalCount: 100_000, // 전체 행 수
+  rowHeight: 40, // 행 높이 px
+  viewportHeight: 600, // 보이는 영역 높이 px
+  scrollTop: 52_000, // 현재 스크롤 위치 px
+  overscan: 5, // 상/하 여유분 행 수 (기본값 5)
 });
 // v = { startIndex, endIndex, startOffset, totalHeight }
 // 렌더링: rows.slice(v.startIndex, v.endIndex)
 // 상단 스페이서: v.startOffset px, 컨테이너: v.totalHeight px
 ```
 
-| 출력 | 의미 |
-| ---- | ---- |
-| `startIndex` / `endIndex` | DOM에 그릴 인덱스 범위 (`endIndex` 미포함) |
-| `startOffset` | 상단 스페이서 높이 (`startIndex * rowHeight`) |
-| `totalHeight` | 전체 스크롤 높이 (`totalCount * rowHeight`) |
+| 출력                      | 의미                                          |
+| ------------------------- | --------------------------------------------- |
+| `startIndex` / `endIndex` | DOM에 그릴 인덱스 범위 (`endIndex` 미포함)    |
+| `startOffset`             | 상단 스페이서 높이 (`startIndex * rowHeight`) |
+| `totalHeight`             | 전체 스크롤 높이 (`totalCount * rowHeight`)   |
 
 scrollTop은 `[0, totalHeight - viewportHeight]`로 클램프되고,
 `totalCount === 0` 또는 `rowHeight <= 0`이면 빈 범위를 반환한다.
@@ -756,7 +780,8 @@ scrollTop은 `[0, totalHeight - viewportHeight]`로 클램프되고,
 
 ```ts
 const grid = new GridCore<User>({
-  columns, data,
+  columns,
+  data,
   virtualScroll: { rowHeight: 40, viewportHeight: 600 }, // 활성화
 });
 
@@ -766,12 +791,12 @@ grid.subscribe(() => {
 });
 ```
 
-| API | 동작 |
-| --- | ---- |
-| `setVirtualScroll(config \| null)` | 런타임 활성/비활성 + 설정 변경 |
-| `setViewportHeight(px)` | 컨테이너 리사이즈 대응 |
-| `handleScroll(scrollTop)` | 스크롤 이벤트 핸들러 — **인덱스 범위가 바뀔 때만** 알림 |
-| `getVirtualState()` | 현재 `VirtualScrollState` (비활성 시 null) |
+| API                                | 동작                                                    |
+| ---------------------------------- | ------------------------------------------------------- |
+| `setVirtualScroll(config \| null)` | 런타임 활성/비활성 + 설정 변경                          |
+| `setViewportHeight(px)`            | 컨테이너 리사이즈 대응                                  |
+| `handleScroll(scrollTop)`          | 스크롤 이벤트 핸들러 — **인덱스 범위가 바뀔 때만** 알림 |
+| `getVirtualState()`                | 현재 `VirtualScrollState` (비활성 시 null)              |
 
 스냅샷 추가 필드: `virtual`, `virtualRows`.
 필터/정렬로 행 수가 바뀌면 `refresh()`에서 인덱스·`totalHeight`를
@@ -780,8 +805,11 @@ grid.subscribe(() => {
 ### 렌더링 패턴 (어댑터 공통)
 
 ```html
-<div class="scroll-container" style="height:600px; overflow:auto"
-     onscroll="grid.handleScroll(this.scrollTop)">
+<div
+  class="scroll-container"
+  style="height:600px; overflow:auto"
+  onscroll="grid.handleScroll(this.scrollTop)"
+>
   <div style="height: {virtual.totalHeight}px; position: relative;">
     <div style="transform: translateY({virtual.startOffset}px)">
       <!-- virtualRows를 rowHeight 고정 높이로 렌더링 -->
@@ -799,7 +827,9 @@ grid.subscribe(() => {
 그리드 전체 스타일을 제어할 수 있다.
 
 ```css
-:root, .grid-theme-light {           /* 기본 라이트 팔레트 */
+:root,
+.grid-theme-light {
+  /* 기본 라이트 팔레트 */
   --grid-bg-color: #ffffff;
   --grid-border-color: #e2e2e2;
   --grid-header-bg: #f7f7f8;
@@ -810,7 +840,9 @@ grid.subscribe(() => {
   /* …입력/패널/스켈레톤/고정 경계 등 파생 변수 — styles.css 참고 */
 }
 
-.grid-theme-dark { /* 동일 변수의 다크 팔레트 */ }
+.grid-theme-dark {
+  /* 동일 변수의 다크 팔레트 */
+}
 ```
 
 - **테마 전환** — 그리드 또는 상위 요소에 `.grid-theme-dark` 클래스를
@@ -824,18 +856,25 @@ grid.subscribe(() => {
 조건부 스타일링은 클래스 주입으로 처리한다:
 
 ```ts
-const columns = [{
-  field: "age",
-  // 셀 파라미터(value/row/rowIndex/column)로 조건부 클래스
-  cellClass: ({ value }) => value >= 40 ? "cell-senior" : "",
-}, {
-  field: "role",
-  // 행 파라미터(row/rowIndex) — 이 컬럼이 속한 모든 행에 적용
-  rowClass: ({ row }) => row.role === "admin" ? "row-admin" : "",
-}];
+const columns = [
+  {
+    field: "age",
+    // 셀 파라미터(value/row/rowIndex/column)로 조건부 클래스
+    cellClass: ({ value }) => (value >= 40 ? "cell-senior" : ""),
+  },
+  {
+    field: "role",
+    // 행 파라미터(row/rowIndex) — 이 컬럼이 속한 모든 행에 적용
+    rowClass: ({ row }) => (row.role === "admin" ? "row-admin" : ""),
+  },
+];
 
 // 모든 행에 공통으로 적용하려면 GridOptions.rowClass
-createGrid({ columns, data, rowClass: ({ rowIndex }) => rowIndex % 2 ? "row-odd" : "" });
+createGrid({
+  columns,
+  data,
+  rowClass: ({ rowIndex }) => (rowIndex % 2 ? "row-odd" : ""),
+});
 ```
 
 - `rowIndex`는 `visibleData` 기준 — 필터/정렬 후 인덱스가 함수에 전달된다.

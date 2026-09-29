@@ -17,7 +17,7 @@ Vite 앱에서는 `@vitejs/plugin-vue2`(비공식 계열 포함)가 필요하다
 ```vue
 <script setup lang="ts">
 import { DataGrid, useGrid } from "@moda-grid/vue2";
-import "@moda-grid/vue2/styles.css";      // 필수 — 공통 스타일
+import "@moda-grid/vue2/styles.css"; // 필수 — 공통 스타일
 
 const { grid, state } = useGrid({ columns, data: users });
 </script>

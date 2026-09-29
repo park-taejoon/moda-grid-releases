@@ -11,14 +11,14 @@
 
 ## 개발자 문서
 
-| 문서 | 내용 |
-| ---- | ---- |
-| [01-project-structure.md](./01-project-structure.md) | 디렉토리 구조와 패키지 의존 관계 |
-| [02-core-api.md](./02-core-api.md) | `@moda-grid/core` 헤드리스 API 레퍼런스 |
-| [03-framework-adapters.md](./03-framework-adapters.md) | React / Vue 3 / Svelte 어댑터 사용법 |
-| [04-build-and-development.md](./04-build-and-development.md) | 빌드·개발 명령어와 새 어댑터 추가 방법 |
-| [05-usage-guide.md](./05-usage-guide.md) | 프레임워크별 임포트 사용법 + 전체 기능 명세 (CDN 포함) |
-| [06-benchmark.md](./06-benchmark.md) | 성능 벤치마크 — core 측정 + AG Grid 비교 |
+| 문서                                                         | 내용                                                   |
+| ------------------------------------------------------------ | ------------------------------------------------------ |
+| [01-project-structure.md](./01-project-structure.md)         | 디렉토리 구조와 패키지 의존 관계                       |
+| [02-core-api.md](./02-core-api.md)                           | `@moda-grid/core` 헤드리스 API 레퍼런스                |
+| [03-framework-adapters.md](./03-framework-adapters.md)       | React / Vue 3 / Svelte 어댑터 사용법                   |
+| [04-build-and-development.md](./04-build-and-development.md) | 빌드·개발 명령어와 새 어댑터 추가 방법                 |
+| [05-usage-guide.md](./05-usage-guide.md)                     | 프레임워크별 임포트 사용법 + 전체 기능 명세 (CDN 포함) |
+| [06-benchmark.md](./06-benchmark.md)                         | 성능 벤치마크 — core 측정 + AG Grid 비교               |
 
 ## 빠른 시작
 

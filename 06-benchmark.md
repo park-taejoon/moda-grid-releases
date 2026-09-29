@@ -18,29 +18,29 @@
 
 ## 결과 (10k 행, mean)
 
-| 작업 | moda-grid | AG Grid Community |
-|---|---:|---:|
-| 초기 생성 (AG는 첫 렌더 포함) | 0.002 ms | 25.2 ms |
-| 데이터 교체 (`setData` / `rowData`) | 0.002 ms | 0.77 ms |
-| 정렬 토글 | 2.35 ms | 16.1 ms |
-| 텍스트 필터 | 0.60 ms | 12.9 ms |
-| 검색 (`setSearch` / quickFilter) | 0.52 ms | 9.2 ms |
-| 셀 편집 + undo + redo | 1.08 ms | —¹ |
-| 10행 갱신 (`pasteTsv`/`applyTransaction`) | 0.003 ms | 9.3 ms |
-| 상태 저장 + 복원 (`getState`) | 0.68 ms | 2.10 ms |
-| 컬럼 자동 너비 | 3.10 ms | 6.10 ms |
-| 하단 고정 행 설정 | ~0 µs | 0.38 ms |
+| 작업                                      | moda-grid | AG Grid Community |
+| ----------------------------------------- | --------: | ----------------: |
+| 초기 생성 (AG는 첫 렌더 포함)             |  0.002 ms |           25.2 ms |
+| 데이터 교체 (`setData` / `rowData`)       |  0.002 ms |           0.77 ms |
+| 정렬 토글                                 |   2.35 ms |           16.1 ms |
+| 텍스트 필터                               |   0.60 ms |           12.9 ms |
+| 검색 (`setSearch` / quickFilter)          |   0.52 ms |            9.2 ms |
+| 셀 편집 + undo + redo                     |   1.08 ms |                —¹ |
+| 10행 갱신 (`pasteTsv`/`applyTransaction`) |  0.003 ms |            9.3 ms |
+| 상태 저장 + 복원 (`getState`)             |   0.68 ms |           2.10 ms |
+| 컬럼 자동 너비                            |   3.10 ms |           6.10 ms |
+| 하단 고정 행 설정                         |     ~0 µs |           0.38 ms |
 
 ¹AG Grid는 `startEditingCell`이 실제 DOM 셀을 요구해 happy-dom에서 의미 있는
 비교치를 얻기 어려워 생략.
 
 ### Enterprise 전용이라 비교 불가 (moda-grid는 무상 제공)
 
-| 기능 | moda-grid |
-|---|---:|
-| Set 필터 (값 체크리스트) | 0.65 ms |
-| 그룹화 + 집계 | 0.57 ms |
-| TSV 복사/붙여넣기 (50셀) | 0.003 ms |
+| 기능                     | moda-grid |
+| ------------------------ | --------: |
+| Set 필터 (값 체크리스트) |   0.65 ms |
+| 그룹화 + 집계            |   0.57 ms |
+| TSV 복사/붙여넣기 (50셀) |  0.003 ms |
 
 ## 해석
 
