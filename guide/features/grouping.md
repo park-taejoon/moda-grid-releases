@@ -20,11 +20,36 @@ grid.isGroupExpanded(key);
 
 ```ts
 { field: "salary", header: "연봉", aggregationFn: "sum" }
-// 'sum' | 'avg' | 'min' | 'max' | 'count'
+// 'sum' | 'avg' | 'min' | 'max' | 'count' | 'first' | 'last'
 ```
 
-- 그룹 노드의 `aggregates[field]`에 저장 (`count`=행 수, 나머지는 숫자 변환
-  가능한 값만 합산).
+- `first`/`last`는 정렬 순서 기준 첫/마지막 행의 **원시 값**을 반환한다 —
+  상태·최신 메모 같은 비숫자 컬럼 집계에 쓴다.
+- 그룹 노드의 `aggregates[field]`에 저장 (`count`=행 수, `sum`/`avg`/
+  `min`/`max`는 숫자 변환 가능한 값만 합산).
+
+### 커스텀 집계 함수
+
+함수를 직접 전달하면 행 전체에 접근해 어떤 집계든 만들 수 있다:
+
+```ts
+{
+  field: "progress",
+  aggregationFn: ({ values }) =>
+    `${values.filter((v) => Number(v) >= 80).length}명 우수`,
+},
+// 가중평균·중복 제거처럼 행이 필요하면 rows/field도 쓴다
+{ field: "score",
+  aggregationFn: ({ rows, field }) =>
+    rows.reduce((a, r) => a + Number(r[field]) * r.weight, 0) },
+```
+
+- 파라미터: `{ values, rows, field }` — `values`는 해당 컬럼의 원시 값 목록
+  (행 순서), `rows`는 집계 대상 행 전체.
+- 반환값은 문자열을 포함해 무엇이든 가능 — `formatAggregate`가 표시한다.
+- 함수에서 예외가 나면 `null`로 집계된다 (셀이 비어 보임).
+- 피벗 측정값의 `agg`에도 동일하게 쓸 수 있다 — 단 패널 UI의 집계 셀렉트는
+  내장 함수만 노출하므로 함수는 코드로 지정한다.
 - 표시 포맷은 `formatAggregate()` 헬퍼 (소수 2자리 반올림).
 - `aggregationFn` 컬럼이 하나라도 있으면 `snapshot.grandTotals`에
   전체 총계가 계산되어 `<tfoot>`에 표시된다 ([pinned-rows.md](./pinned-rows.md)).

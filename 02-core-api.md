@@ -190,7 +190,10 @@ interface ColumnDef<TData> {
   valueGetter?: (row: TData) => unknown;
   formatter?: (value: unknown, row: TData) => string;
   filterPredicate?: (value, row, filter: ColumnFilter) => boolean; // 커스텀 필터 판별
-  aggregationFn?: "sum" | "avg" | "min" | "max" | "count"; // 그룹 행 집계
+  // 그룹 행 집계 — 내장 키 또는 커스텀 함수 (values/rows/field → 임의 값)
+  aggregationFn?:
+    | "sum" | "avg" | "min" | "max" | "count" | "first" | "last"
+    | ((params: { values: unknown[]; rows: TData[]; field: string }) => unknown);
   editable?: boolean; // 기본값 true — 인라인 편집 허용
   cellEditor?: "text" | "number" | "select" | "date" | "custom"; // 기본값 'text'
   editorOptions?: readonly string[]; // select 편집기 옵션

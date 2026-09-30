@@ -33,7 +33,9 @@ const grid = new GridCore({
 - 행 디멘션은 원본 컬럼의 `header`/`format`을 그대로 물려받는다.
 - 측정값 컬럼 헤더는 `"열조합 라벨 측정값헤더"` 형태 — `values[].header`로
   라벨을 바꿀 수 있다.
-- 집계 함수: `sum` `avg` `min` `max` `count`.
+- 집계 함수: `sum` `avg` `min` `max` `count` `first` `last`, 또는
+  커스텀 함수(`({ values, rows, field }) => unknown` —
+  [grouping.md](./grouping.md#커스텀-집계-함수)와 동일 규약).
 - 측정값을 여러 개 두면 열 조합 × 측정값만큼 컬럼이 생긴다.
 - 열 디멘션(`columns`)을 생략하면 측정값 컬럼만 있는 요약 테이블이 된다.
 
@@ -87,7 +89,8 @@ mountGrid(el, { columns, data, pivotPanel: true });
 - **칩 위에 드롭**: 그 위치에 삽입 — 존 내 순서 변경도 같은 방식.
 - **필드 존으로 드롭 / 칩의 ×**: 모든 존에서 제거 — 전부 비면 피벗 해제 +
   원본 컬럼 복원.
-- **값 존 칩**: 집계 함수 셀렉트(sum/avg/min/max/count)로 즉시 변경.
+- **값 존 칩**: 집계 함수 셀렉트(내장 7종)로 즉시 변경 — 커스텀 함수로
+  설정된 측정값은 셀렉트로 표현할 수 없어 `sum` 표시로 보인다.
 - **헤더 컬럼 드래그**(reorderable)를 존에 드롭해도 추가된다 —
   `application/x-mg-column` 드래그 타입을 함께 수용.
 

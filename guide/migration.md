@@ -243,6 +243,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `sheet.dispose()`                                    | 컴포넌트 언마운트 (자동)                                                                                                              |
 | 행 조건부 스타일                                     | `GridOptions.rowStyle` / `ColumnDef.rowStyle` — CSS 문자열·맵·함수, `<tr>`에 병합                                                     |
 | 셀 커스텀 렌더러                                     | React `renderCell` · Vue `#cell-{field}` 슬롯 · Svelte `cell` snippet · vanilla `cellRenderer`(DOM Node 반환)                         |
+| 커스텀 집계 (`aggFunc` / 서브합계 함수)              | `aggregationFn`에 함수 전달 — `({ values, rows, field }) => unknown`. 내장은 `sum/avg/min/max/count/first/last`, 피벗 `agg`도 동일 규약 |
 
 ## 프레임워크별 미니멀 예시
 
