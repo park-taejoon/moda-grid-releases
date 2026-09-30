@@ -185,58 +185,64 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 
 ## 주요 API 메서드 매핑
 
-| 기존 엔터프라이즈 그리드            | moda-grid                                                                                                                             |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `sheet.getValue(r, c)`              | `grid.getCellValueAt(r, c)` / `getCellValue(row, col)`                                                                                |
-| `sheet.setValue(r, c, v)`           | `grid.setCellValue(r, c, v)` — 검증·이력·이벤트 포함                                                                                  |
-| `sheet.getRowData(r)` / 행 조회     | `grid.getRowById(id)` — 숨김·필터 행 포함                                                                                             |
-| `sheet.setRowData(r, {...})`        | `grid.updateRow(id, patch)` — 한 Undo 단위 + `dataChange`                                                                             |
-| 일괄 행 변경 (add/update/remove)    | `grid.applyTransaction({ add, update, remove })`                                                                                      |
-| `sheet.findText()`                  | `grid.findCells()` / `grid.findNext()` (순환 이동)                                                                                    |
-| `sheet.replaceText()`               | `grid.replaceAll(find, replace)`                                                                                                      |
-| `sheet.loadSearchData(json)`        | `grid.setData(rows)` 또는 `data` prop 변경                                                                                            |
-| `sheet.getSaveJson()`               | `grid.getChanges()` — `{created, updated, deleted}`                                                                                   |
-| 행 상태별 조회 필터                 | `grid.setRowStatusFilter(["I","U","D"])` — 변경분만 보기                                                                              |
-| `sheet.addRow({row: i})`            | `grid.addRows(row, index)`                                                                                                            |
-| `sheet.copyRows()` / 행 복제        | `grid.duplicateRows(rows)` — 원본 뒤 삽입 + I 마킹                                                                                    |
-| `sheet.setRowStatus(r, "I")`        | `grid.addRows()` → 자동 I 마킹                                                                                                        |
-| 셀 선택 후 Del                      | `grid.clearRange()` (어댑터에서 Delete/Backspace 자동)                                                                                |
-| Ctrl+X 잘라내기                     | `grid.cutSelectionTsv()` — TSV 반환 + 지우기, Undo 1단위                                                                              |
-| Shift+Space / Ctrl+Space            | `grid.selectEntireRow()` / `selectEntireColumn()` — 행·열 전체 선택                                                                   |
-| Ctrl+A 전체 선택                    | `grid.selectAll()` — multi-cell/row는 전체 범위, single-cell은 전체 행                                                                |
-| 범위 드래그 이동                    | `grid.moveRange(source, target)`                                                                                                      |
-| 자동 채우기 시리즈 (숫자/날짜 외삽) | `GridOptions.fillSeries: true` / `fillRange(…, {series:true})`                                                                        |
-| Ctrl+Enter 범위 입력                | `grid.fillActiveToSelection()` — 선택 범위 전체에 활성 셀 값                                                                          |
-| `sheet.doSearch()`                  | (없음 — data prop 갱신)                                                                                                               |
-| `sheet.doSort(col)`                 | `grid.toggleSort(field)`                                                                                                              |
-| `sheet.setRowHeight(r, h)`          | `grid.setRowHeight(id, px)` — `null`로 해제                                                                                           |
-| `sheet.print()`                     | `grid.print()` — `@media print` 스타일 포함                                                                                           |
-| 컬럼 속성 변경                      | `grid.updateColumn(field, patch)` — 부분 갱신                                                                                         |
-| `Editable: 0` (전체 편집 잠금)      | `GridOptions.editable: false` / `grid.setEditable(bool)`                                                                              |
-| 변경 셀 플래시 (타사 변경 강조)     | `GridOptions.cellFlash: true` / `grid.setCellFlash(bool)` — `.mg-cell-flash` 클래스                                                   |
-| `sheet.refresh()`                   | `grid.resetView()` — 정렬/필터/검색/페이지/선택 초기화                                                                                |
-| `sheet.insertCol()`                 | `grid.addColumn(def, index)`                                                                                                          |
-| 컬럼 공통 속성 일괄 지정            | `GridOptions.defaultColDef` — 모든 컬럼 기본값 병합                                                                                   |
-| `sheet.removeCol()`                 | `grid.removeColumn(field)` — 정렬/필터도 함께 정리                                                                                    |
-| 행 높이 드래그 (AllowRowResizing)   | `rowResizable` prop/옵션 — `rowNumbers` 필요                                                                                          |
-| 행 드래그 이동                      | `col.rowDrag: true` 핸들 + `grid.moveRow(from, to)` / `rowReorder` 이벤트                                                             |
-| `sheet.showRow(r)` / `focusRow`     | `grid.scrollToRow(rowIndex)` — 리프 인덱스(rows 기준). `grid.ensureRowVisible(id)` — 행 ID 기준, 접힌 그룹/트리·다른 페이지 자동 이동 |
-| `showCell(r, c)` / `showColumn(c)`  | `grid.scrollToCell(r, c)` / `scrollToColumn(c)` — 수평 스크롤 포함                                                                    |
-| 첫/마지막 행 이동                   | `grid.scrollToTop()` / `grid.scrollToBottom()`                                                                                        |
-| 행 수 조회 (`RowCount`/`TotalRows`) | `grid.getDisplayedRowCount()` (현재 페이지) / `getFilteredRowCount()` (필터 후 전체) / `getTotalRowCount()` (원본)                    |
-| 행 순회                             | `grid.forEachDisplayedRow(fn)` (표시 순서) / `forEachRow(fn)` (원본 순서)                                                             |
-| 컬럼 조회                           | `grid.getColumn(field)` / `getColumnIndex(field)`                                                                                     |
-| 정렬·필터 모델 일괄 적용            | `grid.getSortModel()`/`setSortModel(specs)` · `getFilterModel()`/`setFilterModel(map)` — getState보다 가벼운 조건만의 저장·복원       |
-| 행 선택 일괄 지정                   | `grid.setRowSelection(ids)` — isRowSelectable·없는 ID 자동 제외, null은 전체 해제                                                     |
-| 수정분 flat 수집 (`GetSaveData`)    | `grid.getModifiedRows()` → `{row, status}[]` (getChanges는 분리형 3배열)                                                              |
-| 강제 재계산 (`Refresh`)             | `grid.refreshCells()` — 외부 제자리 수정·formatter 참조 상태 변경 후                                                                  |
-| 다크 모드 / 테마                    | `theme="dark"` prop/`mountGrid` 옵션 또는 `.grid-theme-dark` 클래스 — `--grid-*` CSS 변수로 커스텀 팔레트                             |
-| 키보드 이동 셀 화면 추적            | 자동 — `scrollRequest`가 행+열 좌표를 발행, 어댑터가 scrollIntoView                                                                   |
-| `sheet.setGroupBy(...)` / 그룹 해제 | `grid.setGroupBy(fields)` — 빈 배열로 해제                                                                                            |
-| `sheet.directDown2Excel()`          | `grid.exportToXlsx({ filename })`                                                                                                     |
-| `sheet.dispose()`                   | 컴포넌트 언마운트 (자동)                                                                                                              |
-| 행 조건부 스타일                    | `GridOptions.rowStyle` / `ColumnDef.rowStyle` — CSS 문자열·맵·함수, `<tr>`에 병합                                                     |
-| 셀 커스텀 렌더러                    | React `renderCell` · Vue `#cell-{field}` 슬롯 · Svelte `cell` snippet · vanilla `cellRenderer`(DOM Node 반환)                         |
+| 기존 엔터프라이즈 그리드                             | moda-grid                                                                                                                             |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `sheet.getValue(r, c)`                               | `grid.getCellValueAt(r, c)` / `getCellValue(row, col)`                                                                                |
+| `sheet.setValue(r, c, v)`                            | `grid.setCellValue(r, c, v)` — 검증·이력·이벤트 포함                                                                                  |
+| `sheet.getRowData(r)` / 행 조회                      | `grid.getRowById(id)` — 숨김·필터 행 포함                                                                                             |
+| `sheet.setRowData(r, {...})`                         | `grid.updateRow(id, patch)` — 한 Undo 단위 + `dataChange`                                                                             |
+| 일괄 행 변경 (add/update/remove)                     | `grid.applyTransaction({ add, update, remove })`                                                                                      |
+| `sheet.findText()`                                   | `grid.findCells()` / `grid.findNext()` (순환 이동)                                                                                    |
+| `sheet.replaceText()`                                | `grid.replaceAll(find, replace)`                                                                                                      |
+| `sheet.loadSearchData(json)`                         | `grid.setData(rows)` 또는 `data` prop 변경                                                                                            |
+| `sheet.getSaveJson()`                                | `grid.getChanges()` — `{created, updated, deleted}`                                                                                   |
+| 행 상태별 조회 필터                                  | `grid.setRowStatusFilter(["I","U","D"])` — 변경분만 보기                                                                              |
+| `sheet.addRow({row: i})`                             | `grid.addRows(row, index)`                                                                                                            |
+| `sheet.copyRows()` / 행 복제                         | `grid.duplicateRows(rows)` — 원본 뒤 삽입 + I 마킹                                                                                    |
+| `sheet.setRowStatus(r, "I")`                         | `grid.addRows()` → 자동 I 마킹                                                                                                        |
+| 셀 선택 후 Del                                       | `grid.clearRange()` (어댑터에서 Delete/Backspace 자동)                                                                                |
+| Ctrl+X 잘라내기                                      | `grid.cutSelectionTsv()` — TSV 반환 + 지우기, Undo 1단위                                                                              |
+| Shift+Space / Ctrl+Space                             | `grid.selectEntireRow()` / `selectEntireColumn()` — 행·열 전체 선택                                                                   |
+| Ctrl+A 전체 선택                                     | `grid.selectAll()` — multi-cell/row는 전체 범위, single-cell은 전체 행                                                                |
+| 범위 드래그 이동                                     | `grid.moveRange(source, target)`                                                                                                      |
+| 자동 채우기 시리즈 (숫자/날짜 외삽)                  | `GridOptions.fillSeries: true` / `fillRange(…, {series:true})`                                                                        |
+| Ctrl+Enter 범위 입력                                 | `grid.fillActiveToSelection()` — 선택 범위 전체에 활성 셀 값                                                                          |
+| `sheet.doSearch()`                                   | (없음 — data prop 갱신)                                                                                                               |
+| `sheet.doSort(col)`                                  | `grid.toggleSort(field)`                                                                                                              |
+| `sheet.setRowHeight(r, h)`                           | `grid.setRowHeight(id, px)` — `null`로 해제                                                                                           |
+| `sheet.print()`                                      | `grid.print()` — `@media print` 스타일 포함                                                                                           |
+| 컬럼 속성 변경                                       | `grid.updateColumn(field, patch)` — 부분 갱신                                                                                         |
+| `Editable: 0` (전체 편집 잠금)                       | `GridOptions.editable: false` / `grid.setEditable(bool)`                                                                              |
+| 변경 셀 플래시 (타사 변경 강조)                      | `GridOptions.cellFlash: true` / `grid.setCellFlash(bool)` — `.mg-cell-flash` 클래스                                                   |
+| `sheet.refresh()`                                    | `grid.resetView()` — 정렬/필터/검색/페이지/선택 초기화                                                                                |
+| `sheet.insertCol()`                                  | `grid.addColumn(def, index)`                                                                                                          |
+| 컬럼 공통 속성 일괄 지정                             | `GridOptions.defaultColDef` — 모든 컬럼 기본값 병합                                                                                   |
+| `sheet.removeCol()`                                  | `grid.removeColumn(field)` — 정렬/필터도 함께 정리                                                                                    |
+| 컬럼 너비 컨테이너 맞춤 (AG Grid `sizeColumnsToFit`) | `grid.sizeColumnsToFit(width)` — 표시 컬럼을 비율로 재분배                                                                            |
+| 변경 버리기 (`DiscardChange`)                        | `grid.clearChanges()` — I/U/D 마킹 전부 해제, 데이터는 유지                                                                           |
+| 삭제 표시 되돌리기                                   | `grid.restoreRowsByIds(ids)` — D 마킹 행만 복원                                                                                       |
+| 서버 재조회 (`Load` 재호출)                          | `grid.refreshServerRows()` — 서버 캐시 버리고 블록 0부터 재요청                                                                       |
+| 트리 일괄 펼침 (`ExpandAll`/`Level`)                 | `grid.setTreeExpandLevel(n)` — 0=모두 접기, 큰 수=모두 펼침                                                                           |
+| 접힌 트리 노드 표시 (`focusRow`)                     | `grid.revealTreeRow(predicate)` — 조상 자동 펼침 + 스크롤 이동                                                                        |
+| 행 높이 드래그 (AllowRowResizing)                    | `rowResizable` prop/옵션 — `rowNumbers` 필요                                                                                          |
+| 행 드래그 이동                                       | `col.rowDrag: true` 핸들 + `grid.moveRow(from, to)` / `rowReorder` 이벤트                                                             |
+| `sheet.showRow(r)` / `focusRow`                      | `grid.scrollToRow(rowIndex)` — 리프 인덱스(rows 기준). `grid.ensureRowVisible(id)` — 행 ID 기준, 접힌 그룹/트리·다른 페이지 자동 이동 |
+| `showCell(r, c)` / `showColumn(c)`                   | `grid.scrollToCell(r, c)` / `scrollToColumn(c)` — 수평 스크롤 포함                                                                    |
+| 첫/마지막 행 이동                                    | `grid.scrollToTop()` / `grid.scrollToBottom()`                                                                                        |
+| 행 수 조회 (`RowCount`/`TotalRows`)                  | `grid.getDisplayedRowCount()` (현재 페이지) / `getFilteredRowCount()` (필터 후 전체) / `getTotalRowCount()` (원본)                    |
+| 행 순회                                              | `grid.forEachDisplayedRow(fn)` (표시 순서) / `forEachRow(fn)` (원본 순서)                                                             |
+| 컬럼 조회                                            | `grid.getColumn(field)` / `getColumnIndex(field)`                                                                                     |
+| 정렬·필터 모델 일괄 적용                             | `grid.getSortModel()`/`setSortModel(specs)` · `getFilterModel()`/`setFilterModel(map)` — getState보다 가벼운 조건만의 저장·복원       |
+| 행 선택 일괄 지정                                    | `grid.setRowSelection(ids)` — isRowSelectable·없는 ID 자동 제외, null은 전체 해제                                                     |
+| 수정분 flat 수집 (`GetSaveData`)                     | `grid.getModifiedRows()` → `{row, status}[]` (getChanges는 분리형 3배열)                                                              |
+| 강제 재계산 (`Refresh`)                              | `grid.refreshCells()` — 외부 제자리 수정·formatter 참조 상태 변경 후                                                                  |
+| 다크 모드 / 테마                                     | `theme="dark"` prop/`mountGrid` 옵션 또는 `.grid-theme-dark` 클래스 — `--grid-*` CSS 변수로 커스텀 팔레트                             |
+| 키보드 이동 셀 화면 추적                             | 자동 — `scrollRequest`가 행+열 좌표를 발행, 어댑터가 scrollIntoView                                                                   |
+| `sheet.setGroupBy(...)` / 그룹 해제                  | `grid.setGroupBy(fields)` — 빈 배열로 해제                                                                                            |
+| `sheet.directDown2Excel()`                           | `grid.exportToXlsx({ filename })`                                                                                                     |
+| `sheet.dispose()`                                    | 컴포넌트 언마운트 (자동)                                                                                                              |
+| 행 조건부 스타일                                     | `GridOptions.rowStyle` / `ColumnDef.rowStyle` — CSS 문자열·맵·함수, `<tr>`에 병합                                                     |
+| 셀 커스텀 렌더러                                     | React `renderCell` · Vue `#cell-{field}` 슬롯 · Svelte `cell` snippet · vanilla `cellRenderer`(DOM Node 반환)                         |
 
 ## 프레임워크별 미니멀 예시
 

@@ -65,8 +65,13 @@ grid.setColumnWidth("name", 180); // min/max 클램프 적용
 grid.autoSizeColumn("name"); // 내용 기준 자동 너비 (단일)
 grid.autoSizeAllColumns(); // 전체 표시 컬럼
 grid.autoSizeAllColumns((t) => ctx.measureText(t).width); // canvas 정확 측정
+grid.sizeColumnsToFit(960); // 컨테이너 너비에 맞춰 컬럼 비율 재분배
 grid.resetColumnLayout(); // 너비/순서를 정의 기본값으로
 ```
+
+`sizeColumnsToFit(width)`는 표시 컬럼 너비를 기존 비율로 스케일해 합계를
+컨테이너 너비에 맞춘다 — AG Grid `sizeColumnsToFit` 대응. 창 리사이즈 시
+재호출하면 컬럼이 컨테이너를 따라간다.
 
 `measureText` 미지정 시 문자 길이 기반 추정(`length * 8 + 패딩`)이라
 DOM 없이도 동작한다.
