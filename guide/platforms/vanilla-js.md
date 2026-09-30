@@ -69,6 +69,9 @@
 - `groupPanel`: 그룹된 컬럼 칩 표시 + 클릭으로 해제
 - `autoRowHeight`: `multiLine` 셀 내용만큼 행 높이 자동 확장
 - 더블클릭 인라인 편집 (text/number/select/date/checkbox/multiselect/radio/textarea)
+- `editorRenderer`: 커스텀 에디터 — 지정하면 어떤 cellEditor보다 우선,
+  반환 Node를 편집 셀에 마운트한다 (`ctx.setValue`/`commit`/`cancel`로
+  생명주기 제어 — 어댑터의 renderEditor/`#editor-{field}`와 동일 역할)
 - 셀 타입: `image` / `button` / `link` / `progress` / `html`
 - 키보드: 방향키/Home/End/PageUp·Down 이동, Enter/F2 편집 진입,
   Delete/Backspace 내용 지우기(`clearRange`), Ctrl+C/V 복사·붙여넣기,

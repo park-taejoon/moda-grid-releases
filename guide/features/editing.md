@@ -376,6 +376,14 @@ commit, cancel }`)를 제공한다. 어댑터별 연결:
 | React      | `ReactColumnDef.renderEditor(ctx)` |
 | Vue / Vue2 | `#editor-{field}` 슬롯             |
 | Svelte     | `{#snippet editor}`                |
+| vanilla    | `ColumnDef.editorRenderer(ctx)`    |
+
+- React `renderEditor`와 vanilla `editorRenderer`는 지정되면 cellEditor
+  종류와 무관하게 우선 적용된다. Vue 슬롯은 해당 field 컬럼만 덮어쓰고,
+  Svelte `editor` 스니펫은 `cellEditor: 'custom'` 컬럼에만 적용된다 —
+  다른 컬럼은 내장 에디터로 폴백한다.
+- 반환/렌더된 노드에서 `ctx.setValue`로 임시 값을 갱신하고
+  `ctx.commit()`/`ctx.cancel()`로 저장·취소한다.
 
 예시는 각 플랫폼 가이드 참고.
 

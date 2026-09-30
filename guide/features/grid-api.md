@@ -38,6 +38,68 @@ grid.forEachRow((row, i) => console.log(i, row));
 ```ts
 grid.getColumn("age"); // ColumnDef | undefined — 숨김 컬럼도 조회 가능
 grid.getColumnIndex("age"); // 표시 컬럼 인덱스 (visibleColumns 기준, 없거나 숨기면 -1)
+
+grid.getColumns(); // 전체 컬럼 정의 — pinned 파티션 반영 렌더 순서
+grid.getVisibleColumnDefs(); // 표시 컬럼만 (숨김 제외, DOM 순서)
+grid.getColumnIds(); // field 목록 — 렌더 순서
+grid.getHiddenColumnIds(); // 숨겨진 컬럼의 field 목록
+```
+
+## 행 탐색·셀 접근 단축
+
+`forEachDisplayedRow`/`getCellValueAt`의 한 줄 버전 — id·predicate로
+바로 찾고 읽는다.
+
+```ts
+grid.getAllRows(); // 원본 전체 (필터 무관, rawData 순서)
+grid.getDisplayedRows(); // 표시 행 전체 (보이는 순서)
+grid.getFirstRow(); // 표시 목록 첫 행
+grid.getLastRow(); // 표시 목록 마지막 행
+grid.getNextRow("42"); // id 행의 다음 표시 행
+grid.getPrevRow("42"); // id 행의 이전 표시 행
+
+grid.findRow((r) => r.name === "Bora"); // 조건 첫 매치
+grid.findRows((r) => r.role === "admin"); // 조건 전체 매치
+grid.findRowIndex((r) => r.age > 40); // 조건 첫 매치 인덱스 (-1)
+
+// 셀 종합 조회 — { row, column, value, text, rowIndex, columnIndex }
+const cell = grid.getCell("42", "name");
+grid.getCellValueById("42", "name"); // 값만
+grid.setCellValueById("42", "age", 40); // 쓰기 — 검증·Undo·afterEdit 동일
+```
+
+## 포커스 단축
+
+`scrollToCell`/`scrollToRow` + `setActiveCell`을 한 번에.
+
+```ts
+grid.focusCell("42", "name"); // 스크롤 + 활성 셀 → boolean
+grid.focusRow("42"); // 스크롤 + 첫 컬럼 활성 → boolean
+```
+
+## 삽입·변경분 단축
+
+```ts
+grid.insertRow(row); // 끝에 추가 (addRows와 동일)
+grid.insertRow(row, "42"); // id=42 행 바로 앞에 삽입 → boolean
+
+grid.getInsertedRows(); // I 상태 행
+grid.getUpdatedRows(); // U 상태 행
+grid.getDeletedRows(); // D 상태 행 (getChanges 분리 접근)
+```
+
+## 표시 행 집계 단축
+
+`aggregationFn` 없이도 표시 행 기준 숫자 집계를 바로 얻는다.
+컬럼의 값 해석(valueGetter 등)을 거쳐 숫자 변환 가능한 값만 모으고,
+필터·검색·페이징이 적용된 표시 행만 계산한다.
+
+```ts
+grid.sumBy("age"); // 합계 — 숫자 없으면 null
+grid.avgBy("age"); // 평균
+grid.minBy("age"); // 최솟값
+grid.maxBy("age"); // 최댓값
+grid.countBy("age"); // 숫자 셀 수 (없으면 0)
 ```
 
 ## 정렬·필터·검색 모델 일괄 get/set
@@ -150,7 +212,16 @@ grid.isLoading(); // 현재 상태 조회
 | `Refresh`                  | `refreshCells()` / `redrawRows()`               | `refreshCells()`                                                          |
 | `GetSaveData`/`GetJson`    | 노드 순회 + `isRowSelected`                     | `getModifiedRows()` → `{row, status}[]`                                   |
 | `MoveToRow`/`ShowRow`      | `ensureIndexVisible`/`ensureNodeVisible`        | `scrollToRow(i)` / `ensureRowVisible(id)`                                 |
+| `SetFocus` + `ShowCell`    | `setFocusedCell` + `ensureNodeVisible`          | `focusCell(id, field)` / `focusRow(id)`                                   |
 | 첫/마지막 행 이동          | `ensureIndexVisible(0/-1)`                      | `scrollToTop()` / `scrollToBottom()`                                      |
+| `GetFirstRow`/`GetLastRow` | 첫/마지막 노드                                  | `getFirstRow()` / `getLastRow()`                                          |
+| `GetNextRow`/`GetPrevRow`  | 이웃 노드                                       | `getNextRow(id)` / `getPrevRow(id)`                                       |
+| `GetDataRows`/전체 행      | `forEachNode*`                                  | `getAllRows()` / `getDisplayedRows()`                                     |
+| 조건부 행 검색             | `forEachNode` + 수동                            | `findRow` / `findRows` / `findRowIndex`                                   |
+| `GetCellValue(Row, Col)`   | `getValue(colKey, rowNode)`                     | `getCell(id, field)` / `getCellValueById(id, field)`                      |
+| `SetCellValue(Row, Col)`   | `setDataValue`                                  | `setCellValueById(id, field, v)`                                          |
+| `GetTotalByCol`            | `forEachNode` + 수동                            | `sumBy` / `avgBy` / `minBy` / `maxBy` / `countBy`                         |
+| 상태별 행 목록             | `forEachNode` + `is*`                           | `getInsertedRows` / `getUpdatedRows` / `getDeletedRows`                   |
 | `SetWaitImageVisible`      | `setGridOption('loading')`                      | `setLoading(bool)` / `GridOptions.loading`                                |
 
 ## 어댑터별 접근

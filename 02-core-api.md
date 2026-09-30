@@ -101,74 +101,84 @@ grid.subscribe(() => render(grid.getSnapshot()));
 
 ## 확장 API (어댑터·앱 공용)
 
-| 메서드                                                                        | 동작                                                                                                           |
-| ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `setColumns(cols)`                                                            | 컬럼 정의 교체                                                                                                 |
-| `setDefaultColDef(def \| null)`                                               | 런타임에 `defaultColDef` 교체 — 마지막 입력 컬럼에 재머지. `undefined`는 미지정(유지), `null`은 해제           |
-| `toggleSort(field, additive?)`                                                | `asc → desc → 해제` 순환. `additive=true`(Shift+클릭)이면 다중 정렬 조건에 추가/제거                           |
-| `clearSorts()`                                                                | 모든 정렬 조건 해제                                                                                            |
-| `setGroupBy(fields \| null)`                                                  | 행 그룹화 기준 필드 목록 설정 (`['dept','role']`)                                                              |
-| `toggleGroupExpanded(key)`                                                    | 그룹 행 펼침/접힘 토글                                                                                         |
-| `expandAllGroups()` / `collapseAllGroups()`                                   | 전체 펼치기/접기                                                                                               |
-| `isGroupExpanded(key)`                                                        | 그룹 키 펼침 여부                                                                                              |
-| `exportToCsv(options?)`                                                       | 표시 상태 데이터를 CSV 문자열로 반환 + 브라우저면 다운로드                                                     |
-| `getCsvTemplate(options?)`                                                    | 그리드 컬럼에 맞는 CSV 템플릿(헤더 행) 반환 + 다운로드                                                         |
-| `importCsv(csvText, options?)`                                                | CSV 문자열 파싱 → 행 추가/교체. `CsvImportResult {added, skipped, errors}` 반환                                |
-| `getSelectionTsv(options?)`                                                   | 선택 범위(없으면 활성 셀)를 TSV 문자열로 변환 (없으면 null). `{ includeHeaders: true }`면 첫 줄에 헤더 행 포함 |
-| `pasteTsv(tsv, start?)`                                                       | TSV를 활성 셀부터 순차 쓰기 → `PasteResult` 반환 (편집 이력에 1개 단위로 기록)                                 |
-| `setSearch(text)`                                                             | 전역 검색 (표시 컬럼 전체, 대소문자 무시)                                                                      |
-| `clearFilters()`                                                              | 모든 컬럼 필터 해제                                                                                            |
-| `setFilterRowVisible(visible)` / `toggleFilterRow()`                          | 필터 입력 행 표시/숨김 — 데이터 파이프라인 재계산 없이 스냅샷만 갱신                                           |
-| `toggleRowSelection(id)` / `clearSelection()` / `isSelected(id)`              | 행 선택                                                                                                        |
-| `toggleAllRows()` / `isAllSelected()` / `isSomeSelected()`                    | 전체 행 선택 토글 / 전체·일부 선택 여부 (헤더 체크박스용)                                                      |
-| `setColumnVisibility(field, visible)` / `setColumnVisible(columnId, visible)` | 컬럼 표시/숨김 (동일 동작 — columnId는 `field`와 같음)                                                         |
-| `setAllColumnsVisible(visible)`                                               | 전체 컬럼 일괄 표시/숨김 (Column Controller의 전체 선택/해제)                                                  |
-| `setColumnWidth(field, width)`                                                | 컬럼 너비 변경 (minWidth/maxWidth 클램프)                                                                      |
-| `autoSizeColumn(field, measureText?)` / `autoSizeAllColumns(measureText?)`    | 내용 기준 자동 너비. `measureText` 미지정 시 문자 길이 기반 추정 (DOM 없이 동작)                               |
-| `reorderColumn(draggedId, targetId)`                                          | 컬럼 순서 변경 (숨김 포함 전체 순서 기준)                                                                      |
-| `resetColumnLayout()`                                                         | 너비/순서를 컬럼 정의 기본값으로 초기화                                                                        |
-| `setColumnPinned(field, pinned)`                                              | 컬럼 고정 위치 변경 (`'left'`/`'right'`/`null`)                                                                |
-| `isServerSide()` / `isRowLoaded(i)`                                           | 서버 모드 여부 / 해당 인덱스 로드 여부 (스켈레톤 판별)                                                         |
-| `refreshServerRows()`                                                         | 서버 캐시 폐기 + 현재 뷰포트부터 재요청                                                                        |
-| `moveRow(from, to)`                                                           | 행 순서 이동 + `rowReorder` 이벤트 발행                                                                        |
-| `beginRowDrag` / `updateRowDropPosition` / `endRowDrag`                       | 행 드래그 라이프사이클 (어댑터 연결용)                                                                         |
-| `on(event, cb)`                                                               | 타입 이벤트 구독 (`rowReorder` 등)                                                                             |
-| `setSelectionMode(mode)`                                                      | 셀 선택 모드 (`'single-cell'`/`'multi-cell'`/`'row'`)                                                          |
-| `setActiveCell(row, col)`                                                     | 활성 셀 지정 (범위 해제 + 클램프 + scrollIntoView)                                                             |
-| `setCellRange(range \| null)`                                                 | 선택 범위 직접 지정 (정규화 적용)                                                                              |
-| `navigateCell(dir, extend?)`                                                  | 키보드 셀 네비게이션 (아래 셀 선택 참고)                                                                       |
-| `clearCellSelection()`                                                        | 활성 셀/범위 해제                                                                                              |
-| `isActiveCell(r, c)` / `isCellInRange(r, c)`                                  | 렌더링 시 셀 상태 조회                                                                                         |
-| `getScrollTop()`                                                              | 현재 스크롤 위치 (DOM 동기화용)                                                                                |
-| `startEditing(row, col, initial?)`                                            | 편집 진입 (`editable: false`면 false)                                                                          |
-| `updateEditValue(v)`                                                          | 임시 입력 값 갱신 (에러 해제 포함)                                                                             |
-| `commitEditing()`                                                             | 검증 후 rawData에 저장. 실패 시 false + 편집 유지                                                              |
-| `cancelEditing()`                                                             | 저장 없이 편집 종료                                                                                            |
-| `isEditing(r, c)` / `isCellEditable(r, c)`                                    | 렌더링 시 편집 상태 조회                                                                                       |
-| `getEditorContext(r, c)`                                                      | 커스텀 편집기용 컨텍스트 (`CellEditorContext`)                                                                 |
-| `undo()` / `redo()` / `canUndo()` / `canRedo()`                               | 편집·붙여넣기 이력 되돌리기/다시 실행 (아래 Undo/Redo 참고)                                                    |
-| `getRowState(row)` / `getChanges()` / `hasChanges()`                          | 행 상태(I/U/D) 조회 / 변경분 수집 / 변경 여부 (아래 행 상태 추적 참고)                                         |
-| `deleteRowsByIds(ids)` / `restoreRowsByIds(ids)`                              | 삭제 마킹(D) / 삭제 마킹 해제                                                                                  |
-| `commitChanges()` / `clearChanges()`                                          | D 행 실제 제거 + 마킹 초기화 / 마킹만 초기화                                                                   |
-| `validateChanges()` / `validateRow(row)` / `getCellError(row, col)`           | I/U 행의 required·validate 검사 (저장 전 유효성 확인)                                                          |
-| `setPinnedTopRows(rows)` / `setPinnedBottomRows(rows)`                        | 상단/하단 고정 행 데이터 설정 (`null`로 해제)                                                                  |
-| `getUniqueValues(field)`                                                      | 컬럼의 고유 표시 값 목록 — Set 필터 체크리스트용                                                               |
-| `getState()` / `applyState(state)`                                            | 직렬화 가능한 그리드 상태 저장/복원 (`GridPersistedState`)                                                     |
-| `getRowId(row)`                                                               | 행 고유 ID (렌더 key용)                                                                                        |
-| `getCellText(row, col)`                                                       | `formatter`/`valueGetter` 적용된 표시 문자열                                                                   |
-| `getCellClass(row, rowIndex, col)` / `getRowClass(row, rowIndex)`             | `cellClass`/`rowClass` 해석된 커스텀 클래스 문자열                                                             |
-| `getDisplayedRowCount()` / `getFilteredRowCount()` / `getTotalRowCount()`     | 행 수 — 현재 표시(페이지 반영) / 필터+검색 후(페이징 전) / 원본 전체                                           |
-| `getDisplayedRowAt(i)` / `getDisplayedRowIndex(id)`                           | 표시 인덱스 ↔ 행/ID 변환 (그룹화 시 displayRows 리프 기준)                                                     |
-| `forEachDisplayedRow(fn)` / `forEachRow(fn)`                                  | 표시 순서 / 원본 순서 행 순회                                                                                  |
-| `getColumn(field)` / `getColumnIndex(field)`                                  | 컬럼 정의 조회 / 표시 컬럼 인덱스 (숨김·없으면 -1)                                                             |
-| `getSortModel()` / `setSortModel(specs)`                                      | 정렬 조건 모델 일괄 get/set — priority 순 정규화, 서버 모드 재요청                                             |
-| `getFilterModel()` / `setFilterModel(map)`                                    | 컬럼 필터 맵 일괄 get/set — 기존 필터 전체 교체, 첫 페이지 이동                                                |
-| `getSearchText()`                                                             | 현재 전역 검색어 (snapshot.searchText와 동일)                                                                  |
-| `setRowSelection(ids)`                                                        | 행 ID 목록 일괄 선택 — isRowSelectable 제외 적용, null은 전체 해제                                             |
-| `refreshCells()`                                                              | 파이프라인 강제 재계산 + 재렌더 — 외부 제자리 수정/formatter 참조 변경 후                                      |
-| `getModifiedRows()`                                                           | I/U/D 마킹 행을 `{row, status}[]` flat 배열로 반환 (저장 페이로드용)                                           |
-| `ensureRowVisible(id)` / `scrollToTop()` / `scrollToBottom()`                 | 행 ID 기준 스크롤 / 첫·마지막 표시 행으로                                                                      |
-| `setLoading(bool)` / `isLoading()`                                            | 로딩 오버레이 상태 — `snapshot.loading`으로 노출, 어댑터가 오버레이 렌더링                                     |
+| 메서드                                                                                | 동작                                                                                                           |
+| ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `setColumns(cols)`                                                                    | 컬럼 정의 교체                                                                                                 |
+| `setDefaultColDef(def \| null)`                                                       | 런타임에 `defaultColDef` 교체 — 마지막 입력 컬럼에 재머지. `undefined`는 미지정(유지), `null`은 해제           |
+| `toggleSort(field, additive?)`                                                        | `asc → desc → 해제` 순환. `additive=true`(Shift+클릭)이면 다중 정렬 조건에 추가/제거                           |
+| `clearSorts()`                                                                        | 모든 정렬 조건 해제                                                                                            |
+| `setGroupBy(fields \| null)`                                                          | 행 그룹화 기준 필드 목록 설정 (`['dept','role']`)                                                              |
+| `toggleGroupExpanded(key)`                                                            | 그룹 행 펼침/접힘 토글                                                                                         |
+| `expandAllGroups()` / `collapseAllGroups()`                                           | 전체 펼치기/접기                                                                                               |
+| `isGroupExpanded(key)`                                                                | 그룹 키 펼침 여부                                                                                              |
+| `exportToCsv(options?)`                                                               | 표시 상태 데이터를 CSV 문자열로 반환 + 브라우저면 다운로드                                                     |
+| `getCsvTemplate(options?)`                                                            | 그리드 컬럼에 맞는 CSV 템플릿(헤더 행) 반환 + 다운로드                                                         |
+| `importCsv(csvText, options?)`                                                        | CSV 문자열 파싱 → 행 추가/교체. `CsvImportResult {added, skipped, errors}` 반환                                |
+| `getSelectionTsv(options?)`                                                           | 선택 범위(없으면 활성 셀)를 TSV 문자열로 변환 (없으면 null). `{ includeHeaders: true }`면 첫 줄에 헤더 행 포함 |
+| `pasteTsv(tsv, start?)`                                                               | TSV를 활성 셀부터 순차 쓰기 → `PasteResult` 반환 (편집 이력에 1개 단위로 기록)                                 |
+| `setSearch(text)`                                                                     | 전역 검색 (표시 컬럼 전체, 대소문자 무시)                                                                      |
+| `clearFilters()`                                                                      | 모든 컬럼 필터 해제                                                                                            |
+| `setFilterRowVisible(visible)` / `toggleFilterRow()`                                  | 필터 입력 행 표시/숨김 — 데이터 파이프라인 재계산 없이 스냅샷만 갱신                                           |
+| `toggleRowSelection(id)` / `clearSelection()` / `isSelected(id)`                      | 행 선택                                                                                                        |
+| `toggleAllRows()` / `isAllSelected()` / `isSomeSelected()`                            | 전체 행 선택 토글 / 전체·일부 선택 여부 (헤더 체크박스용)                                                      |
+| `setColumnVisibility(field, visible)` / `setColumnVisible(columnId, visible)`         | 컬럼 표시/숨김 (동일 동작 — columnId는 `field`와 같음)                                                         |
+| `setAllColumnsVisible(visible)`                                                       | 전체 컬럼 일괄 표시/숨김 (Column Controller의 전체 선택/해제)                                                  |
+| `setColumnWidth(field, width)`                                                        | 컬럼 너비 변경 (minWidth/maxWidth 클램프)                                                                      |
+| `autoSizeColumn(field, measureText?)` / `autoSizeAllColumns(measureText?)`            | 내용 기준 자동 너비. `measureText` 미지정 시 문자 길이 기반 추정 (DOM 없이 동작)                               |
+| `reorderColumn(draggedId, targetId)`                                                  | 컬럼 순서 변경 (숨김 포함 전체 순서 기준)                                                                      |
+| `resetColumnLayout()`                                                                 | 너비/순서를 컬럼 정의 기본값으로 초기화                                                                        |
+| `setColumnPinned(field, pinned)`                                                      | 컬럼 고정 위치 변경 (`'left'`/`'right'`/`null`)                                                                |
+| `isServerSide()` / `isRowLoaded(i)`                                                   | 서버 모드 여부 / 해당 인덱스 로드 여부 (스켈레톤 판별)                                                         |
+| `refreshServerRows()`                                                                 | 서버 캐시 폐기 + 현재 뷰포트부터 재요청                                                                        |
+| `moveRow(from, to)`                                                                   | 행 순서 이동 + `rowReorder` 이벤트 발행                                                                        |
+| `beginRowDrag` / `updateRowDropPosition` / `endRowDrag`                               | 행 드래그 라이프사이클 (어댑터 연결용)                                                                         |
+| `on(event, cb)`                                                                       | 타입 이벤트 구독 (`rowReorder` 등)                                                                             |
+| `setSelectionMode(mode)`                                                              | 셀 선택 모드 (`'single-cell'`/`'multi-cell'`/`'row'`)                                                          |
+| `setActiveCell(row, col)`                                                             | 활성 셀 지정 (범위 해제 + 클램프 + scrollIntoView)                                                             |
+| `setCellRange(range \| null)`                                                         | 선택 범위 직접 지정 (정규화 적용)                                                                              |
+| `navigateCell(dir, extend?)`                                                          | 키보드 셀 네비게이션 (아래 셀 선택 참고)                                                                       |
+| `clearCellSelection()`                                                                | 활성 셀/범위 해제                                                                                              |
+| `isActiveCell(r, c)` / `isCellInRange(r, c)`                                          | 렌더링 시 셀 상태 조회                                                                                         |
+| `getScrollTop()`                                                                      | 현재 스크롤 위치 (DOM 동기화용)                                                                                |
+| `startEditing(row, col, initial?)`                                                    | 편집 진입 (`editable: false`면 false)                                                                          |
+| `updateEditValue(v)`                                                                  | 임시 입력 값 갱신 (에러 해제 포함)                                                                             |
+| `commitEditing()`                                                                     | 검증 후 rawData에 저장. 실패 시 false + 편집 유지                                                              |
+| `cancelEditing()`                                                                     | 저장 없이 편집 종료                                                                                            |
+| `isEditing(r, c)` / `isCellEditable(r, c)`                                            | 렌더링 시 편집 상태 조회                                                                                       |
+| `getEditorContext(r, c)`                                                              | 커스텀 편집기용 컨텍스트 (`CellEditorContext`)                                                                 |
+| `undo()` / `redo()` / `canUndo()` / `canRedo()`                                       | 편집·붙여넣기 이력 되돌리기/다시 실행 (아래 Undo/Redo 참고)                                                    |
+| `getRowState(row)` / `getChanges()` / `hasChanges()`                                  | 행 상태(I/U/D) 조회 / 변경분 수집 / 변경 여부 (아래 행 상태 추적 참고)                                         |
+| `deleteRowsByIds(ids)` / `restoreRowsByIds(ids)`                                      | 삭제 마킹(D) / 삭제 마킹 해제                                                                                  |
+| `commitChanges()` / `clearChanges()`                                                  | D 행 실제 제거 + 마킹 초기화 / 마킹만 초기화                                                                   |
+| `validateChanges()` / `validateRow(row)` / `getCellError(row, col)`                   | I/U 행의 required·validate 검사 (저장 전 유효성 확인)                                                          |
+| `setPinnedTopRows(rows)` / `setPinnedBottomRows(rows)`                                | 상단/하단 고정 행 데이터 설정 (`null`로 해제)                                                                  |
+| `getUniqueValues(field)`                                                              | 컬럼의 고유 표시 값 목록 — Set 필터 체크리스트용                                                               |
+| `getState()` / `applyState(state)`                                                    | 직렬화 가능한 그리드 상태 저장/복원 (`GridPersistedState`)                                                     |
+| `getRowId(row)`                                                                       | 행 고유 ID (렌더 key용)                                                                                        |
+| `getCellText(row, col)`                                                               | `formatter`/`valueGetter` 적용된 표시 문자열                                                                   |
+| `getCellClass(row, rowIndex, col)` / `getRowClass(row, rowIndex)`                     | `cellClass`/`rowClass` 해석된 커스텀 클래스 문자열                                                             |
+| `getDisplayedRowCount()` / `getFilteredRowCount()` / `getTotalRowCount()`             | 행 수 — 현재 표시(페이지 반영) / 필터+검색 후(페이징 전) / 원본 전체                                           |
+| `getDisplayedRowAt(i)` / `getDisplayedRowIndex(id)`                                   | 표시 인덱스 ↔ 행/ID 변환 (그룹화 시 displayRows 리프 기준)                                                     |
+| `forEachDisplayedRow(fn)` / `forEachRow(fn)`                                          | 표시 순서 / 원본 순서 행 순회                                                                                  |
+| `getColumn(field)` / `getColumnIndex(field)`                                          | 컬럼 정의 조회 / 표시 컬럼 인덱스 (숨김·없으면 -1)                                                             |
+| `getSortModel()` / `setSortModel(specs)`                                              | 정렬 조건 모델 일괄 get/set — priority 순 정규화, 서버 모드 재요청                                             |
+| `getFilterModel()` / `setFilterModel(map)`                                            | 컬럼 필터 맵 일괄 get/set — 기존 필터 전체 교체, 첫 페이지 이동                                                |
+| `getSearchText()`                                                                     | 현재 전역 검색어 (snapshot.searchText와 동일)                                                                  |
+| `setRowSelection(ids)`                                                                | 행 ID 목록 일괄 선택 — isRowSelectable 제외 적용, null은 전체 해제                                             |
+| `refreshCells()`                                                                      | 파이프라인 강제 재계산 + 재렌더 — 외부 제자리 수정/formatter 참조 변경 후                                      |
+| `getModifiedRows()`                                                                   | I/U/D 마킹 행을 `{row, status}[]` flat 배열로 반환 (저장 페이로드용)                                           |
+| `ensureRowVisible(id)` / `scrollToTop()` / `scrollToBottom()`                         | 행 ID 기준 스크롤 / 첫·마지막 표시 행으로                                                                      |
+| `getAllRows()` / `getDisplayedRows()`                                                 | 원본 전체 / 표시 행 전체 배열 (순회 없이 한 번에)                                                              |
+| `getFirstRow()` / `getLastRow()` / `getNextRow(id)` / `getPrevRow(id)`                | 표시 목록 첫·마지막·이웃 행                                                                                    |
+| `findRow` / `findRows` / `findRowIndex(predicate)`                                    | 표시 행에서 조건 검색 — 첫 매치 / 전체 매치 / 첫 매치 인덱스                                                   |
+| `getCell(id, field)`                                                                  | 셀 종합 정보 — `{row, column, value, text, rowIndex, columnIndex}` (없으면 undefined)                          |
+| `getCellValueById(id, field)` / `setCellValueById(id, field, v)`                      | id+field 직접 값 조회/쓰기 — 검증·Undo·afterEdit 동일 적용                                                     |
+| `getColumns()` / `getVisibleColumnDefs()` / `getColumnIds()` / `getHiddenColumnIds()` | 컬럼 정의 조회 — 전체 / 표시만 / field 목록 / 숨김 목록                                                        |
+| `focusCell(id, field)` / `focusRow(id)`                                               | 스크롤+활성 셀 한 번에 — `scrollToCell`+`setActiveCell` 단축                                                   |
+| `insertRow(row, beforeId?)`                                                           | 행 id 기준 위치 삽입 — 생략 시 끝 추가                                                                         |
+| `getInsertedRows()` / `getUpdatedRows()` / `getDeletedRows()`                         | 상태별 행 목록 — `getChanges()`의 분리 접근                                                                    |
+| `sumBy` / `avgBy` / `minBy` / `maxBy` / `countBy(field)`                              | 표시 행 기준 숫자 집계 단축 (필터·페이징 적용 결과)                                                            |
+| `setLoading(bool)` / `isLoading()`                                                    | 로딩 오버레이 상태 — `snapshot.loading`으로 노출, 어댑터가 오버레이 렌더링                                     |
 
 ## ColumnDef
 
@@ -192,8 +202,18 @@ interface ColumnDef<TData> {
   filterPredicate?: (value, row, filter: ColumnFilter) => boolean; // 커스텀 필터 판별
   // 그룹 행 집계 — 내장 키 또는 커스텀 함수 (values/rows/field → 임의 값)
   aggregationFn?:
-    | "sum" | "avg" | "min" | "max" | "count" | "first" | "last"
-    | ((params: { values: unknown[]; rows: TData[]; field: string }) => unknown);
+    | "sum"
+    | "avg"
+    | "min"
+    | "max"
+    | "count"
+    | "first"
+    | "last"
+    | ((params: {
+        values: unknown[];
+        rows: TData[];
+        field: string;
+      }) => unknown);
   editable?: boolean; // 기본값 true — 인라인 편집 허용
   cellEditor?: "text" | "number" | "select" | "date" | "custom"; // 기본값 'text'
   editorOptions?: readonly string[]; // select 편집기 옵션

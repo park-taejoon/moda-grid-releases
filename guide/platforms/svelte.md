@@ -94,7 +94,8 @@ Svelte 5의 named snippet으로 위임한다:
     {/if}
   {/snippet}
 
-  <!-- 커스텀 편집기 — ctx: CellEditorContext -->
+  <!-- 커스텀 편집기 — ctx: CellEditorContext.
+       cellEditor: "custom" 컬럼에만 적용되고 다른 컬럼은 내장 에디터로 폴백 -->
   {#snippet editor(ctx)}
     <select
       value={String(ctx.editValue ?? ctx.value ?? "")}

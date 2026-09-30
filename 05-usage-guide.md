@@ -36,8 +36,18 @@ interface ColumnDef<TData> {
   filterPredicate?: (value, row, filter) => boolean; // 커스텀 필터 판별
   // 그룹 행 집계 — 내장 키 또는 커스텀 함수 ({values,rows,field} → 임의 값)
   aggregationFn?:
-    | "sum" | "avg" | "min" | "max" | "count" | "first" | "last"
-    | ((params: { values: unknown[]; rows: TData[]; field: string }) => unknown);
+    | "sum"
+    | "avg"
+    | "min"
+    | "max"
+    | "count"
+    | "first"
+    | "last"
+    | ((params: {
+        values: unknown[];
+        rows: TData[];
+        field: string;
+      }) => unknown);
   editable?: boolean; // 기본값 true
   cellEditor?: "text" | "number" | "select" | "date" | "custom";
   editorOptions?: readonly string[]; // select 옵션
