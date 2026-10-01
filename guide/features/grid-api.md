@@ -88,6 +88,96 @@ grid.getUpdatedRows(); // U 상태 행
 grid.getDeletedRows(); // D 상태 행 (getChanges 분리 접근)
 ```
 
+## 행 상태·선택·체크 단축
+
+```ts
+// 행 상태 수동 지정 — I/U/D 마킹 또는 null로 해제
+grid.setRowStatus("42", "U"); // 서버 저장 전 상태 강제 조정 → boolean
+grid.setRowStatus("42", null); // 상태 해제
+
+// 선택 행 ID / 일괄 삭제 — getSelectedRowData의 ID 버전
+grid.getSelectedRowIds(); // ["1","4",...] (rawData 순서)
+grid.deleteSelectedRows(); // 선택 행을 일괄 D 마킹 → 처리 행 수
+
+// checkbox 컬럼 ID 일괄 조작 — setRowChecked의 복수 버전
+grid.getCheckedRowIds(); // 체크된 행 ID 목록
+grid.setCheckedRowIds(["1", "3"]); // 일괄 체크 → 적용 수
+grid.setCheckedRowIds(["1"], false); // 일괄 해제
+```
+
+## 편집·트리·컬럼 레이아웃 단축
+
+```ts
+// 행 ID + 필드로 바로 편집 진입 — focusCell + startEditing 합성
+grid.startEditingById("42", "name"); // → boolean
+
+// 트리 노드 명시적 펼침/접힘 — toggleTreeExpanded의 결정적 버전
+grid.isTreeExpanded("1"); // 현재 펼침 여부
+grid.setTreeExpanded("1", false); // 접기 (같은 상태면 무시)
+
+// 컬럼 순서 일괄 지정 — 나열 컬럼이 순서대로 앞에 배치,
+// 나머지는 기존 상대 순서 유지
+grid.setColumnOrder(["role"]); // role 컬럼을 맨 앞으로
+
+// 컬럼 너비 저장/복원 — getState 없이 너비만 주고받을 때
+const widths = grid.getColumnWidths(); // { [field]: px } 실효 너비
+grid.setColumnWidths({ name: 240 }); // 일괄 지정 → 적용된 컬럼 수
+```
+
+## 페이지·표시 여부·변경 되돌리기
+
+```ts
+// 페이지 상태 조회 — 페이저 UI를 직접 그릴 때
+grid.getPageIndex(); // 현재 페이지 (0-base)
+grid.getPageSize(); // 0이면 페이징 해제
+grid.getPageCount(); // 전체 페이지 수
+grid.setPageSize(50); // 크기만 변경 — 현재 페이지는 범위 내에서 유지
+
+// 트리 깊이·일괄 펼침 — setTreeExpandLevel의 네이밍 단축
+grid.getRowDepth("8"); // 루트=0, 비트리/미존재는 -1
+grid.expandAllTree(); // 전체 펼치기
+grid.collapseAllTree(); // 전체 접기
+
+// 표시 여부 — 필터·페이징·숨김·트리/그룹 접힘까지 반영
+grid.isRowDisplayed("8"); // 화면 표시 목록에 있으면 true
+
+// 변경 되돌리기 — commitChanges 없이 폐기
+// I 행은 제거, D 행은 복원, U 행은 편집 전 값으로 복귀 → 처리 행 수
+grid.discardRowChanges(grid.getSelectedRowIds());
+```
+
+## 활성/편집 셀·선택·순서·고정/그룹 탐색
+
+```ts
+// 활성/편집 셀 조회 — 리프 인덱스 + 컬럼 field + 행 ID를 한 번에 반환
+grid.getActiveCell(); // {rowIndex, columnIndex, columnKey, rowId} | null
+grid.getEditingCell(); // 편집 중이 아니면 null
+
+// 결정적 선택 — toggleRowSelection의 명시적 버전
+grid.setRowSelected("42", true); // isRowSelectable 거부·미존재 행은 false
+
+// 표시 행 ID 목록 / 순서 이동 — ID 기반 API의 입력으로 바로 사용
+grid.getDisplayedRowIds(); // ["1","4",...] (표시 순서)
+grid.moveRowById("42", 0); // 표시 목록 맨 앞으로 → boolean
+
+// 컬럼 표시/고정 상태 — setColumnVisible/setColumnPinned의 조회 버전
+grid.isColumnVisible("age"); // 숨김이면 false (없는 field도 false)
+grid.getPinnedColumnIds(); // ["id","progress"] — 표시 순서
+grid.getPinnedColumnIds("left"); // 한쪽만
+grid.getColumnPinned("id"); // "left" | "right" | null
+
+// 그룹 행 토글 — displayRows의 GroupNode.key를 그대로 사용
+const g = grid.getSnapshot().displayRows?.find((d) => d.type === "group");
+if (g?.type === "group") {
+  grid.isGroupExpanded(g.key); // 현재 펼침 여부
+  grid.setGroupExpanded(g.key, false); // 결정적 접기
+}
+
+// 트리 부모/자식 ID — getRowDepth와 함께 트리 탐색에 사용
+grid.getParentRowId("8"); // 부모 ID 또는 null
+grid.getChildRowIds("1"); // 직계 자식 ID 목록
+```
+
 ## 표시 행 집계 단축
 
 `aggregationFn` 없이도 표시 행 기준 숫자 집계를 바로 얻는다.
@@ -198,31 +288,52 @@ grid.isLoading(); // 현재 상태 조회
 
 ## IBSheet / AG-Grid 매핑 표
 
-| IBSheet                    | AG-Grid                                         | moda-grid                                                                 |
-| -------------------------- | ----------------------------------------------- | ------------------------------------------------------------------------- |
-| `RowCount` / `TotalRows`   | `getDisplayedRowCount()`                        | `getDisplayedRowCount()` / `getFilteredRowCount()` / `getTotalRowCount()` |
-| `GetRowData(row)`          | `getDisplayedRowAtIndex(i)`                     | `getDisplayedRowAt(i)` / `getRowById(id)`                                 |
-| `GetRowIndexBy...`         | `getRowNode(id).rowIndex`                       | `getDisplayedRowIndex(id)`                                                |
-| 노드 순회                  | `forEachNode` / `forEachNodeAfterFilterAndSort` | `forEachRow` / `forEachDisplayedRow`                                      |
-| —                          | `columnApi.getColumn(key)`                      | `getColumn(field)` / `getColumnIndex(field)`                              |
-| `GetSortCol`/`SetSortCol`  | `columnApi` 정렬 상태                           | `getSortModel()` / `setSortModel(specs)`                                  |
-| —                          | `getFilterModel()` / `setFilterModel()`         | `getFilterModel()` / `setFilterModel(map)`                                |
-| `SearchStr`                | `setGridOption('quickFilterText')`              | `setSearch(text)` / `getSearchText()`                                     |
-| `SetSelectRow` / 전체 선택 | `setNodesSelected` / `selectAll`                | `setRowSelection(ids)` / `selectAllRows()`                                |
-| `Refresh`                  | `refreshCells()` / `redrawRows()`               | `refreshCells()`                                                          |
-| `GetSaveData`/`GetJson`    | 노드 순회 + `isRowSelected`                     | `getModifiedRows()` → `{row, status}[]`                                   |
-| `MoveToRow`/`ShowRow`      | `ensureIndexVisible`/`ensureNodeVisible`        | `scrollToRow(i)` / `ensureRowVisible(id)`                                 |
-| `SetFocus` + `ShowCell`    | `setFocusedCell` + `ensureNodeVisible`          | `focusCell(id, field)` / `focusRow(id)`                                   |
-| 첫/마지막 행 이동          | `ensureIndexVisible(0/-1)`                      | `scrollToTop()` / `scrollToBottom()`                                      |
-| `GetFirstRow`/`GetLastRow` | 첫/마지막 노드                                  | `getFirstRow()` / `getLastRow()`                                          |
-| `GetNextRow`/`GetPrevRow`  | 이웃 노드                                       | `getNextRow(id)` / `getPrevRow(id)`                                       |
-| `GetDataRows`/전체 행      | `forEachNode*`                                  | `getAllRows()` / `getDisplayedRows()`                                     |
-| 조건부 행 검색             | `forEachNode` + 수동                            | `findRow` / `findRows` / `findRowIndex`                                   |
-| `GetCellValue(Row, Col)`   | `getValue(colKey, rowNode)`                     | `getCell(id, field)` / `getCellValueById(id, field)`                      |
-| `SetCellValue(Row, Col)`   | `setDataValue`                                  | `setCellValueById(id, field, v)`                                          |
-| `GetTotalByCol`            | `forEachNode` + 수동                            | `sumBy` / `avgBy` / `minBy` / `maxBy` / `countBy`                         |
-| 상태별 행 목록             | `forEachNode` + `is*`                           | `getInsertedRows` / `getUpdatedRows` / `getDeletedRows`                   |
-| `SetWaitImageVisible`      | `setGridOption('loading')`                      | `setLoading(bool)` / `GridOptions.loading`                                |
+| IBSheet                        | AG-Grid                                            | moda-grid                                                                 |
+| ------------------------------ | -------------------------------------------------- | ------------------------------------------------------------------------- |
+| `RowCount` / `TotalRows`       | `getDisplayedRowCount()`                           | `getDisplayedRowCount()` / `getFilteredRowCount()` / `getTotalRowCount()` |
+| `GetRowData(row)`              | `getDisplayedRowAtIndex(i)`                        | `getDisplayedRowAt(i)` / `getRowById(id)`                                 |
+| `GetRowIndexBy...`             | `getRowNode(id).rowIndex`                          | `getDisplayedRowIndex(id)`                                                |
+| 노드 순회                      | `forEachNode` / `forEachNodeAfterFilterAndSort`    | `forEachRow` / `forEachDisplayedRow`                                      |
+| —                              | `columnApi.getColumn(key)`                         | `getColumn(field)` / `getColumnIndex(field)`                              |
+| `GetSortCol`/`SetSortCol`      | `columnApi` 정렬 상태                              | `getSortModel()` / `setSortModel(specs)`                                  |
+| —                              | `getFilterModel()` / `setFilterModel()`            | `getFilterModel()` / `setFilterModel(map)`                                |
+| `SearchStr`                    | `setGridOption('quickFilterText')`                 | `setSearch(text)` / `getSearchText()`                                     |
+| `SetSelectRow` / 전체 선택     | `setNodesSelected` / `selectAll`                   | `setRowSelection(ids)` / `selectAllRows()`                                |
+| `Refresh`                      | `refreshCells()` / `redrawRows()`                  | `refreshCells()`                                                          |
+| `GetSaveData`/`GetJson`        | 노드 순회 + `isRowSelected`                        | `getModifiedRows()` → `{row, status}[]`                                   |
+| `MoveToRow`/`ShowRow`          | `ensureIndexVisible`/`ensureNodeVisible`           | `scrollToRow(i)` / `ensureRowVisible(id)`                                 |
+| `SetFocus` + `ShowCell`        | `setFocusedCell` + `ensureNodeVisible`             | `focusCell(id, field)` / `focusRow(id)`                                   |
+| 첫/마지막 행 이동              | `ensureIndexVisible(0/-1)`                         | `scrollToTop()` / `scrollToBottom()`                                      |
+| `GetFirstRow`/`GetLastRow`     | 첫/마지막 노드                                     | `getFirstRow()` / `getLastRow()`                                          |
+| `GetNextRow`/`GetPrevRow`      | 이웃 노드                                          | `getNextRow(id)` / `getPrevRow(id)`                                       |
+| `GetDataRows`/전체 행          | `forEachNode*`                                     | `getAllRows()` / `getDisplayedRows()`                                     |
+| 조건부 행 검색                 | `forEachNode` + 수동                               | `findRow` / `findRows` / `findRowIndex`                                   |
+| `GetCellValue(Row, Col)`       | `getValue(colKey, rowNode)`                        | `getCell(id, field)` / `getCellValueById(id, field)`                      |
+| `SetCellValue(Row, Col)`       | `setDataValue`                                     | `setCellValueById(id, field, v)`                                          |
+| `GetTotalByCol`                | `forEachNode` + 수동                               | `sumBy` / `avgBy` / `minBy` / `maxBy` / `countBy`                         |
+| 상태별 행 목록                 | `forEachNode` + `is*`                              | `getInsertedRows` / `getUpdatedRows` / `getDeletedRows`                   |
+| `GetRowStatus`/`SetRowStatus`  | 노드 데이터 수동                                   | `getRowState(row)` / `setRowStatus(id, status)`                           |
+| 선택 행 ID 목록                | `getSelectedRows().map(id)`                        | `getSelectedRowIds()`                                                     |
+| `DeleteSelectedRows`           | `applyTransaction({remove})`                       | `deleteSelectedRows()`                                                    |
+| `FindCheckedRow`               | 체크박스 노드 필터                                 | `getCheckedRowIds(field?)` / `setCheckedRowIds(ids, checked?)`            |
+| 셀 편집 진입                   | `startEditingCell` + 포커스                        | `startEditingById(id, field)`                                             |
+| `SetColOrder`/컬럼 이동        | `columnApi.moveColumns`                            | `setColumnOrder(fields)` / `reorderColumn(dragged, target)`               |
+| `SetColWidth` 반복             | `columnApi.setColumnWidths`                        | `getColumnWidths()` / `setColumnWidths(map)`                              |
+| `GetRowExpand`/`SetRowExpand`  | 트리 노드 `expanded`                               | `isTreeExpanded(id)` / `setTreeExpanded(id, bool)`                        |
+| `GetCurrentPage`/`SetPageSize` | `paginationGetCurrentPage`/`paginationSetPageSize` | `getPageIndex()` / `setPageSize(n)` / `getPageCount()`                    |
+| 트리 일괄 펼침/접기            | `expandAll`/`collapseAll` (rowModel)               | `expandAllTree()` / `collapseAllTree()`                                   |
+| `GetRowDepth`                  | 노드 `level`                                       | `getRowDepth(id)`                                                         |
+| `IsVisible`                    | 노드 `displayed`                                   | `isRowDisplayed(id)` — 필터·페이징·숨김·접힘 반영                         |
+| `DiscardData`/`Undo`           | `applyTransaction` 역연산                          | `discardRowChanges(ids)` — I 제거·D 복원·U 원본 복귀                      |
+| `GetFocusRow`/`GetFocusCol`    | `getFocusedCell()`                                 | `getActiveCell()` — 인덱스+컬럼키+행 ID 한 번에                           |
+| `GetEditRow`                   | `getEditingCells()`                                | `getEditingCell()` — 비편집 시 null                                       |
+| `SetRowSelected`               | `setSelected(bool)`/`selectAll`                    | `setRowSelected(id, bool)` — 결정적 지정                                  |
+| 행 순서 이동                   | `moveRowNode`                                      | `moveRowById(id, toIndex)` — 표시 목록 기준                               |
+| `GetColHidden`                 | `columnApi.getColumnState`                         | `isColumnVisible(field)`                                                  |
+| 고정 컬럼 조회                 | `getColumnState` `pinned`                          | `getPinnedColumnIds(side?)` / `getColumnPinned(field)`                    |
+| `SetGroupRowExpanded`          | `setExpanded(bool)` (그룹 노드)                    | `setGroupExpanded(key, bool)` / `isGroupExpanded(key)`                    |
+| 트리 부모/자식                 | 노드 `parent`/`childrenAfterGroup`                 | `getParentRowId(id)` / `getChildRowIds(id)`                               |
+| `SetWaitImageVisible`          | `setGridOption('loading')`                         | `setLoading(bool)` / `GridOptions.loading`                                |
 
 ## 어댑터별 접근
 

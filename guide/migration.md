@@ -96,9 +96,9 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 피벗 설정 변경                  | `pivotChange` — `{ pivot }` (해제 시 null)                                                                   |
 | `SetRowHeight`                  | `grid.setRowHeight(id, px)` + `rowResize` 이벤트                                                             |
 | `onSearchEnd` / 서버 조회 완료  | `serverRequest`/`serverResponse`/`serverError` — 서버 사이드 모드 블록 요청 생명주기 (`server-side.md` 참조) |
-| `findCheckedRow` / 선택 행 조회 | `grid.getSelectedRowData()` — 선택 행 데이터 배열                                                            |
-| 체크박스 컬럼 체크 행 조회      | `grid.getCheckedRows(field?)` — `checkedValue` 기준, 선택과 별개                                             |
-| 체크 설정                       | `grid.setRowChecked(id, checked, field?)` — ID 기준, 값 매핑 자동                                            |
+| `findCheckedRow` / 선택 행 조회 | `grid.getSelectedRowData()` / `getSelectedRowIds()` — 선택 행 데이터/ID 배열                                 |
+| 체크박스 컬럼 체크 행 조회      | `grid.getCheckedRows(field?)` / `getCheckedRowIds(field?)` — `checkedValue` 기준, 선택과 별개                |
+| 체크 설정                       | `grid.setRowChecked(id, checked, field?)` / `setCheckedRowIds(ids, checked?)` — ID 기준, 값 매핑 자동        |
 | 조합 상태 감시                  | `grid.watch(selector, listener)` — 스냅샷 슬라이스 옵저버 (`events.md` 참조)                                 |
 
 ```tsx
@@ -211,6 +211,22 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `sheet.addRow({row: i})`                             | `grid.addRows(row, index)`                                                                                                              |
 | `sheet.copyRows()` / 행 복제                         | `grid.duplicateRows(rows)` — 원본 뒤 삽입 + I 마킹                                                                                      |
 | `sheet.setRowStatus(r, "I")`                         | `grid.addRows()` → 자동 I 마킹                                                                                                          |
+| `sheet.setRowStatus` 수동 지정                       | `grid.setRowStatus(id, "I"\|"U"\|"D"\|null)` — 상태 강제 지정/해제                                                                      |
+| `sheet.deleteSelectedRows()`                         | `grid.deleteSelectedRows()` — 선택 행 일괄 D 마킹                                                                                       |
+| 셀 편집 진입                                         | `grid.startEditingById(id, field)` — 행 ID+필드로 바로 편집                                                                             |
+| `sheet.setColOrder` / 컬럼 순서                      | `grid.setColumnOrder(fields)` — 나열 컬럼을 순서대로 앞에 배치                                                                          |
+| `sheet.setColWidth` 반복 호출                        | `grid.setColumnWidths(map)` / `getColumnWidths()` — 너비 일괄 저장·복원                                                                 |
+| 트리 노드 펼침 상태                                  | `grid.isTreeExpanded(id)` / `setTreeExpanded(id, bool)` — toggle의 결정적 버전                                                          |
+| 페이지 상태 조회                                     | `grid.getPageIndex()` / `getPageSize()` / `getPageCount()` / `setPageSize(n)`                                                           |
+| 트리 일괄 펼침/접기                                  | `grid.expandAllTree()` / `collapseAllTree()` — `setTreeExpandLevel`의 단축                                                              |
+| 행 깊이·표시 여부                                    | `grid.getRowDepth(id)` (루트=0, 비트리/-1) / `grid.isRowDisplayed(id)` — 접힘·필터·페이징 반영                                          |
+| 변경 되돌리기                                        | `grid.discardRowChanges(ids)` — I 행 제거·D 복원·U 원본 값 복귀                                                                         |
+| 활성/편집 셀 조회                                    | `grid.getActiveCell()` / `getEditingCell()` — `{rowIndex, columnIndex, columnKey, rowId}` 또는 `null`                                   |
+| 행 선택 결정적 지정                                  | `grid.setRowSelected(id, bool)` — `isRowSelectable` 거부·미존재는 `false`                                                               |
+| 표시 행 ID·순서 이동                                 | `grid.getDisplayedRowIds()` / `moveRowById(id, toIndex)` — 표시 목록 기준                                                               |
+| 컬럼 표시/고정 조회                                  | `grid.isColumnVisible(field)` / `getPinnedColumnIds(side?)` / `getColumnPinned(field)`                                                  |
+| 그룹 행 펼침 지정                                    | `grid.setGroupExpanded(key, bool)` / `isGroupExpanded(key)` — `GroupNode.key` 사용                                                      |
+| 트리 부모/자식 탐색                                  | `grid.getParentRowId(id)` / `getChildRowIds(id)` — `getRowDepth`와 함께 사용                                                            |
 | 셀 선택 후 Del                                       | `grid.clearRange()` (어댑터에서 Delete/Backspace 자동)                                                                                  |
 | Ctrl+X 잘라내기                                      | `grid.cutSelectionTsv()` — TSV 반환 + 지우기, Undo 1단위                                                                                |
 | Shift+Space / Ctrl+Space                             | `grid.selectEntireRow()` / `selectEntireColumn()` — 행·열 전체 선택                                                                     |

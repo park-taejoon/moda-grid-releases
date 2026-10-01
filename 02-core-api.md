@@ -178,6 +178,23 @@ grid.subscribe(() => render(grid.getSnapshot()));
 | `insertRow(row, beforeId?)`                                                           | 행 id 기준 위치 삽입 — 생략 시 끝 추가                                                                         |
 | `getInsertedRows()` / `getUpdatedRows()` / `getDeletedRows()`                         | 상태별 행 목록 — `getChanges()`의 분리 접근                                                                    |
 | `sumBy` / `avgBy` / `minBy` / `maxBy` / `countBy(field)`                              | 표시 행 기준 숫자 집계 단축 (필터·페이징 적용 결과)                                                            |
+| `setRowStatus(id, status)`                                                            | 행 상태 수동 지정 — `"I"/"U"/"D"` 마킹 또는 `null` 해제 (저장 전 상태 조정)                                    |
+| `getSelectedRowIds()` / `deleteSelectedRows()`                                        | 선택 행 ID 목록 / 선택 행 일괄 D 마킹 → 처리 수                                                                |
+| `getCheckedRowIds(field?)` / `setCheckedRowIds(ids, checked?)`                        | checkbox 컬럼 체크 ID 일괄 조회/지정 — 값 매핑 자동                                                            |
+| `startEditingById(id, field)`                                                         | 행 ID+필드로 편집 진입 — `focusCell`+`startEditing` 합성                                                       |
+| `setColumnOrder(fields)`                                                              | 컬럼 순서 일괄 지정 — 나열 컬럼을 앞에, 나머지는 기존 순서 유지                                                |
+| `getColumnWidths()` / `setColumnWidths(map)`                                          | 컬럼 실효 너비 조회 / 일괄 지정 — resizable·min/max 존중                                                       |
+| `isTreeExpanded(id)` / `setTreeExpanded(id, bool)`                                    | 트리 노드 펼침 조회 / 명시적 지정 — `toggleTreeExpanded`의 결정적 버전                                         |
+| `getPageIndex()` / `getPageSize()` / `getPageCount()` / `setPageSize(n)`              | 페이지 상태 조회 / 크기만 단독 변경 — 커스텀 페이저 구현용                                                     |
+| `getRowDepth(id)` / `expandAllTree()` / `collapseAllTree()`                           | 트리 깊이 조회(루트=0, 비트리=-1) / 일괄 펼침·접기 — `setTreeExpandLevel` 단축                                 |
+| `isRowDisplayed(id)`                                                                  | 표시 목록 멤버십 — 필터·페이징·숨김·트리/그룹 접힘 반영                                                        |
+| `discardRowChanges(ids)`                                                              | 행 변경 되돌리기 — I 제거·D 복원·U 원본 값 복귀 → 처리 수                                                      |
+| `getActiveCell()` / `getEditingCell()`                                                | 활성/편집 셀 정보 — `{rowIndex, columnIndex, columnKey, rowId}` 또는 `null`                                    |
+| `setRowSelected(id, selected)`                                                        | 행 선택 결정적 지정 — `isRowSelectable` 거부·미존재는 `false`                                                  |
+| `getDisplayedRowIds()` / `moveRowById(id, toIndex)`                                   | 표시 행 ID 목록(표시 순서) / 행 ID 기준 순서 이동                                                              |
+| `isColumnVisible(field)` / `getPinnedColumnIds(side?)` / `getColumnPinned(field)`     | 컬럼 표시/고정 상태 조회 — `setColumnVisible`/`setColumnPinned`의 조회 버전                                    |
+| `setGroupExpanded(key, bool)` / `isGroupExpanded(key)`                                | 그룹 행 결정적 접기/펼치기 — `displayRows`의 `GroupNode.key` 사용                                              |
+| `getParentRowId(id)` / `getChildRowIds(id)`                                           | 트리 부모/직계 자식 ID — `getRowDepth`와 함께 트리 탐색                                                        |
 | `setLoading(bool)` / `isLoading()`                                                    | 로딩 오버레이 상태 — `snapshot.loading`으로 노출, 어댑터가 오버레이 렌더링                                     |
 
 ## ColumnDef

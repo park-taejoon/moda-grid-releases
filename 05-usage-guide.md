@@ -546,6 +546,44 @@ grid.getSearchText();
 grid.setRowSelection(ids); // 일괄 선택 (isRowSelectable 적용)
 grid.refreshCells(); // 강제 재계산 — 외부 제자리 수정 후
 grid.getModifiedRows(); // {row, status: "I"|"U"|"D"}[] — 저장 페이로드용
+grid.getSelectedRowIds(); // 선택 행 ID 목록
+grid.deleteSelectedRows(); // 선택 행 일괄 D 마킹 → 처리 수
+grid.setRowStatus(id, "U"); // 상태 수동 지정 (null로 해제)
+grid.getCheckedRowIds(); // 체크된 행 ID 목록
+grid.setCheckedRowIds(ids, checked); // 체크 일괄 지정 → 적용 수
+grid.startEditingById(id, field); // 행 ID+필드로 편집 진입
+
+// 컬럼 레이아웃·트리
+grid.setColumnOrder(fields); // 나열 컬럼을 순서대로 앞에 배치
+grid.getColumnWidths(); // {field: px} 실효 너비 맵
+grid.setColumnWidths({ name: 240 }); // 너비 일괄 지정
+grid.isTreeExpanded(id); // 트리 노드 펼침 여부
+grid.setTreeExpanded(id, false); // 노드 명시적 접기/펼치기
+
+// 페이지·트리 일괄·되돌리기
+grid.getPageIndex(); // 현재 페이지 (0-base)
+grid.getPageSize(); // 0이면 페이징 해제
+grid.getPageCount(); // 전체 페이지 수
+grid.setPageSize(50); // 크기만 변경 — 현재 페이지 유지
+grid.getRowDepth(id); // 트리 깊이 (루트=0, 비트리/-1)
+grid.expandAllTree(); // 트리 전체 펼치기/접기 단축
+grid.collapseAllTree();
+grid.isRowDisplayed(id); // 필터·페이징·접힘까지 반영한 표시 여부
+grid.discardRowChanges(ids); // I 제거·D 복원·U 원본 복귀 → 처리 수
+
+// 활성/편집 셀·선택·순서·고정/그룹
+grid.getActiveCell(); // {rowIndex, columnIndex, columnKey, rowId} | null
+grid.getEditingCell(); // 비편집 시 null
+grid.setRowSelected(id, true); // 결정적 선택 — 거부·미존재는 false
+grid.getDisplayedRowIds(); // 표시 행 ID 목록 (표시 순서)
+grid.moveRowById(id, toIndex); // 행 ID 기준 순서 이동
+grid.isColumnVisible(field); // 숨김 컬럼 false
+grid.getPinnedColumnIds(); // 고정 컬럼 field 목록
+grid.getColumnPinned(field); // "left" | "right" | null
+grid.setGroupExpanded(key, false); // 그룹 행 결정적 접기
+grid.isGroupExpanded(key);
+grid.getParentRowId(id); // 트리 부모 ID 또는 null
+grid.getChildRowIds(id); // 직계 자식 ID 목록
 
 // 스크롤·로딩
 grid.ensureRowVisible(id); // 행 ID 기준 (없으면 false)
