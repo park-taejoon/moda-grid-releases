@@ -227,6 +227,19 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 컬럼 표시/고정 조회                                  | `grid.isColumnVisible(field)` / `getPinnedColumnIds(side?)` / `getColumnPinned(field)`                                                  |
 | 그룹 행 펼침 지정                                    | `grid.setGroupExpanded(key, bool)` / `isGroupExpanded(key)` — `GroupNode.key` 사용                                                      |
 | 트리 부모/자식 탐색                                  | `grid.getParentRowId(id)` / `getChildRowIds(id)` — `getRowDepth`와 함께 사용                                                            |
+| 행 상/하단 고정 (ID 기준)                            | `grid.pinRow(id, "top"\|"bottom")` / `unpinRow(id)` / `getPinnedRowIds` / `getPinnedRows`                                               |
+| 서버 검증 에러의 셀 표시                             | `grid.setCellError(id, field, msg)` — 컬럼 validate보다 우선, `null`로 해제                                                             |
+| 셀 노트 행 단위 지정                                 | `grid.setCellNote(id, field, note)` — `ColumnDef.note` 오버라이드                                                                       |
+| 활성/편집 셀의 행 객체                               | `grid.getActiveRow()` / `getEditingRow()` — 비활성·비편집 시 `null`                                                                     |
+| 단일 컬럼 필터/너비 조회                             | `grid.getColumnFilter(field)` / `getColumnWidth(field)`                                                                                 |
+| 그룹핑 컬럼 목록                                     | `grid.getGroupBy()` — `setGroupBy`의 읽기 버전                                                                                          |
+| 렌더된 행 범위                                       | `grid.getViewportRowRange()` — 가상 스크롤이면 뷰포트 슬라이스 `{start,end}`                                                            |
+| 원본 데이터 행 위치                                  | `grid.indexOfRow(id)` / `getRowByIndex(i)` — 표시 순서와 별개, 로드 순서 기준                                                           |
+| 표시 컬럼 인덱스 ↔ 필드                              | `grid.getColumnIndex(field)` / `getFieldAt(i)` — 재배치·숨김 반영                                                                       |
+| 정렬 상태 조회                                       | `grid.getSortState()` / `getSortDirection(field)` — 멀티 정렬 우선순위 포함                                                             |
+| 행 상태 조건자                                       | `grid.isRowAdded(id)` / `isRowModified(id)` / `isRowDeleted(id)` — I/U/D 단축                                                           |
+| 변경 필드·원본 값                                    | `grid.getChangedFields(id)` / `getOriginalValue(id, field)` / `getOriginalRow(id)`                                                      |
+| 개별 행 높이 맵                                      | `grid.getRowHeights()` — `setRowHeight` 오버라이드 `{id: px}`                                                                           |
 | 셀 선택 후 Del                                       | `grid.clearRange()` (어댑터에서 Delete/Backspace 자동)                                                                                  |
 | Ctrl+X 잘라내기                                      | `grid.cutSelectionTsv()` — TSV 반환 + 지우기, Undo 1단위                                                                                |
 | Shift+Space / Ctrl+Space                             | `grid.selectEntireRow()` / `selectEntireColumn()` — 행·열 전체 선택                                                                     |

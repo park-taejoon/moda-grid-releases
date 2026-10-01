@@ -178,6 +178,66 @@ grid.getParentRowId("8"); // 부모 ID 또는 null
 grid.getChildRowIds("1"); // 직계 자식 ID 목록
 ```
 
+## 고정 행·셀 오버라이드·모델 조회
+
+```ts
+// 행 ID 기준 상/하단 고정 — 한 행은 한쪽에만 고정 (반대쪽은 자동 해제)
+grid.pinRow("42", "top"); // → boolean (없는 ID는 false)
+grid.unpinRow("42"); // 어느 쪽이든 해제
+grid.getPinnedRowIds("top"); // 고정 행 ID 목록
+grid.getPinnedRows("top"); // 행 객체 복사본 — 이펙트에서 요약 행과 병합용
+
+// 수동 셀 에러 — 서버 저장 결과 등 외부 검증 에러의 셀 표시.
+// 컬럼 validate보다 우선, null로 해제하면 원래 검증으로 복귀
+grid.setCellError("42", "name", "중복된 이름입니다");
+grid.setCellError("42", "name", null);
+
+// 수동 셀 노트 — ColumnDef.note의 행 단위 오버라이드
+grid.setCellNote("42", "name", "확인 필요");
+
+// 활성/편집 셀의 행 객체 — getActiveCell/getEditingCell의 행 버전
+grid.getActiveRow(); // TData | null
+grid.getEditingRow(); // 비편집 시 null
+
+// 단일 컬럼 모델 조회 — setFilter/setColumnWidth의 읽기 버전
+grid.getColumnFilter("role"); // ColumnFilter | null (복사본)
+grid.getColumnWidth("name"); // 실효 px 또는 null
+
+// 현재 그룹핑 컬럼 목록 — setGroupBy의 읽기 버전
+grid.getGroupBy(); // ["role"] (비그룹이면 [])
+
+// 실제 DOM 렌더 행 범위 — 가상 스크롤이면 뷰포트 슬라이스
+grid.getViewportRowRange(); // {start, end} | null (end 미포함)
+```
+
+## 위치·정렬·변경분·원본 값 조회
+
+```ts
+// 원본 데이터(setData 순서) 기준 위치 — 표시 순서와 별개
+grid.getRowByIndex(0); // 첫 원본 행
+grid.indexOfRow("42"); // 원본 내 인덱스, 없으면 -1
+// 표시 컬럼 순서 ↔ 필드 상호 변환 (재배치·숨김 반영)
+grid.getColumnIndex("name"); // 1
+grid.getFieldAt(1); // "name"
+
+// 현재 정렬 상태 — 커스텀 정렬 표시기용
+grid.getSortState(); // SortSpec[] 복사본 (우선순위순)
+grid.getSortDirection("name"); // "asc" | "desc" | null
+
+// 행 상태 조건자 — getRowState의 단축
+grid.isRowAdded("42"); // I
+grid.isRowModified("42"); // U
+grid.isRowDeleted("42"); // D
+
+// 변경 필드·원본 값 — "무엇이 바뀌었나" 검토용
+grid.getChangedFields("42"); // ["name", "age"]
+grid.getOriginalValue("42", "name"); // 최초 로드 시점 값
+grid.getOriginalRow("42"); // 원본 값이 적용된 행 사본
+
+// 개별 행 높이 오버라이드 맵 — 레이아웃 저장용
+grid.getRowHeights(); // {"42": 48}
+```
+
 ## 표시 행 집계 단축
 
 `aggregationFn` 없이도 표시 행 기준 숫자 집계를 바로 얻는다.
@@ -333,6 +393,19 @@ grid.isLoading(); // 현재 상태 조회
 | 고정 컬럼 조회                 | `getColumnState` `pinned`                          | `getPinnedColumnIds(side?)` / `getColumnPinned(field)`                    |
 | `SetGroupRowExpanded`          | `setExpanded(bool)` (그룹 노드)                    | `setGroupExpanded(key, bool)` / `isGroupExpanded(key)`                    |
 | 트리 부모/자식                 | 노드 `parent`/`childrenAfterGroup`                 | `getParentRowId(id)` / `getChildRowIds(id)`                               |
+| 행 고정                        | `setPinnedTopRowData`/`setPinnedBottomRowData`     | `pinRow(id, side)` / `unpinRow(id)` / `getPinnedRowIds` / `getPinnedRows` |
+| 셀 에러 수동 표시              | `setCellValue` + `valid` 플래그                    | `setCellError(id, field, msg)` — 서버 검증 결과 표시                      |
+| 셀 노트 오버라이드             | —                                                  | `setCellNote(id, field, note)`                                            |
+| `GetFocusRow` 데이터           | `getFocusedCell`의 노드                            | `getActiveRow()` / `getEditingRow()`                                      |
+| `GetTopRow`/렌더 범위          | `getFirst/LastDisplayedRowIndex`                   | `getViewportRowRange()` → `{start, end}`                                  |
+| 그룹 컬럼 조회                 | `getRowGroupColumns`                               | `getGroupBy()`                                                            |
+| 단일 컬럼 필터/너비            | `getFilterModel`/`getActualWidth`                  | `getColumnFilter(field)` / `getColumnWidth(field)`                        |
+| 원본 행 위치                   | `getRowIndex` (데이터)                             | `indexOfRow(id)` / `getRowByIndex(i)`                                     |
+| 컬럼 위치 ↔ 필드               | `getColumn` / `colId`                              | `getColumnIndex(field)` / `getFieldAt(i)`                                 |
+| 정렬 상태 조회                 | `getSortModel`/`getSortState`                      | `getSortState()` / `getSortDirection(field)`                              |
+| 행 상태 조건자                 | 노드 `rowPinned`/`data` 비교                       | `isRowAdded` / `isRowModified` / `isRowDeleted(id)`                       |
+| 변경 필드·원본 값              | —                                                  | `getChangedFields(id)` / `getOriginalValue` / `getOriginalRow`            |
+| 개별 행 높이 조회              | 노드 `rowHeight`                                   | `getRowHeights()` → `{id: px}`                                            |
 | `SetWaitImageVisible`          | `setGridOption('loading')`                         | `setLoading(bool)` / `GridOptions.loading`                                |
 
 ## 어댑터별 접근

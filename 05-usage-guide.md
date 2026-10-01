@@ -585,6 +585,29 @@ grid.isGroupExpanded(key);
 grid.getParentRowId(id); // 트리 부모 ID 또는 null
 grid.getChildRowIds(id); // 직계 자식 ID 목록
 
+// 고정 행·셀 오버라이드·모델 조회
+grid.pinRow(id, "top"); // 행 ID 상단 고정 ("bottom"도 가능)
+grid.unpinRow(id); // 고정 해제
+grid.getPinnedRowIds(); // 고정 행 ID 목록
+grid.setCellError(id, field, "중복"); // 수동 셀 에러 (null로 해제)
+grid.setCellNote(id, field, "메모"); // 수동 셀 노트
+grid.getActiveRow(); // 활성 셀의 행 객체 | null
+grid.getEditingRow(); // 편집 중 행 객체 | null
+grid.getColumnFilter(field); // 단일 컬럼 필터 | null
+grid.getColumnWidth(field); // 단일 컬럼 실효 너비
+grid.getGroupBy(); // 현재 그룹핑 컬럼 목록
+grid.getViewportRowRange(); // {start,end} — 실제 렌더 범위
+
+// 위치·정렬·변경분·원본 값
+grid.indexOfRow(id); // 원본 데이터 내 인덱스
+grid.getFieldAt(1); // 표시 컬럼 1의 필드명 ("name")
+grid.getSortState(); // 정렬 목록 (우선순위순)
+grid.isRowModified(id); // U 상태 여부
+grid.getChangedFields(id); // 변경된 필드 목록
+grid.getOriginalValue(id, "name"); // 최초 로드 시점 값
+grid.getOriginalRow(id); // 원본 값이 적용된 행 사본
+grid.getRowHeights(); // 개별 행 높이 맵 {id: px}
+
 // 스크롤·로딩
 grid.ensureRowVisible(id); // 행 ID 기준 (없으면 false)
 grid.scrollToTop();

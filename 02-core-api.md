@@ -195,6 +195,21 @@ grid.subscribe(() => render(grid.getSnapshot()));
 | `isColumnVisible(field)` / `getPinnedColumnIds(side?)` / `getColumnPinned(field)`     | 컬럼 표시/고정 상태 조회 — `setColumnVisible`/`setColumnPinned`의 조회 버전                                    |
 | `setGroupExpanded(key, bool)` / `isGroupExpanded(key)`                                | 그룹 행 결정적 접기/펼치기 — `displayRows`의 `GroupNode.key` 사용                                              |
 | `getParentRowId(id)` / `getChildRowIds(id)`                                           | 트리 부모/직계 자식 ID — `getRowDepth`와 함께 트리 탐색                                                        |
+| `pinRow(id, "top"\|"bottom")` / `unpinRow(id)`                                        | 행 ID 기준 고정 — 한 행은 한쪽에만 고정                                                                        |
+| `getPinnedRowIds(side?)` / `getPinnedRows(side?)`                                     | 고정 행 ID 목록 / 행 객체 복사본 — 이펙트에서 요약 행과 병합할 때 사용                                         |
+| `setCellError(id, field, msg \| null)`                                                | 수동 셀 에러 — 컬럼 validate보다 우선, 서버 검증 결과 표시용                                                   |
+| `setCellNote(id, field, note \| null)`                                                | 수동 셀 노트 — `ColumnDef.note`의 행 단위 오버라이드                                                           |
+| `getActiveRow()` / `getEditingRow()`                                                  | 활성/편집 셀의 행 객체 — 비활성·비편집 시 `null`                                                               |
+| `getColumnFilter(field)` / `getColumnWidth(field)`                                    | 단일 컬럼 필터(복사본) / 실효 너비 조회                                                                        |
+| `getGroupBy()`                                                                        | 현재 그룹핑 컬럼 목록 — `setGroupBy`의 읽기 버전                                                               |
+| `getViewportRowRange()`                                                               | 실제 DOM 렌더 행 범위 `{start,end}` — 가상 스크롤이면 뷰포트 슬라이스                                          |
+| `getRowByIndex(i)` / `indexOfRow(id)`                                                 | 원본 데이터(setData 순서) 기준 행/인덱스 조회 — 표시 순서와 별개                                               |
+| `getFieldAt(i)`                                                                       | 표시 컬럼 인덱스의 필드명 — `getColumnIndex`의 역방향, 재배치·숨김 반영                                        |
+| `getSortState()` / `getSortDirection(field)`                                          | 현재 정렬 목록(우선순위순 복사본) / 컬럼의 정렬 방향 `"asc"\|"desc"\|null`                                     |
+| `isRowAdded(id)` / `isRowModified(id)` / `isRowDeleted(id)`                           | 행 상태 조건자 — `getRowState`의 단축                                                                          |
+| `getChangedFields(id)`                                                                | U 행에서 원본과 다른 필드 목록 — 저장 전 변경 검토용                                                           |
+| `getOriginalValue(id, field)` / `getOriginalRow(id)`                                  | 최초 로드 시점 값 / 원본 값이 적용된 행 사본                                                                   |
+| `getRowHeights()`                                                                     | `setRowHeight` 개별 오버라이드 맵 `{id: px}` — 레이아웃 저장용                                                 |
 | `setLoading(bool)` / `isLoading()`                                                    | 로딩 오버레이 상태 — `snapshot.loading`으로 노출, 어댑터가 오버레이 렌더링                                     |
 
 ## ColumnDef
