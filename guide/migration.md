@@ -240,6 +240,11 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 행 상태 조건자                                       | `grid.isRowAdded(id)` / `isRowModified(id)` / `isRowDeleted(id)` — I/U/D 단축                                                           |
 | 변경 필드·원본 값                                    | `grid.getChangedFields(id)` / `getOriginalValue(id, field)` / `getOriginalRow(id)`                                                      |
 | 개별 행 높이 맵                                      | `grid.getRowHeights()` — `setRowHeight` 오버라이드 `{id: px}`                                                                           |
+| 행 숨기기/표시 증분                                  | `grid.hideRowsByIds(ids)` / `showRowsByIds(ids)` / `getHiddenRows()` — `setHiddenRows`의 부분 갱신 버전                                 |
+| `sheet.DataInsert(Row)` 반복                         | `grid.insertRows(rows, beforeId?)` — 여러 행을 한 번에, `beforeId` 생략 시 끝에 추가                                                    |
+| 선택 셀 판정·범위 값 배열                            | `grid.isCellSelected(rowIndex, colIndex)` / `getRangeValues(range?)` — `getSelectionTsv`의 데이터 버전                                  |
+| `sheet.SelectCell` 범위 선택                         | `grid.selectRangeByIds(startId, startField, endId?, endField?)` — 표시 좌표 대신 ID+필드 기준                                           |
+| 수동 셀 플래시                                       | `grid.flashCells(ids, fields?)` / `flashRows(ids)` — `cellFlash` prop과 무관, 600ms 자동 해제                                           |
 | 셀 선택 후 Del                                       | `grid.clearRange()` (어댑터에서 Delete/Backspace 자동)                                                                                  |
 | Ctrl+X 잘라내기                                      | `grid.cutSelectionTsv()` — TSV 반환 + 지우기, Undo 1단위                                                                                |
 | Shift+Space / Ctrl+Space                             | `grid.selectEntireRow()` / `selectEntireColumn()` — 행·열 전체 선택                                                                     |

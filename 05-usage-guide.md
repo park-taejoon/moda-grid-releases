@@ -608,6 +608,16 @@ grid.getOriginalValue(id, "name"); // 최초 로드 시점 값
 grid.getOriginalRow(id); // 원본 값이 적용된 행 사본
 grid.getRowHeights(); // 개별 행 높이 맵 {id: px}
 
+// 숨김 증분·일괄 삽입·범위·플래시
+grid.hideRowsByIds([id]); // 기존 숨김 유지하며 추가 숨김
+grid.showRowsByIds([id]); // 숨김 해제 — 바뀐 행 수 반환
+grid.insertRows(rows, beforeId); // 여러 행 일괄 삽입 (I 상태)
+grid.selectRangeByIds("1", "name", "9", "role"); // ID+필드로 범위 선택
+grid.isCellSelected(0, 1); // 셀이 선택 안인지
+grid.getRangeValues(); // 활성 범위의 2차원 값 배열 | null
+grid.flashCells([id], ["age"]); // 수동 셀 플래시 (600ms 자동 해제)
+grid.flashRows([id]); // 행 전체 플래시
+
 // 스크롤·로딩
 grid.ensureRowVisible(id); // 행 ID 기준 (없으면 false)
 grid.scrollToTop();

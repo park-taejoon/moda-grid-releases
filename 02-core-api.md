@@ -210,6 +210,13 @@ grid.subscribe(() => render(grid.getSnapshot()));
 | `getChangedFields(id)`                                                                | U 행에서 원본과 다른 필드 목록 — 저장 전 변경 검토용                                                           |
 | `getOriginalValue(id, field)` / `getOriginalRow(id)`                                  | 최초 로드 시점 값 / 원본 값이 적용된 행 사본                                                                   |
 | `getRowHeights()`                                                                     | `setRowHeight` 개별 오버라이드 맵 `{id: px}` — 레이아웃 저장용                                                 |
+| `hideRowsByIds(ids)` / `showRowsByIds(ids)`                                           | 숨김 증분 제어 — `setHiddenRows`의 합집합/차집합 버전, 실제로 바뀐 행 수 반환                                  |
+| `getHiddenRows()`                                                                     | 숨겨진 행 객체 배열 (rawData 순서) — `getHiddenRowIds`의 행 버전                                               |
+| `insertRows(rows, beforeId?)`                                                         | 여러 행 일괄 삽입 — `insertRow`의 일괄 버전, `beforeId` 생략 시 끝에 추가, 삽입 수 반환                        |
+| `isCellSelected(rowIndex, colIndex)`                                                  | 활성 셀이거나 어느 선택 범위 안이면 `true` — 커스텀 렌더러 선택 판정용                                         |
+| `getRangeValues(range?)`                                                              | 범위의 2차원 값 배열 (표시 행×표시 컬럼 좌표) — 범위 없으면 `null`                                             |
+| `selectRangeByIds(startId, startField, endId?, endField?)`                            | 행 ID+컬럼 필드로 범위 선택 — 표시 목록에 없는 좌표면 `false`                                                  |
+| `flashCells(ids, fields?)` / `flashRows(ids)`                                         | 수동 셀 플래시 — `cellFlash` prop과 무관, 600ms 자동 해제, 플래시된 셀 수 반환                                 |
 | `setLoading(bool)` / `isLoading()`                                                    | 로딩 오버레이 상태 — `snapshot.loading`으로 노출, 어댑터가 오버레이 렌더링                                     |
 
 ## ColumnDef

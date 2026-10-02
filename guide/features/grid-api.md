@@ -238,6 +238,38 @@ grid.getOriginalRow("42"); // 원본 값이 적용된 행 사본
 grid.getRowHeights(); // {"42": 48}
 ```
 
+## 숨김 증분·일괄 삽입·범위 선택·셀 플래시
+
+```ts
+// 숨김 증분 제어 — setHiddenRows의 합집합/차집합 버전
+grid.hideRowsByIds(["7", "9"]); // 새로 숨긴 행 수 반환
+grid.showRowsByIds(["7"]); // 다시 표시된 행 수 반환
+grid.getHiddenRows(); // 숨겨진 행 객체 배열 (rawData 순서)
+
+// 여러 행 일괄 삽입 — insertRow의 일괄 버전 (I 상태 마킹)
+grid.insertRows(rows, "42"); // "42" 앞에 삽입 → 삽입 수 반환
+grid.insertRows(rows); // beforeId 생략 시 끝에 추가
+
+// 선택 상태 판정·범위 값 읽기 — 커스텀 렌더러/외부 UI용
+grid.isCellSelected(0, 1); // 활성 셀이거나 선택 범위 안이면 true
+grid.getRangeValues(); // 활성 범위의 2차원 값 배열, 범위 없으면 null
+grid.getRangeValues({ startRow: 0, startCol: 1, endRow: 3, endCol: 2 });
+
+// 행 ID + 컬럼 필드로 범위 선택 — 표시 좌표를 몰라도 된다
+grid.selectRangeByIds("1", "name", "9", "role"); // 실패 시 false
+
+// 수동 셀 플래시 — 데이터 변경 없이 잠깐 강조 (600ms 자동 해제)
+grid.flashCells(["42"], ["age"]); // 실제로 플래시된 셀 수 반환
+grid.flashRows(["42", "43"]); // 행 전체 — 모든 표시 컬럼
+```
+
+- `hideRowsByIds`는 존재하지 않는 ID를 무시하고, `showRowsByIds`는 숨겨져
+  있지 않은 ID를 무시한다. 둘 다 실제로 바뀐 행 수를 반환한다.
+- `selectRangeByIds`는 어느 좌표든 표시 목록(필터·페이징·숨김 반영)에
+  없으면 `false`를 반환하고 기존 선택을 바꾸지 않는다.
+- `flashCells`는 `cellFlash` prop과 무관하게 동작한다 — 자동 플래시를
+  꺼둔 그리드에서도 수동 강조가 가능하다.
+
 ## 표시 행 집계 단축
 
 `aggregationFn` 없이도 표시 행 기준 숫자 집계를 바로 얻는다.
@@ -406,6 +438,11 @@ grid.isLoading(); // 현재 상태 조회
 | 행 상태 조건자                 | 노드 `rowPinned`/`data` 비교                       | `isRowAdded` / `isRowModified` / `isRowDeleted(id)`                       |
 | 변경 필드·원본 값              | —                                                  | `getChangedFields(id)` / `getOriginalValue` / `getOriginalRow`            |
 | 개별 행 높이 조회              | 노드 `rowHeight`                                   | `getRowHeights()` → `{id: px}`                                            |
+| 행 숨기기/표시 증분            | —                                                  | `hideRowsByIds(ids)` / `showRowsByIds(ids)` / `getHiddenRows()`           |
+| `DataInsert` 일괄              | `applyTransaction({add, addIndex})`                | `insertRows(rows, beforeId?)`                                             |
+| 선택 셀 판정·범위 값           | `getCellRangeSelections`                           | `isCellSelected(r,c)` / `getRangeValues(range?)`                          |
+| `SelectCell` 범위              | `setCellSelection` / `addCellRange`                | `selectRangeByIds(startId, field, endId?, endField?)`                     |
+| —                              | `flashCells`                                       | `flashCells(ids, fields?)` / `flashRows(ids)` — 600ms 자동 해제           |
 | `SetWaitImageVisible`          | `setGridOption('loading')`                         | `setLoading(bool)` / `GridOptions.loading`                                |
 
 ## 어댑터별 접근
