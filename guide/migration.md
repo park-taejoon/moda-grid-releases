@@ -245,6 +245,13 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 선택 셀 판정·범위 값 배열                            | `grid.isCellSelected(rowIndex, colIndex)` / `getRangeValues(range?)` — `getSelectionTsv`의 데이터 버전                                  |
 | `sheet.SelectCell` 범위 선택                         | `grid.selectRangeByIds(startId, startField, endId?, endField?)` — 표시 좌표 대신 ID+필드 기준                                           |
 | 수동 셀 플래시                                       | `grid.flashCells(ids, fields?)` / `flashRows(ids)` — `cellFlash` prop과 무관, 600ms 자동 해제                                           |
+| `sheet.GetEditValues()`                              | `grid.getEditValues()` / `isRowEditing(id)` — 커밋 전 임시 값·행 편집 여부                                                              |
+| 범위 값 기록                                         | `grid.setRangeValues(range, values)` — 붙여넣기와 같은 규칙, 전체가 한 Undo 단위                                                        |
+| 선택 셀 목록                                         | `grid.getSelectedCells()` — `{rowIndex, columnIndex, rowId, field, value}` 배열                                                         |
+| 행 목록 TSV                                          | `grid.getRowsTsv(ids?, {includeHeaders?, formatted?})` — `clipboardDelimiter` 적용                                                      |
+| 행 일괄 이동                                         | `grid.moveRowsByIds(ids, toIndex)` — moveRowById의 벡터 버전, 지정 순서 유지                                                            |
+| 그룹 리프 행 조회                                    | `grid.getGroupRows(groupKey)` — displayRows의 `GroupNode.key`로 리프 행 배열                                                            |
+| `sheet.ChildAdd(Row)`                                | `grid.getChildRows(id)` / `addTreeChild(parentId, row, index?)` — nested/flat 트리 모두 지원                                            |
 | 셀 선택 후 Del                                       | `grid.clearRange()` (어댑터에서 Delete/Backspace 자동)                                                                                  |
 | Ctrl+X 잘라내기                                      | `grid.cutSelectionTsv()` — TSV 반환 + 지우기, Undo 1단위                                                                                |
 | Shift+Space / Ctrl+Space                             | `grid.selectEntireRow()` / `selectEntireColumn()` — 행·열 전체 선택                                                                     |

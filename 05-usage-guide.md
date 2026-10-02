@@ -618,6 +618,17 @@ grid.getRangeValues(); // 활성 범위의 2차원 값 배열 | null
 grid.flashCells([id], ["age"]); // 수동 셀 플래시 (600ms 자동 해제)
 grid.flashRows([id]); // 행 전체 플래시
 
+// 편집 값·범위 쓰기·행 이동·행 TSV·그룹/트리 탐색
+grid.getEditValues(); // 편집 중 보류 값 맵 | null (fullRow는 행 전체)
+grid.isRowEditing(id); // 해당 행이 편집 중인지
+grid.setRangeValues(range, values); // 2차원 값 기록 — 한 Undo 단위
+grid.getSelectedCells(); // 선택 셀 [{rowIndex, columnIndex, rowId, field, value}]
+grid.moveRowsByIds([id1, id2], 999); // 여러 행 일괄 이동 (지정 순서 유지)
+grid.getRowsTsv([id]); // 행 목록 → TSV (clipboardDelimiter 적용)
+grid.getGroupRows(groupKey); // 그룹 노드의 리프 행 배열
+grid.getChildRows(id); // 트리 직계 자식 행 객체
+grid.addTreeChild(parentId, row); // 트리 자식 삽입 — nested/flat 모두 지원
+
 // 스크롤·로딩
 grid.ensureRowVisible(id); // 행 ID 기준 (없으면 false)
 grid.scrollToTop();

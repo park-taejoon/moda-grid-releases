@@ -207,7 +207,7 @@ grid.subscribe(() => render(grid.getSnapshot()));
 | `getFieldAt(i)`                                                                       | 표시 컬럼 인덱스의 필드명 — `getColumnIndex`의 역방향, 재배치·숨김 반영                                        |
 | `getSortState()` / `getSortDirection(field)`                                          | 현재 정렬 목록(우선순위순 복사본) / 컬럼의 정렬 방향 `"asc"\|"desc"\|null`                                     |
 | `isRowAdded(id)` / `isRowModified(id)` / `isRowDeleted(id)`                           | 행 상태 조건자 — `getRowState`의 단축                                                                          |
-| `getChangedFields(id)`                                                                | U 행에서 원본과 다른 필드 목록 — 저장 전 변경 검토용                                                           |
+| `getChangedFields(id)`                                                                | U 행에서 원본과 다른 필드 목록 — 원본으로 되돌린 필드는 제외. 저장 전 변경 검토용                              |
 | `getOriginalValue(id, field)` / `getOriginalRow(id)`                                  | 최초 로드 시점 값 / 원본 값이 적용된 행 사본                                                                   |
 | `getRowHeights()`                                                                     | `setRowHeight` 개별 오버라이드 맵 `{id: px}` — 레이아웃 저장용                                                 |
 | `hideRowsByIds(ids)` / `showRowsByIds(ids)`                                           | 숨김 증분 제어 — `setHiddenRows`의 합집합/차집합 버전, 실제로 바뀐 행 수 반환                                  |
@@ -217,6 +217,13 @@ grid.subscribe(() => render(grid.getSnapshot()));
 | `getRangeValues(range?)`                                                              | 범위의 2차원 값 배열 (표시 행×표시 컬럼 좌표) — 범위 없으면 `null`                                             |
 | `selectRangeByIds(startId, startField, endId?, endField?)`                            | 행 ID+컬럼 필드로 범위 선택 — 표시 목록에 없는 좌표면 `false`                                                  |
 | `flashCells(ids, fields?)` / `flashRows(ids)`                                         | 수동 셀 플래시 — `cellFlash` prop과 무관, 600ms 자동 해제, 플래시된 셀 수 반환                                 |
+| `getEditValues()` / `isRowEditing(id)`                                                | 편집 중 보류 값 맵 / 행 편집 여부 — 커밋 전 임시 값, `fullRow`면 행 전체 맵                                    |
+| `setRangeValues(range, values)`                                                       | 범위에 2차원 값 기록 — 붙여넣기와 같은 규칙, 전체가 한 Undo 단위, 쓰인 셀 수 반환                              |
+| `getSelectedCells()`                                                                  | 현재 선택 모든 셀의 평탄 목록 `{rowIndex, columnIndex, rowId, field, value}` — 다중 범위 겹침 제외             |
+| `getRowsTsv(ids?, {includeHeaders?, formatted?})`                                     | 행 목록을 표시 컬럼 순서 TSV로 — `clipboardDelimiter` 적용, ids 생략 시 선택 행                                |
+| `moveRowsByIds(ids, toIndex)`                                                         | 여러 행 일괄 이동 — `moveRowById`의 벡터 버전, 지정 순서 유지, 실제 이동 수 반환                               |
+| `getGroupRows(groupKey)`                                                              | `GroupNode.key`로 그룹의 리프 행 배열 — 없는 키면 빈 배열                                                      |
+| `getChildRows(id)` / `addTreeChild(parentId, row, index?)`                            | 트리 직계 자식 행 / 자식 삽입 — nested(childrenKey)·flat(getParentId) 모두 지원, 삽입 행은 I 마킹              |
 | `setLoading(bool)` / `isLoading()`                                                    | 로딩 오버레이 상태 — `snapshot.loading`으로 노출, 어댑터가 오버레이 렌더링                                     |
 
 ## ColumnDef

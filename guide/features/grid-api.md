@@ -230,6 +230,7 @@ grid.isRowModified("42"); // U
 grid.isRowDeleted("42"); // D
 
 // 변경 필드·원본 값 — "무엇이 바뀌었나" 검토용
+// 원본으로 되돌린 필드는 목록에서 제외된다 (현재 값과 실시간 비교)
 grid.getChangedFields("42"); // ["name", "age"]
 grid.getOriginalValue("42", "name"); // 최초 로드 시점 값
 grid.getOriginalRow("42"); // 원본 값이 적용된 행 사본
@@ -269,6 +270,54 @@ grid.flashRows(["42", "43"]); // 행 전체 — 모든 표시 컬럼
   없으면 `false`를 반환하고 기존 선택을 바꾸지 않는다.
 - `flashCells`는 `cellFlash` prop과 무관하게 동작한다 — 자동 플래시를
   꺼둔 그리드에서도 수동 강조가 가능하다.
+
+## 편집 값·범위 쓰기·행 이동·행 TSV·그룹/트리 탐색
+
+```ts
+// 편집 중 보류 값 — 커밋 전 임시 값을 읽는다
+grid.getEditValues(); // cell 편집: {name: "임시"} / fullRow: 행 전체 맵 / 비편집: null
+grid.isRowEditing("42"); // 해당 행이 지금 편집 중이면 true
+
+// 선택 상태 검사 — 외부 툴바·보내기용
+grid.getSelectedCells(); // [{rowIndex, columnIndex, rowId, field, value}, ...]
+
+// 범위에 2차원 값 기록 — 붙여넣기와 같은 규칙 (editable·검증·valueSetter)
+// 전체가 한 Undo 단위로 기록된다
+grid.setRangeValues(
+  { startRow: 0, startCol: 1, endRow: 1, endCol: 2 },
+  [
+    ["범위1", "r1@x.io"],
+    ["범위2", "r2@x.io"],
+  ],
+); // 실제로 쓰인 셀 수 반환
+
+// 행 목록을 TSV로 — 범위 선택이 아닌 "행" 단위 복사
+grid.getRowsTsv(["1", "3"]); // 표시 컬럼 순서 TSV, 대상 없으면 null
+grid.getRowsTsv(); // 생략 시 선택된 행
+grid.getRowsTsv(["1"], { includeHeaders: true, formatted: true });
+
+// 여러 행 일괄 이동 — moveRowById의 벡터 버전 (지정 순서 유지)
+grid.moveRowsByIds(["1", "2"], 999); // 맨 뒤로 → 실제 이동 수 반환
+
+// 그룹/트리 탐색 — 노드 키로 리프 행 조회
+grid.getGroupRows("operator"); // displayRows의 GroupNode.key → 리프 행 배열
+grid.getChildRows("8"); // getChildRowIds의 행 객체 버전
+grid.addTreeChild("1", { id: 99, parentId: 1, ... }); // 트리 자식 삽입
+```
+
+- `getEditValues`는 cell 편집이면 해당 셀의 `{field: value}` 한 엔트리,
+  `editType: "fullRow"`면 행 전체 `field → value` 맵을 반환한다
+  (입력 중인 미커밋 값 포함). 반환값은 복사본이다.
+- `setRangeValues`의 좌표는 `getRangeValues`와 같은 표시 행/표시 컬럼
+  기준이다. `values`가 범위보다 짧으면 주어진 셀만 쓰고 길면 잘라낸다.
+  읽기 전용·formula·검증 실패 셀은 건너뛰고, 값이 실제로 바뀐 셀만
+  이력에 남는다.
+- `getRowsTsv`의 구분자는 `clipboardDelimiter` 옵션을 따른다.
+  `beforeCopy` 훅은 적용하지 않는다(훅이 필요하면 `getSelectionTsv`).
+- `addTreeChild`는 두 트리 모드를 모두 지원한다. nested(childrenKey)
+  모드에서는 부모의 children 배열에, flat(getParentId) 모드에서는
+  부모 필드가 지정된 행을 부모 바로 뒤에 삽입한다. `parentId`가
+  `null`이면 루트 끝에 추가되고, 삽입된 행은 I 상태로 마킹된다.
 
 ## 표시 행 집계 단축
 
@@ -443,6 +492,13 @@ grid.isLoading(); // 현재 상태 조회
 | 선택 셀 판정·범위 값           | `getCellRangeSelections`                           | `isCellSelected(r,c)` / `getRangeValues(range?)`                          |
 | `SelectCell` 범위              | `setCellSelection` / `addCellRange`                | `selectRangeByIds(startId, field, endId?, endField?)`                     |
 | —                              | `flashCells`                                       | `flashCells(ids, fields?)` / `flashRows(ids)` — 600ms 자동 해제           |
+| `GetEditValues`                | —                                                  | `getEditValues()` / `isRowEditing(id)` — 커밋 전 임시 값·편집 여부        |
+| 범위 값 쓰기                   | `getCellRangeSelections` + `setCellValue`          | `setRangeValues(range, values)` — 한 Undo 단위                            |
+| 선택 셀 목록                   | `getCellRangeSelections`                           | `getSelectedCells()` → `{rowIndex, columnIndex, rowId, field, value}[]`   |
+| 행 목록 TSV                    | `getDataAsClipboard`류                             | `getRowsTsv(ids?, {includeHeaders?, formatted?})`                         |
+| 행 일괄 이동                   | `applyTransaction` + 행 인덱스 재배치              | `moveRowsByIds(ids, toIndex)` — 지정 순서 유지                            |
+| 그룹 리프 행 조회              | 노드 `childrenAfterGroup` 순회                     | `getGroupRows(groupKey)` — GroupNode.key로 리프 행 배열                   |
+| `ChildAdd`                     | 노드 `children` 수동 삽입                          | `getChildRows(id)` / `addTreeChild(parentId, row, index?)`                |
 | `SetWaitImageVisible`          | `setGridOption('loading')`                         | `setLoading(bool)` / `GridOptions.loading`                                |
 
 ## 어댑터별 접근
