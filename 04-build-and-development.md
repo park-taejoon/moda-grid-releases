@@ -2,20 +2,20 @@
 
 ## 명령어
 
-| 명령                                                         | 위치   | 동작                                                                  |
-| ------------------------------------------------------------ | ------ | --------------------------------------------------------------------- |
-| `pnpm install`                                               | 루트   | 워크스페이스 전체 설치                                                |
-| `pnpm build`                                                 | 루트   | `packages/*` 빌드 — pnpm이 의존 순서 자동 정렬                        |
-| `pnpm build:apps`                                            | 루트   | dev 앱 프로덕션 빌드 (타입체크 포함)                                  |
-| `pnpm build:all`                                             | 루트   | 패키지 + 앱 전체                                                      |
-| `pnpm typecheck`                                             | 루트   | 전체 프로젝트 타입 검사                                               |
-| `pnpm test`                                                  | 루트   | `packages/core` vitest 실행                                           |
+| 명령                                                         | 위치   | 동작                                                                   |
+| ------------------------------------------------------------ | ------ | ---------------------------------------------------------------------- |
+| `pnpm install`                                               | 루트   | 워크스페이스 전체 설치                                                 |
+| `pnpm build`                                                 | 루트   | `packages/*` 빌드 — pnpm이 의존 순서 자동 정렬                         |
+| `pnpm build:apps`                                            | 루트   | dev 앱 프로덕션 빌드 (타입체크 포함)                                   |
+| `pnpm build:all`                                             | 루트   | 패키지 + 앱 전체                                                       |
+| `pnpm typecheck`                                             | 루트   | 전체 프로젝트 타입 검사                                                |
+| `pnpm test`                                                  | 루트   | `packages/core` vitest 실행                                            |
 | `pnpm dev`                                                   | 루트   | dev 앱 5개 + 탭 셸(`scripts/dev.mjs`) — **50800에서 탭 전환**으로 확인 |
-| `pnpm dev:react` / `:vue` / `:svelte` / `:vue2` / `:vanilla` | 루트   | 개별 dev 서버 (5173/5174/5175/5176/5177)                              |
+| `pnpm dev:react` / `:vue` / `:svelte` / `:vue2` / `:vanilla` | 루트   | 개별 dev 서버 (5173/5174/5175/5176/5177)                               |
 | `pnpm demo`                                                  | 루트   | `build:apps` 후 `scripts/serve-demos.mjs`로 50800 통합 서빙            |
-| `pnpm serve:demos`                                           | 루트   | 빌드 없이 통합 데모 서버만 실행                                       |
-| `pnpm clean`                                                 | 루트   | 모든 `dist/`, `node_modules/` 제거                                    |
-| `pnpm dev`                                                   | 패키지 | `tsc --watch` / `svelte-package --watch`                              |
+| `pnpm serve:demos`                                           | 루트   | 빌드 없이 통합 데모 서버만 실행                                        |
+| `pnpm clean`                                                 | 루트   | 모든 `dist/`, `node_modules/` 제거                                     |
+| `pnpm dev`                                                   | 패키지 | `tsc --watch` / `svelte-package --watch`                               |
 
 ## 데모 앱
 
@@ -45,10 +45,10 @@ svelte,vanilla}` 경로의 dist를 iframe한다. 개별 포트 직접 접근도 
 
 ## Docker
 
-| 명령                                                  | 동작                                      |
-| ----------------------------------------------------- | ----------------------------------------- |
+| 명령                                                  | 동작                                       |
+| ----------------------------------------------------- | ------------------------------------------ |
 | `docker compose up --build`                           | 5개 데모 빌드 → 50800 통합 서빙 (프로덕션) |
-| `docker compose -f docker-compose.dev.yml up --build` | 소스 마운트 + vite watch → 5173~5177      |
+| `docker compose -f docker-compose.dev.yml up --build` | 소스 마운트 + vite watch → 5173~5177       |
 
 `Dockerfile`은 멀티 스테이지: `base`(pnpm install) → `dev`(vite watch) /
 `build`(`build:apps`) → `prod`(dist + `serve-demos.mjs`만 복사한 경량 이미지).

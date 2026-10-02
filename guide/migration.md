@@ -289,12 +289,15 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 수정분 flat 수집 (`GetSaveData`)                     | `grid.getModifiedRows()` → `{row, status}[]` (getChanges는 분리형 3배열)                                                                |
 | 강제 재계산 (`Refresh`)                              | `grid.refreshCells()` — 외부 제자리 수정·formatter 참조 상태 변경 후                                                                    |
 | 다크 모드 / 테마                                     | `theme="dark"` prop/`mountGrid` 옵션 또는 `.grid-theme-dark` 클래스 — `--grid-*` CSS 변수로 커스텀 팔레트                               |
+| 테마 오브젝트 / 브랜드 커스텀                        | `theme={{ base, vars }}` — `--grid-*` 변수를 루트에 인라인 적용. `gridThemePresets`(violet/highContrast) 내장                           |
+| 밀도 (콤팩트/넓게)                                   | `density="compact" \| "comfortable"` prop/옵션 — `--grid-font-size`·`--grid-cell-padding-*` 일괄 조정                                   |
 | 키보드 이동 셀 화면 추적                             | 자동 — `scrollRequest`가 행+열 좌표를 발행, 어댑터가 scrollIntoView                                                                     |
 | `sheet.setGroupBy(...)` / 그룹 해제                  | `grid.setGroupBy(fields)` — 빈 배열로 해제                                                                                              |
 | `sheet.directDown2Excel()`                           | `grid.exportToXlsx({ filename })`                                                                                                       |
 | `sheet.dispose()`                                    | 컴포넌트 언마운트 (자동)                                                                                                                |
 | 행 조건부 스타일                                     | `GridOptions.rowStyle` / `ColumnDef.rowStyle` — CSS 문자열·맵·함수, `<tr>`에 병합                                                       |
 | 셀 커스텀 렌더러                                     | React `renderCell` · Vue `#cell-{field}` 슬롯 · Svelte `cell` snippet · vanilla `cellRenderer`(DOM Node 반환)                           |
+| 모바일/터치 지원                                     | 자동 — 롱프레스(550ms) 컨텍스트 메뉴 + 터치 커스텀 DnD(컬럼/행/피벗) + 리사이즈·fill 핸들 터치 + `pointer:coarse` 핸들 확대             |
 | 커스텀 집계 (`aggFunc` / 서브합계 함수)              | `aggregationFn`에 함수 전달 — `({ values, rows, field }) => unknown`. 내장은 `sum/avg/min/max/count/first/last`, 피벗 `agg`도 동일 규약 |
 
 ## 프레임워크별 미니멀 예시

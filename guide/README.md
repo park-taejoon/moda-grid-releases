@@ -51,6 +51,7 @@
 | 컬럼     | 계산 컬럼 — 수식(formula)/누계(cumulative)                                     | [features/computed-columns.md](./features/computed-columns.md)   |
 | 렌더     | 셀 타입 (이미지·버튼·링크·프로그레스·HTML) + 셀 툴팁 + 멀티라인                | [features/cell-types.md](./features/cell-types.md)               |
 | 상호작용 | 컨텍스트 메뉴 (셀/헤더 우클릭)                                                 | [features/context-menu.md](./features/context-menu.md)           |
+| 상호작용 | 모바일/터치 — 롱프레스 메뉴 + 터치 DnD + 핸들 확대                             | [features/mobile.md](./features/mobile.md)                       |
 | 상호작용 | 이벤트 + 행 번호 + 채우기 핸들 + 범위 지우기/이동 + scrollToRow                | [features/events.md](./features/events.md)                       |
 | 설정     | 다국어(locale) + 접근성(aria)                                                  | [features/i18n.md](./features/i18n.md)                           |
 | 출력     | 내장 포맷터 (숫자·통화·퍼센트·날짜)                                            | [features/formatting.md](./features/formatting.md)               |

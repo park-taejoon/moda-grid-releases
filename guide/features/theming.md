@@ -1,28 +1,93 @@
 # 테마 / 커스텀 스타일 (Theming)
 
-모든 색상은 `--grid-*` CSS 변수 기반. 변수 재정의나 클래스 주입으로
-그리드 전체 스타일을 제어한다.
+모든 색상과 간격·타이포는 `--grid-*` CSS 변수 기반. `theme` prop,
+`density` prop, 변수 재정의, 클래스 주입으로 그리드 전체 스타일을 제어한다.
 
-## 다크 모드
+## `theme` 옵션 — 세 가지 형태
 
-### `theme` prop — 그리드 단위 테마 (권장)
-
-각 렌더러의 `theme` prop/`mountGrid` 옵션으로 그리드 자체에 테마를 적용한다 —
-상위 요소 클래스 없이 그리드 하나만 다크로 둘 수 있다:
+`theme` prop/`mountGrid` 옵션은 문자열 프리셋과 오브젝트 오버라이드를
+모두 받는다:
 
 ```tsx
-// 어댑터 (React/Vue3/Vue2/Svelte)
+// 1. 내장 팔레트 — "light" | "dark"
 <DataGrid columns={cols} data={rows} theme="dark" />;
-
-// mountGrid
 mountGrid(el, { columns, data, theme: "dark" });
+
+// 2. 오브젝트 — 베이스 팔레트 위에 --grid-* 변수만 덮어쓴다
+<DataGrid
+  columns={cols}
+  data={rows}
+  theme={{
+    base: "light",
+    vars: {
+      primaryColor: "#0d9488", // camelCase → --grid-primary-color
+      "--grid-font-size": "13px", // --grid-* 이름도 그대로 가능
+      borderRadius: "8px",
+      cellPaddingY: "4px",
+    },
+  }}
+/>;
 ```
 
 - `"dark"` → 루트에 `.grid-theme-dark`, `"light"` → `.grid-theme-light` 적용
   (다크 페이지 안의 라이트 그리드도 가능).
-- 생략하면 클래스를 추가하지 않는다 — 상위 요소/`:root` 팔레트를 상속.
+- `{ base, vars }` — `base`는 팔레트 클래스(생략 시 기본 라이트 팔레트
+  `:root` 위에 얹는다), `vars`는 루트에 인라인 `--grid-*` 변수로 적용된다.
+  키는 camelCase(`primaryColor`)와 변수명(`--grid-primary-color`) 모두 허용.
+- CSS 파일 없이 JS만으로 테마를 만들 수 있고, prop/옵션을 바꾸면
+  런타임에 전환된다 — 이전 적용분(클래스·인라인 변수)은 자동으로 제거된다.
+- 생략하면 아무것도 추가하지 않는다 — 상위 요소/`:root` 팔레트를 상속.
 
-### 클래스 직접 적용
+### 내장 프리셋 — `gridThemePresets`
+
+자주 쓰는 조합을 프리셋으로 제공한다 — `theme`에 그대로 전달하거나
+`vars`를 펼쳐 커스텀 팔레트의 출발점으로 쓴다:
+
+```ts
+import { gridThemePresets } from "@moda-grid/react"; // 모든 패키지 동일
+
+// 바이올렛 포인트 — primary/헤더/선택 배경을 보라 계열로
+<DataGrid theme={gridThemePresets.violet} ... />;
+
+// 고대비 — 저시력·프로젝터 환경 (굵은 경계선 + 진한 선택 배경)
+<DataGrid theme={gridThemePresets.highContrast} ... />;
+
+// 프리셋 위에 추가 오버라이드
+mountGrid(el, {
+  columns,
+  data,
+  theme: {
+    base: "dark",
+    vars: { ...gridThemePresets.violet.vars, fontSize: "15px" },
+  },
+});
+```
+
+| 프리셋         | base    | 특징                                                     |
+| -------------- | ------- | -------------------------------------------------------- |
+| `violet`       | `light` | 보라 계열 포인트 색 + 둥근 모서리 (브랜드 테마 예시)     |
+| `highContrast` | `light` | 검정 텍스트·진한 경계·파란 선택 배경 — 접근성/프로젝터용 |
+
+## `density` 옵션 — 밀도 프리셋
+
+테마와 독립적으로 폰트 크기·셀 패딩을 일괄 조정한다:
+
+```tsx
+<DataGrid columns={cols} data={rows} density="compact" />;
+mountGrid(el, { columns, data, density: "comfortable" });
+```
+
+| 값            | 클래스                    | 폰트 | 셀 패딩     |
+| ------------- | ------------------------- | ---- | ----------- |
+| `standard`    | (없음 — 기본값)           | 14px | 8px / 12px  |
+| `compact`     | `.mg-density-compact`     | 12px | 3px / 8px   |
+| `comfortable` | `.mg-density-comfortable` | 15px | 12px / 16px |
+
+밀도 클래스는 `--grid-font-size`/`--grid-cell-padding-*` 변수만
+오버라이드한다 — 커스텀 값이 있으면 `theme.vars`로 함께 지정하는 게
+예측 가능하다(테마 인라인 변수가 클래스보다 우선한다).
+
+## 클래스 직접 적용
 
 그리드 또는 상위 요소에 `.grid-theme-dark` 클래스를 적용한다 (CSS 변수는
 상속되므로 페이지 어디에 걸어도 된다):
@@ -64,6 +129,7 @@ grid.setStriped(true); // 런타임 토글
 ```css
 :root,
 .grid-theme-light {
+  /* 색상 */
   --grid-bg-color: #ffffff;
   --grid-border-color: #e2e2e2;
   --grid-header-bg: #f7f7f8;
@@ -71,6 +137,16 @@ grid.setStriped(true); // 런타임 토글
   --grid-row-hover-bg: #f4f6ff;
   --grid-row-selected-bg: #e5ecff;
   --grid-primary-color: #2563eb;
+  --grid-on-accent-color: #ffffff; /* primary·액센트 표면 위 텍스트 */
+
+  /* 간격·타이포 — density 프리셋과 theme.vars가 오버라이드 */
+  --grid-font-size: 14px;
+  --grid-font-size-sm: 12px; /* 메뉴·배지·오버레이 등 보조 텍스트 */
+  --grid-font-size-xs: 11px;
+  --grid-cell-padding-y: 8px;
+  --grid-cell-padding-x: 12px;
+  --grid-border-radius: 4px; /* 버튼·인풋·칩 등 작은 컨트롤 */
+  --grid-panel-radius: 8px; /* 패널·메뉴·토스트 등 큰 표면 */
   /* 행 상태 색도 변수: --grid-status-i/u/d-color, --grid-status-i/u/d-bg */
   /* 입력/패널/스켈레톤/고정 경계 등 파생 변수 — styles.css 참고 */
 }
@@ -188,3 +264,4 @@ createGrid({
 | `.mg-row-drag-handle` / `.mg-drop-before` / `.mg-drop-after` | 행 드래그                                                |
 | `.mg-empty`                                                  | 빈 그리드 행                                             |
 | `.mg-striped`                                                | 줄무늬 활성 루트 (`striped` 옵션)                        |
+| `.mg-density-compact` / `.mg-density-comfortable`            | 밀도 프리셋 활성 루트 (`density` 옵션)                   |

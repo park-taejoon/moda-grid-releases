@@ -24,6 +24,12 @@ Undo/Redo로 되돌릴 수 있다.
 방향키/Enter가 먹지 않는 문제를 막는다. 저장 실패(검증 오류) 시에는
 편집 상태와 위치를 유지한다.
 
+피커 계열 편집기(`select`·`date`·`radio`·`checkbox`)는 값을 고르는
+순간 **즉시 저장되고 에디터가 닫힌다** — 다른 셀 클릭(blur)을 기다리지
+않는다. `multiselect`(연속 선택 필요)·`text`·`number`·`textarea`는
+Enter/Tab/blur로 저장한다. `editType:"fullRow"`에서는 모든 편집기가
+보류 값만 갱신하고 행 커밋을 기다린다.
+
 ## 싱글클릭 편집 (`singleClickEdit`)
 
 `singleClickEdit: true`를 켜면 셀 클릭 한 번으로 편집 모드에 들어간다
