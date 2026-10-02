@@ -101,6 +101,8 @@ const { grid, snapshot } = useGridCore({ columns, data: users });
 | `domLayout`            | `"normal" \| "autoHeight"`     | `normal`      | 내용 높이 레이아웃 — 가상 스크롤 무시                                                 |
 | `autoPageSize`         | `boolean`                      | `false`       | 뷰포트÷행 높이로 pageSize 자동 계산                                                   |
 | `className`            | `string`                       | —             | 추가 클래스                                                                           |
+| `theme`                | `GridTheme`                    | —             | `"light"\|"dark"` 팔레트 또는 `{ base, vars }` 오브젝트 — `--grid-*` 변수 인라인 적용 |
+| `density`              | `GridDensity`                  | `standard`    | `standard`/`compact`/`comfortable` — 폰트·셀 패딩 일괄 조정                           |
 
 ## Hooks
 
@@ -151,6 +153,32 @@ const { grid, snapshot } = useGridCore({ columns, data });
   이전
 </button>;
 ```
+
+## 테마 / 밀도
+
+```tsx
+import { gridThemePresets } from "@moda-grid/react";
+
+// 내장 팔레트
+<DataGrid columns={cols} data={rows} theme="dark" />;
+
+// 오브젝트 오버라이드 — vars는 --grid-* 변수로 인라인 적용된다
+<DataGrid
+  columns={cols}
+  data={rows}
+  theme={{
+    base: "light",
+    vars: { primaryColor: "#0d9488", fontSize: "13px", borderRadius: "8px" },
+  }}
+  density="compact" // standard | compact | comfortable
+/>;
+
+// 내장 프리셋
+<DataGrid columns={cols} data={rows} theme={gridThemePresets.violet} />;
+```
+
+prop을 state로 두면 런타임 전환도 된다. 변수 목록·커스텀 팔레트 작성은
+[features/theming.md](../features/theming.md) 참고.
 
 ## 자주 묻는 것
 

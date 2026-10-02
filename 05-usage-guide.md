@@ -512,13 +512,19 @@ serverSide: {
 
 ### 테마 / 커스텀 스타일
 
-- 모든 색상은 `--grid-*` CSS 변수로 정의 (`styles.css` 상단)
+- 모든 색상과 간격·타이포는 `--grid-*` CSS 변수로 정의 (`styles.css` 상단)
+- `theme` prop/옵션: `"light" | "dark"` 팔레트 또는
+  `{ base, vars }` 오브젝트로 변수 인라인 오버라이드
+  (내장 프리셋 `gridThemePresets`: `violet`/`highContrast`)
+- `density` prop/옵션: `"standard" | "compact" | "comfortable"` —
+  폰트·셀 패딩 일괄 조정
 - `.grid-theme-dark` 클래스를 그리드/상위 요소에 적용 → 다크 모드
 - 커스텀 테마: `.my-theme { --grid-primary-color: #9333ea; }` 식으로 변수 재정의
 - `ColumnDef.cellClass` / `rowClass`, `GridOptions.rowClass`로 조건부 클래스
   (함수 형태는 `{value,row,rowIndex,column}`/`{row,rowIndex}` 파라미터)
+- 상세는 `guide/features/theming.md` 참고
 
-### 그리드 편의 API (IBSheet/AG-Grid 대응)
+### 그리드 편의 API (상용 엔터프라이즈 그리드 대응)
 
 엔터프라이즈 그리드의 조회·모델·스크롤 패턴과 동일한 헬퍼 모음.
 전체 목록과 매핑 표는 `guide/features/grid-api.md` 참조.

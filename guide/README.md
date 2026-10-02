@@ -33,39 +33,39 @@
 모든 기능은 코어(`GridCore`)가 담당하고 어댑터는 동일하게 렌더링하므로,
 기능 문서의 코어 API는 플랫폼과 무관하게 동일하다.
 
-| 카테고리 | 기능                                                                           | 문서                                                             |
-| -------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
-| 데이터   | 정렬 / 다중 정렬                                                               | [features/sorting.md](./features/sorting.md)                     |
-| 데이터   | 컬럼 필터 / 전역 검색 / Set 필터                                               | [features/filtering.md](./features/filtering.md)                 |
-| 데이터   | 페이징                                                                         | [features/paging.md](./features/paging.md)                       |
-| 데이터   | 행 그룹화 + 집계 + 소계 행 + 그룹 패널                                         | [features/grouping.md](./features/grouping.md)                   |
-| 데이터   | 트리 데이터 (계층/레벨 접기/노드 검색/트리 소계)                               | [features/tree-data.md](./features/tree-data.md)                 |
-| 데이터   | 피벗 테이블 (행/열 디멘션 + 집계)                                              | [features/pivot.md](./features/pivot.md)                         |
-| 데이터   | 서버 사이드 / 무한 스크롤 / Append Scroll                                      | [features/server-side.md](./features/server-side.md)             |
-| 데이터   | 셀 병합 (rowSpan/colSpan/auto-merge)                                           | [features/cell-merge.md](./features/cell-merge.md)               |
-| 컬럼     | 리사이즈·재배치·고정·숨김·자동 너비·그룹 헤더·컬럼 관리                        | [features/columns.md](./features/columns.md)                     |
-| 선택     | 행/셀/범위 선택 + 체크박스 + 상태바 집계                                       | [features/selection.md](./features/selection.md)                 |
-| 편집     | 인라인 편집 + 체크박스/다중선택/라디오/textarea 에디터 + 검증 + Undo/Redo      | [features/editing.md](./features/editing.md)                     |
-| 편집     | 클립보드 복사/붙여넣기 (TSV) + 행 자동 확장(pasteExtend)                       | [features/clipboard.md](./features/clipboard.md)                 |
-| 편집     | 찾기/바꾸기 — findCells/replaceAll                                             | [features/find-replace.md](./features/find-replace.md)           |
-| 컬럼     | 계산 컬럼 — 수식(formula)/누계(cumulative)                                     | [features/computed-columns.md](./features/computed-columns.md)   |
-| 렌더     | 셀 타입 (이미지·버튼·링크·프로그레스·HTML) + 셀 툴팁 + 멀티라인                | [features/cell-types.md](./features/cell-types.md)               |
-| 상호작용 | 컨텍스트 메뉴 (셀/헤더 우클릭)                                                 | [features/context-menu.md](./features/context-menu.md)           |
-| 상호작용 | 모바일/터치 — 롱프레스 메뉴 + 터치 DnD + 핸들 확대                             | [features/mobile.md](./features/mobile.md)                       |
-| 상호작용 | 이벤트 + 행 번호 + 채우기 핸들 + 범위 지우기/이동 + scrollToRow                | [features/events.md](./features/events.md)                       |
-| 설정     | 다국어(locale) + 접근성(aria)                                                  | [features/i18n.md](./features/i18n.md)                           |
-| 출력     | 내장 포맷터 (숫자·통화·퍼센트·날짜)                                            | [features/formatting.md](./features/formatting.md)               |
-| 출력     | CSV 보내기/가져오기/템플릿                                                     | [features/csv-export.md](./features/csv-export.md)               |
-| 출력     | Excel (xlsx) 보내기/가져오기 + 스타일 보내기                                   | [features/excel.md](./features/excel.md)                         |
-| 출력     | PDF 보내기 + 인쇄                                                              | [features/pdf.md](./features/pdf.md)                             |
-| 행       | 행 상태 추적 (I/U/D) + 변경분 수집                                             | [features/row-state.md](./features/row-state.md)                 |
-| 행       | 행 드래그앤드롭 재정렬                                                         | [features/row-drag.md](./features/row-drag.md)                   |
-| 행       | 고정 행 + 전체 총계                                                            | [features/pinned-rows.md](./features/pinned-rows.md)             |
-| 행       | 행 상세 패널 (master-detail)                                                   | [features/master-detail.md](./features/master-detail.md)         |
-| 성능     | 가상 스크롤 + batch 일괄 갱신                                                  | [features/virtual-scroll.md](./features/virtual-scroll.md)       |
-| 상태     | 상태 저장/복원 (localStorage)                                                  | [features/state-persistence.md](./features/state-persistence.md) |
-| API      | 그리드 편의 API — 조회·모델 get/set·스크롤·로딩 (IBSheet/AG-Grid 매핑 표 포함) | [features/grid-api.md](./features/grid-api.md)                   |
-| 스타일   | 테마 / 다크 모드 / 줄무늬 / 커스텀 클래스                                      | [features/theming.md](./features/theming.md)                     |
+| 카테고리 | 기능                                                                       | 문서                                                             |
+| -------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| 데이터   | 정렬 / 다중 정렬                                                           | [features/sorting.md](./features/sorting.md)                     |
+| 데이터   | 컬럼 필터 / 전역 검색 / Set 필터                                           | [features/filtering.md](./features/filtering.md)                 |
+| 데이터   | 페이징                                                                     | [features/paging.md](./features/paging.md)                       |
+| 데이터   | 행 그룹화 + 집계 + 소계 행 + 그룹 패널                                     | [features/grouping.md](./features/grouping.md)                   |
+| 데이터   | 트리 데이터 (계층/레벨 접기/노드 검색/트리 소계)                           | [features/tree-data.md](./features/tree-data.md)                 |
+| 데이터   | 피벗 테이블 (행/열 디멘션 + 집계)                                          | [features/pivot.md](./features/pivot.md)                         |
+| 데이터   | 서버 사이드 / 무한 스크롤 / Append Scroll                                  | [features/server-side.md](./features/server-side.md)             |
+| 데이터   | 셀 병합 (rowSpan/colSpan/auto-merge)                                       | [features/cell-merge.md](./features/cell-merge.md)               |
+| 컬럼     | 리사이즈·재배치·고정·숨김·자동 너비·그룹 헤더·컬럼 관리                    | [features/columns.md](./features/columns.md)                     |
+| 선택     | 행/셀/범위 선택 + 체크박스 + 상태바 집계                                   | [features/selection.md](./features/selection.md)                 |
+| 편집     | 인라인 편집 + 체크박스/다중선택/라디오/textarea 에디터 + 검증 + Undo/Redo  | [features/editing.md](./features/editing.md)                     |
+| 편집     | 클립보드 복사/붙여넣기 (TSV) + 행 자동 확장(pasteExtend)                   | [features/clipboard.md](./features/clipboard.md)                 |
+| 편집     | 찾기/바꾸기 — findCells/replaceAll                                         | [features/find-replace.md](./features/find-replace.md)           |
+| 컬럼     | 계산 컬럼 — 수식(formula)/누계(cumulative)                                 | [features/computed-columns.md](./features/computed-columns.md)   |
+| 렌더     | 셀 타입 (이미지·버튼·링크·프로그레스·HTML) + 셀 툴팁 + 멀티라인            | [features/cell-types.md](./features/cell-types.md)               |
+| 상호작용 | 컨텍스트 메뉴 (셀/헤더 우클릭)                                             | [features/context-menu.md](./features/context-menu.md)           |
+| 상호작용 | 모바일/터치 — 롱프레스 메뉴 + 터치 DnD + 핸들 확대                         | [features/mobile.md](./features/mobile.md)                       |
+| 상호작용 | 이벤트 + 행 번호 + 채우기 핸들 + 범위 지우기/이동 + scrollToRow            | [features/events.md](./features/events.md)                       |
+| 설정     | 다국어(locale) + 접근성(aria)                                              | [features/i18n.md](./features/i18n.md)                           |
+| 출력     | 내장 포맷터 (숫자·통화·퍼센트·날짜)                                        | [features/formatting.md](./features/formatting.md)               |
+| 출력     | CSV 보내기/가져오기/템플릿                                                 | [features/csv-export.md](./features/csv-export.md)               |
+| 출력     | Excel (xlsx) 보내기/가져오기 + 스타일 보내기                               | [features/excel.md](./features/excel.md)                         |
+| 출력     | PDF 보내기 + 인쇄                                                          | [features/pdf.md](./features/pdf.md)                             |
+| 행       | 행 상태 추적 (I/U/D) + 변경분 수집                                         | [features/row-state.md](./features/row-state.md)                 |
+| 행       | 행 드래그앤드롭 재정렬                                                     | [features/row-drag.md](./features/row-drag.md)                   |
+| 행       | 고정 행 + 전체 총계                                                        | [features/pinned-rows.md](./features/pinned-rows.md)             |
+| 행       | 행 상세 패널 (master-detail)                                               | [features/master-detail.md](./features/master-detail.md)         |
+| 성능     | 가상 스크롤 + batch 일괄 갱신                                              | [features/virtual-scroll.md](./features/virtual-scroll.md)       |
+| 상태     | 상태 저장/복원 (localStorage)                                              | [features/state-persistence.md](./features/state-persistence.md) |
+| API      | 그리드 편의 API — 조회·모델 get/set·스크롤·로딩 (상용 그리드 매핑 표 포함) | [features/grid-api.md](./features/grid-api.md)                   |
+| 스타일   | 테마 오브젝트·프리셋 / 밀도 / 다크 모드 / 줄무늬 / 커스텀 클래스           | [features/theming.md](./features/theming.md)                     |
 
 ### 기여
 

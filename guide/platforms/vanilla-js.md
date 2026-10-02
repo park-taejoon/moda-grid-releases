@@ -99,8 +99,12 @@
   (엑셀 autofilter — 어댑터 `headerFilters` prop과 동일)
 - `pivotPanel`: 상단에 필드/행/열/값 존 패널 — 칩 드래그로 피벗 구성
   (엑셀 피벗 필드 목록 — 어댑터 `pivotPanel` prop과 동일)
-- `theme`: 그리드 자체 테마 (`"light" | "dark"`) — 루트에 `grid-theme-*`
-  클래스 적용, 생략 시 상위 팔레트 상속 (어댑터 `theme` prop과 동일)
+- `theme`: 그리드 자체 테마 — `"light" | "dark"` 팔레트 클래스 또는
+  `{ base, vars }` 오브젝트로 `--grid-*` 변수를 루트에 인라인 적용.
+  내장 프리셋 `gridThemePresets`(violet/highContrast) 사용 가능.
+  생략 시 상위 팔레트 상속 (어댑터 `theme` prop과 동일)
+- `density`: 밀도 프리셋 (`"standard" | "compact" | "comfortable"`) —
+  폰트·셀 패딩 일괄 조정 (어댑터 `density` prop과 동일)
 - `statusBar`: 선택 영역 집계 상태바 (셀 수/개수/합계/평균/최소/최대,
   기본 true)
 - `pageSizeOptions`: 페이저에 페이지 크기 셀렉트 (예: `[10, 20, 50]`)

@@ -1,6 +1,6 @@
 # 그리드 편의 API (Grid Convenience API)
 
-IBSheet·AG-Grid 같은 엔터프라이즈 그리드에서 매일 쓰는 조회·모델·스크롤
+상용 엔터프라이즈 그리드에서 매일 쓰는 조회·모델·스크롤
 패턴을 `GridCore`에 동일하게 제공한다. 모두 기존 상태를 조합한 얇은
 래퍼이므로 React/Vue/Vue2/Svelte/`mountGrid` 어디서든 동일하게 동작한다.
 
@@ -380,7 +380,7 @@ grid.setRowSelection(null); // 전체 해제 (clearSelection과 동일)
 
 ```ts
 row.price = fetchPrice(row.id);
-grid.refreshCells(); // IBSheet Refresh / AG refreshCells 대응
+grid.refreshCells(); // 상용 그리드의 Refresh/refreshCells 대응
 ```
 
 데이터를 통째로 교체할 때는 `setData`가 더 적합하다(Undo 이력·행 상태 초기화).
@@ -416,7 +416,7 @@ grid.scrollToBottom(); // 마지막 표시 행
 그리드 위에 반투명 오버레이를 렌더링한다.
 
 ```ts
-grid.setLoading(true); // IBSheet SetWaitImageVisible 대응
+grid.setLoading(true); // 상용 그리드의 로딩 표시 대응
 await fetchData();
 grid.setLoading(false);
 grid.isLoading(); // 현재 상태 조회
@@ -427,9 +427,9 @@ grid.isLoading(); // 현재 상태 조회
 - 서버 사이드 블록 로딩(`snapshot.serverSide.loading`)과는 별개의 수동 제어다.
 - `mountGrid`에서는 `mounted.setLoading(on)`이 같은 코어 경로로 위임된다.
 
-## IBSheet / AG-Grid 매핑 표
+## 상용 그리드 매핑 표
 
-| IBSheet                        | AG-Grid                                            | moda-grid                                                                 |
+| 레거시 그리드 (`sheet.*`)      | 대표적 그리드 라이브러리                           | moda-grid                                                                 |
 | ------------------------------ | -------------------------------------------------- | ------------------------------------------------------------------------- |
 | `RowCount` / `TotalRows`       | `getDisplayedRowCount()`                           | `getDisplayedRowCount()` / `getFilteredRowCount()` / `getTotalRowCount()` |
 | `GetRowData(row)`              | `getDisplayedRowAtIndex(i)`                        | `getDisplayedRowAt(i)` / `getRowById(id)`                                 |

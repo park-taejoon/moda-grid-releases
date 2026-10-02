@@ -126,6 +126,31 @@ Svelte 5의 named snippet으로 위임한다:
 <span>{$store.filteredRowCount} / {$store.totalRowCount}행</span>
 ```
 
+## 테마 / 밀도
+
+```svelte
+<script lang="ts">
+  import { gridThemePresets } from "@moda-grid/svelte";
+</script>
+
+<!-- 내장 팔레트 -->
+<DataGrid columns={cols} data={rows} theme="dark" />
+
+<!-- 오브젝트 오버라이드 + 밀도 — $state로 두면 런타임 전환 -->
+<DataGrid
+  columns={cols}
+  data={rows}
+  theme={{ base: "light", vars: { primaryColor: "#0d9488", fontSize: "13px" } }}
+  density="compact"
+/>
+
+<!-- 내장 프리셋 -->
+<DataGrid columns={cols} data={rows} theme={gridThemePresets.violet} />
+```
+
+변수 목록·커스텀 팔레트 작성은
+[features/theming.md](../features/theming.md) 참고.
+
 ## 자주 묻는 것
 
 - **`$store` vs `store.grid`** — 읽기는 `$store`, 쓰기(액션)는 `store.grid`.

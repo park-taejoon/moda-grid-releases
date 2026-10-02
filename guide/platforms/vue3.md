@@ -73,7 +73,7 @@ const { grid, state } = useGrid<User>({ columns, data: users });
 React 어댑터와 동일하다 (kebab-case로 전달): `columns` `data` `grid`
 `height` `row-height` `overscan` `resizable` `reorderable` `selectable`
 `selection-mode` `server-side` `tree-data` `column-controller`
-`row-checkboxes` `status-bar` `get-row-id` `class-name`.
+`row-checkboxes` `status-bar` `get-row-id` `class-name` `theme` `density`.
 전체 목록: [react.md의 props 표](./react.md#props)와 동일.
 
 ## Composables
@@ -127,6 +127,36 @@ React 어댑터와 동일하다 (kebab-case로 전달): `columns` `data` `grid`
 </button>
 <span>{{ state.filteredRowCount }} / {{ state.totalRowCount }}행</span>
 ```
+
+## 테마 / 밀도
+
+```vue
+<script setup lang="ts">
+import { gridThemePresets } from "@moda-grid/vue";
+</script>
+
+<template>
+  <!-- 내장 팔레트 -->
+  <DataGrid :columns="cols" :data="rows" theme="dark" />
+
+  <!-- 오브젝트 오버라이드 + 밀도 — :theme에 반응형 바인딩하면 런타임 전환 -->
+  <DataGrid
+    :columns="cols"
+    :data="rows"
+    :theme="{
+      base: 'light',
+      vars: { primaryColor: '#0d9488', fontSize: '13px' },
+    }"
+    density="compact"
+  />
+
+  <!-- 내장 프리셋 -->
+  <DataGrid :columns="cols" :data="rows" :theme="gridThemePresets.violet" />
+</template>
+```
+
+변수 목록·커스텀 팔레트 작성은
+[features/theming.md](../features/theming.md) 참고.
 
 ## 자주 묻는 것
 
