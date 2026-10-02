@@ -33,10 +33,10 @@ pnpm dev:vue          # http://localhost:5174 (Vue 3)
 pnpm dev:svelte       # http://localhost:5175
 pnpm dev:vue2         # http://localhost:5176 (Vue 2.7)
 pnpm dev:vanilla      # http://localhost:5177 (mountGrid, 프레임워크 없음)
-pnpm dev              # 5개 앱 watch + http://localhost:8080 탭 셸로 통합 확인
+pnpm dev              # 5개 앱 watch + http://localhost:50800 탭 셸로 통합 확인
                       # (개별 포트 5173~5177로도 직접 접근 가능)
 
-pnpm demo             # 전체 데모 빌드 후 http://localhost:8080 통합 서빙
+pnpm demo             # 전체 데모 빌드 후 http://localhost:50800 통합 서빙
 ```
 
 각 데모 앱 상단의 "구현된 기능 목록" 패널에서 현재 구현된 기능을 확인할 수 있다.
@@ -44,7 +44,7 @@ pnpm demo             # 전체 데모 빌드 후 http://localhost:8080 통합 �
 ### Docker
 
 ```bash
-docker compose up --build                           # 프로덕션 — 8080 통합 데모 서버
+docker compose up --build                           # 프로덕션 — 50800 통합 데모 서버
 docker compose -f docker-compose.dev.yml up --build # watch — 소스 마운트 + HMR (5173~5177)
 ```
 

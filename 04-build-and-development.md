@@ -10,9 +10,9 @@
 | `pnpm build:all`                                             | 루트   | 패키지 + 앱 전체                                                      |
 | `pnpm typecheck`                                             | 루트   | 전체 프로젝트 타입 검사                                               |
 | `pnpm test`                                                  | 루트   | `packages/core` vitest 실행                                           |
-| `pnpm dev`                                                   | 루트   | dev 앱 5개 + 탭 셸(`scripts/dev.mjs`) — **8080에서 탭 전환**으로 확인 |
+| `pnpm dev`                                                   | 루트   | dev 앱 5개 + 탭 셸(`scripts/dev.mjs`) — **50800에서 탭 전환**으로 확인 |
 | `pnpm dev:react` / `:vue` / `:svelte` / `:vue2` / `:vanilla` | 루트   | 개별 dev 서버 (5173/5174/5175/5176/5177)                              |
-| `pnpm demo`                                                  | 루트   | `build:apps` 후 `scripts/serve-demos.mjs`로 8080 통합 서빙            |
+| `pnpm demo`                                                  | 루트   | `build:apps` 후 `scripts/serve-demos.mjs`로 50800 통합 서빙            |
 | `pnpm serve:demos`                                           | 루트   | 빌드 없이 통합 데모 서버만 실행                                       |
 | `pnpm clean`                                                 | 루트   | 모든 `dist/`, `node_modules/` 제거                                    |
 | `pnpm dev`                                                   | 패키지 | `tsc --watch` / `svelte-package --watch`                              |
@@ -31,7 +31,7 @@
 | 5177 | `apps/dev-vanilla` | `@moda-grid/core` — `mountGrid` (프레임워크 없음) |
 
 - 각 앱의 모드 셀렉트로 로컬/서버/트리/피벗 데이터를 전환한다.
-- **통합 탭 셸** — `pnpm dev`/`pnpm demo` 모두 `http://localhost:8080`에서
+- **통합 탭 셸** — `pnpm dev`/`pnpm demo` 모두 `http://localhost:50800`에서
   탭으로 5개 데모를 전환한다 (`scripts/serve-demos.mjs`). dev 모드는
   각 vite 서버를 iframe으로 연결하고, prod 모드는 `/{react,vue,vue2,
 svelte,vanilla}` 경로의 dist를 iframe한다. 개별 포트 직접 접근도 가능.
@@ -47,7 +47,7 @@ svelte,vanilla}` 경로의 dist를 iframe한다. 개별 포트 직접 접근도 
 
 | 명령                                                  | 동작                                      |
 | ----------------------------------------------------- | ----------------------------------------- |
-| `docker compose up --build`                           | 5개 데모 빌드 → 8080 통합 서빙 (프로덕션) |
+| `docker compose up --build`                           | 5개 데모 빌드 → 50800 통합 서빙 (프로덕션) |
 | `docker compose -f docker-compose.dev.yml up --build` | 소스 마운트 + vite watch → 5173~5177      |
 
 `Dockerfile`은 멀티 스테이지: `base`(pnpm install) → `dev`(vite watch) /
