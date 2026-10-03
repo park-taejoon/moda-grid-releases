@@ -114,26 +114,27 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 
 ## 컬럼 타입 매핑
 
-| 레거시 컬럼 `Type`                 | moda-grid `ColumnDef`                                                        |
-| ---------------------------------- | ---------------------------------------------------------------------------- |
-| `Text`                             | 기본값 (`cellEditor` 생략)                                                   |
-| `Int`/`Float`                      | `{ type: "number" }` 또는 `cellEditor: "number"` + `format: {kind:"number"}` |
-| `Combo`                            | `{ cellEditor: "select", editorOptions: [...] }`                             |
-| `MultiCombo`                       | `{ cellEditor: "multiselect", editorOptions: [...] }`                        |
-| `CheckBox`                         | `{ cellEditor: "checkbox", headerCheckbox: true }`                           |
-| `Radio`                            | `{ cellEditor: "radio", editorOptions: [...] }`                              |
-| `Text`(MultiLine)                  | `{ cellEditor: "textarea", multiLine: true }`                                |
-| `Date`                             | `{ cellEditor: "date" }` + `format: {kind:"date"}`                           |
-| `Image`/`Button`/`Link`/`Progress` | `{ cellType: "image"\|"button"\|"link"\|"progress" }`                        |
-| `Html`                             | `{ cellType: "html" }` — raw HTML, XSS 주의                                  |
-| `AutoSum`/`Formula`                | `{ formula: "price * qty" }` / `{ cumulative: "amount" }`                    |
-| 컬럼 이동 잠금                     | `movable: false` — `reorderable` 중에도 해당 컬럼 드래그 불가                |
-| 읽기 전용                          | `{ editable: false }` — `mg-cell-readonly` 스타일 자동                       |
-| 행 조건부 읽기 전용                | `{ editable: (row) => boolean }` — 행 데이터로 편집 가능 여부 결정           |
-| `SaveName`                         | `field` (행 객체의 키)                                                       |
-| `Align`/`HeaderAlign`              | `align` / `headerAlign` — left\|center\|right                                |
-| 헤더 툴팁                          | `headerTooltip` — 헤더 마우스오버 시 title 툴팁                              |
-| 입력값 파서                        | `valueParser: (text) => 저장값` — 편집 커밋/붙여넣기/가져오기에 적용         |
+| 레거시 컬럼 `Type`                 | moda-grid `ColumnDef`                                                                |
+| ---------------------------------- | ------------------------------------------------------------------------------------ |
+| `Text`                             | 기본값 (`cellEditor` 생략)                                                           |
+| `Int`/`Float`                      | `{ type: "number" }` 또는 `cellEditor: "number"` + `format: {kind:"number"}`         |
+| `Combo`                            | `{ cellEditor: "select", editorOptions: [...] }`                                     |
+| `MultiCombo`                       | `{ cellEditor: "multiselect", editorOptions: [...] }`                                |
+| `CheckBox`                         | `{ cellEditor: "checkbox", headerCheckbox: true }`                                   |
+| `Radio`                            | `{ cellEditor: "radio", editorOptions: [...] }`                                      |
+| `Text`(MultiLine)                  | `{ cellEditor: "textarea", multiLine: true }`                                        |
+| `Date`                             | `{ cellEditor: "date" }` + `format: {kind:"date"}`                                   |
+| `Image`/`Button`/`Link`/`Progress` | `{ cellType: "image"\|"button"\|"link"\|"progress" }`                                |
+| `Html`                             | `{ cellType: "html" }` — raw HTML, XSS 주의                                          |
+| `AutoSum`/`Formula`                | `{ formula: "price * qty" }` / `{ cumulative: "amount" }`                            |
+| 컬럼 이동 잠금                     | `movable: false` — `reorderable` 중에도 해당 컬럼 드래그 불가                        |
+| 읽기 전용                          | `{ editable: false }` — `mg-cell-readonly` 스타일 자동                               |
+| 행 조건부 읽기 전용                | `{ editable: (row) => boolean }` — 행 데이터로 편집 가능 여부 결정                   |
+| `SaveName`                         | `field` (행 객체의 키)                                                               |
+| `Align`/`HeaderAlign`              | `align` / `headerAlign` — left\|center\|right                                        |
+| 헤더 툴팁                          | `headerTooltip` — 헤더 마우스오버 시 title 툴팁                                      |
+| 입력값 파서                        | `valueParser: (text) => 저장값` — 편집 커밋/붙여넣기/가져오기에 적용                 |
+| 입력 마스크                        | `editMask: "999-9999-9999"` — `9`=숫자, `A`=영문, `*`=영숫자, 나머지 리터럴 자동삽입 |
 
 ## 기능 매핑
 
