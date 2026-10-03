@@ -297,6 +297,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `sheet.dispose()`                                    | 컴포넌트 언마운트 (자동)                                                                                                                |
 | 행 조건부 스타일                                     | `GridOptions.rowStyle` / `ColumnDef.rowStyle` — CSS 문자열·맵·함수, `<tr>`에 병합                                                       |
 | 셀 커스텀 렌더러                                     | React `renderCell` · Vue `#cell-{field}` 슬롯 · Svelte `cell` snippet · vanilla `cellRenderer`(DOM Node 반환)                           |
+| 헤더 커스텀 렌더러                                   | React `renderHeader` · Vue `#header-{field}` 슬롯 · Svelte `header` snippet · vanilla `headerRenderer` — 정렬/필터 UI 유지              |
 | 모바일/터치 지원                                     | 자동 — 롱프레스(550ms) 컨텍스트 메뉴 + 터치 커스텀 DnD(컬럼/행/피벗) + 리사이즈·fill 핸들 터치 + `pointer:coarse` 핸들 확대             |
 | 커스텀 집계 (`aggFunc` / 서브합계 함수)              | `aggregationFn`에 함수 전달 — `({ values, rows, field }) => unknown`. 내장은 `sum/avg/min/max/count/first/last`, 피벗 `agg`도 동일 규약 |
 

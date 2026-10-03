@@ -165,6 +165,51 @@ grid.setHeaderHeight(80); // 런타임 변경 (null이면 기본값)
 `grid.getHeaderClass(col)`로 해석된 값을 4개 어댑터와 `mountGrid`가
 `th` 클래스에 병합한다.
 
+## 커스텀 헤더 렌더링 (`headerRenderer`)
+
+헤더 셀의 **텍스트 자리**를 커스텀 내용으로 대체한다 — 정렬 화살표·
+필터 버튼·required 표시·headerCheckbox는 그대로 유지된다.
+아이콘·배지·버튼이 들어간 헤더를 만들 때 사용한다.
+
+| 프레임워크 | 확장점                                |
+| ---------- | ------------------------------------- |
+| React      | `ReactColumnDef.renderHeader(col)`    |
+| Vue / Vue2 | `#header-{field}` 슬롯 (`{ column }`) |
+| Svelte     | `{#snippet header({ column })}`       |
+| vanilla    | `ColumnDef.headerRenderer(params)`    |
+
+```tsx
+// React
+{ field: "name", header: "이름", renderHeader: (col) => <><span className="badge">★</span>{col.header}</> }
+```
+
+```vue
+<!-- Vue 3 / Vue 2 -->
+<template #header-name="{ column }">
+  <span class="badge">★</span> {{ column.header }}
+</template>
+```
+
+```svelte
+<!-- Svelte — 모든 컬럼 헤더에 적용, column.field로 분기 -->
+{#snippet header({ column })}
+  {#if column.field === "name"}<span class="badge">★</span> {column.header}
+  {:else}{column.header ?? column.field}{/if}
+{/snippet}
+```
+
+```ts
+// vanilla mountGrid — Node/문자열 반환, null/undefined면 기본 텍스트로 폴백
+{
+  field: "name",
+  headerRenderer: ({ column }) => {
+    const span = document.createElement("span");
+    span.textContent = `★ ${column.header}`;
+    return span;
+  },
+}
+```
+
 ## 런타임 컬럼 교체
 
 ```ts
