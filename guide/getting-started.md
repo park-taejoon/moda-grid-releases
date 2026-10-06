@@ -12,6 +12,8 @@
 | 프레임워크 없이 직접 렌더링           | `@moda-grid/core`                       |
 
 어댑터 패키지는 `@moda-grid/core`를 자동으로 포함한다.
+필요한 기능만 번들에 담고 싶으면 `@moda-grid/core/slim` 엔트리를 쓴다 —
+자세한 것은 [기능 등록과 플러그인](./features/plugins.md) 참고.
 
 ## 요구사항
 
