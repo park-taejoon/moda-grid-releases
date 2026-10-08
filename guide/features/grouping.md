@@ -92,7 +92,9 @@ mountGrid(el, { columns, data, groupPanel: true });
 - `GroupNode`의 `key`는 전체 경로를 JSON 직렬화한 고유 문자열.
 - `expandedRowKeys: Set<string>` — 펼친 그룹 키 집합. **새 그룹은 기본
   펼침**, 사용자가 접은 그룹은 `setData` 후에도 접힘 유지.
-- 로컬 페이징과는 병용되지 않고, 서버 사이드 모드에서는 적용되지 않는다.
+- 로컬 페이징과는 병용되지 않는다. 서버 사이드 모드에서는 로컬 평탄화 대신
+  서버 그룹 행(`ServerSideGroupRow`)으로 레벨별 지연 로드된다 —
+  `server-side.md`의 서버사이드 그룹화 참조.
 - 행 드래그는 그룹 모드에서 자동 비활성된다.
 
 ## 스냅샷 필드

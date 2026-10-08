@@ -74,18 +74,68 @@ grid.resetView();
 ```ts
 grid.getUniqueValues("role"); // ["admin", "editor", ...] — 체크리스트 항목
 grid.setFilter("role", { operator: "set", value: "", values: ["admin"] });
-grid.setFilter("role", null); // 전체 선택과 동일 = 해제
+grid.setFilter("role", null); // 해제
 ```
 
 - 비교는 셀 값의 문자열 표현(`String(value)`) 기준.
-- `values`가 고유값 전체를 포함하면 필터 해제와 동일.
-- 어댑터는 `(전체 선택)` → `setFilter(field, null)`, 개별 토글 → `values`
-  갱신 후 `operator: "set"`으로 재지정한다.
+- `values`가 고유값 전체를 포함하면 체크리스트는 비활성(필터 없음과 동일).
 
-## 헤더 필터 드롭다운 (`headerFilters`)
+## 고급 필터 빌더 — 조건식 + 체크리스트 AND/OR 결합
 
-필터 행과 별개로, `filterable` 컬럼 헤더에 `▾` 버튼을 달아
-엑셀 autofilter식 **값 체크리스트 드롭다운**을 연다:
+`ColumnFilter`는 **조건식**(operator + value/valueTo)과 **값 체크리스트**
+(`values`)를 같은 모델 안에서 `join`으로 결합할 수 있다:
+
+```ts
+// 역할이 "admin"을 포함(조건) 하면서 값이 admin/editor 중 하나(체크리스트)
+grid.setFilter("role", {
+  operator: "contains",
+  value: "admin",
+  values: ["admin", "editor"],
+  join: "and", // 기본값 — 조건과 체크리스트를 모두 만족
+});
+
+// OR — 조건 또는 체크리스트 둘 중 하나만 만족해도 통과
+grid.setFilter("age", {
+  operator: "greaterThan",
+  value: "30",
+  values: ["22"],
+  join: "or",
+});
+```
+
+규칙:
+
+- `join`은 조건식과 체크리스트가 **둘 다 활성**일 때만 의미가 있다.
+  조건식(value/valueTo 모두 공백)이나 체크리스트(빈 `values`)가 비어 있으면
+  해당 부분은 없는 것으로 평가된다.
+- `operator: "set"`이면 `values`만이 조건이다 — `join`은 무시된다.
+- 컬럼 간 결합은 기존과 동일하게 항상 AND다.
+- `filterPredicate`가 있는 컬럼은 결합 필터 전체를 받아 커스텀 판정한다.
+- `getFilterModel()`/`setFilterModel()`/`getColumnFilter()`는 `values` 배열
+  까지 깊은 복사로 주고받는다 — 반환값을 변형해도 내부 상태가 오염되지 않는다.
+
+렌더러의 필터 빌더 UI가 쓰는 공용 헬퍼도 export된다:
+
+```ts
+import { buildColumnFilter, normalizeColumnFilter } from "@moda-grid/core";
+
+// FilterBuilderInput { operator, value, valueTo, values, join } → ColumnFilter|null
+buildColumnFilter({
+  operator: "contains",
+  value: "a",
+  values: ["x"],
+  join: "or",
+});
+// 조건·체크리스트 모두 비활성이면 null — setFilter(field, null)로 해제
+buildColumnFilter({ operator: "contains", value: "" }); // → null
+// 체크리스트만 있으면 레거시 { operator: "set" } 형태로 낸다
+buildColumnFilter({ values: ["admin"] }); // → { operator: "set", value: "", values: ["admin"] }
+```
+
+## 헤더 필터 드롭다운 (`headerFilters`) — 필터 빌더 UI
+
+필터 행과 별개로, `filterable` 컬럼 헤더에 `▾` 버튼을 달아 **필터 빌더
+드롭다운**을 연다:
 
 ```tsx
 // React/Vue3/Vue2/Svelte — prop
@@ -97,10 +147,18 @@ grid.setFilter("role", null); // 전체 선택과 동일 = 해제
 mountGrid(el, { columns, data, headerFilters: true });
 ```
 
-- 클릭 시 해당 컬럼의 고유 값 체크리스트(`getUniqueValues`)가 버튼 아래
-  팝오버로 열린다 — `(전체 선택)` + 값별 체크박스.
-- 토글은 즉시 `operator: "set"` 필터로 반영되고, 모든 값이 선택되면
-  `setFilter(field, null)`로 자동 해제된다.
+드롭다운 구성 (`filterType: "set"`이 아닌 컬럼 기준):
+
+1. **조건 섹션** — 연산자 셀렉트(`.mg-filter-cond-op`) + 비교 값 입력
+   (`.mg-filter-cond-val`), `inRange`면 상한 입력(`.mg-filter-to`) 추가.
+   값 입력은 blur/Enter에서 반영된다.
+2. **결합 토글** — 조건식 ↔ 체크리스트를 `그리고(AND)`/`또는(OR)`로 묶는
+   라디오(`.mg-filter-join-radio`). 로케일 키: `filterAnd`/`filterOr`.
+3. **값 체크리스트** — `(전체 선택)` + `getUniqueValues` 값별 체크박스
+   (`.mg-colctl-item`). 조건식과 독립 상태로 유지된다.
+
+- `filterType: "set"` 컬럼은 체크리스트만 표시된다.
+- 조건·체크리스트 모두 비어 있으면 필터는 자동 해제된다.
 - 활성 필터가 있는 컬럼의 버튼은 강조 색(`mg-active`)으로 표시된다.
 - 한 번에 하나만 열리며, 오버레이 클릭·`Esc`·버튼 재클릭으로 닫힌다.
 - `filterRowVisible: false`로 필터 행을 숨겨도 헤더 드롭다운으로 필터할 수

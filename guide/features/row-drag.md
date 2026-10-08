@@ -36,6 +36,53 @@ grid.endRowDrag(true); // 커밋 → moveRow / false면 취소
 grid.getRowDragState(); // { draggingIndex, dropIndex } | null
 ```
 
+## 그리드 간 행 드래그 (rowDragAcceptExternal)
+
+`rowDragAcceptExternal: true`인 그리드는 **다른 그리드에서** 드래그한
+행을 드롭으로 받는다 — 이동(move) 시맨틱으로, 소스 그리드에서는
+드롭된 행이 제거된다.
+
+```ts
+const source = new GridCore({ columns, data: srcRows }); // rowDrag 컬럼 필요
+const target = new GridCore({ columns, data: [], rowDragAcceptExternal: true });
+```
+
+- 어댑터 prop: `<DataGrid rowDragAcceptExternal />` (React/Vue/
+  Vue2/Svelte), `mountGrid({ rowDragAcceptExternal: true })` (vanilla)
+- 소스에는 아무 옵션도 필요 없다 — 컬럼의 `rowDrag` 핸들로 시작된
+  드래그는 자동으로 외부 세션이 된다. 대상에도 `rowDrag` 컬럼이 있으면
+  양방향 이동이 된다.
+- 대상 행 위로 `dragover`하면 포인터 위쪽/아래쪽 절반으로 삽입 갭을
+  계산해 `.mg-drop-before`/`.mg-drop-after` 인디케이터를 표시한다.
+- `drop` 시 대상의 `insertIndex` 위치에 행이 삽입되고, 성공하면 소스
+  행이 제거된다. 소스의 `dragend`(Escape/취소)는 세션과 인디케이터를
+  정리한다.
+- 서버사이드(`serverSide`) 그리드는 대상이 될 수 없다 — 원격 행은
+  로컬 삽입이 불가능하기 때문이다.
+- 소스/대상의 행 타입이 달라도 동작한다 (드래그된 행 객체가 그대로
+  이전된다 — 필요하면 `externalRowDrop`에서 변환 후 직접 삽입).
+
+### 이벤트
+
+```ts
+// 대상 그리드 — 드롭으로 들어온 행
+target.on("externalRowDrop", (e) => {
+  // { rows: TData[], insertIndex, sourceGrid }
+});
+
+// 소스 그리드 — 드롭으로 나간 행 (성공 커밋 시에만)
+source.on("externalRowRemove", (e) => {
+  // { rows: TData[], targetGrid }
+});
+```
+
+### 코어 API
+
+```ts
+grid.canAcceptExternalRowDrop(); // 지금 외부 드래그를 받을 수 있는가
+grid.setRowDragAcceptExternal(true); // 런타임 토글 (prop 동기화 경로)
+```
+
 ## 동작 규칙
 
 - 인덱스는 **visibleData 기준** — 필터가 걸려 있어도 화면에 보이는 순서

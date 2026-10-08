@@ -59,10 +59,13 @@
 | 출력     | Excel (xlsx) 보내기/가져오기 + 스타일 보내기                               | [features/excel.md](./features/excel.md)                         |
 | 출력     | PDF 보내기 + 인쇄                                                          | [features/pdf.md](./features/pdf.md)                             |
 | 행       | 행 상태 추적 (I/U/D) + 변경분 수집                                         | [features/row-state.md](./features/row-state.md)                 |
-| 행       | 행 드래그앤드롭 재정렬                                                     | [features/row-drag.md](./features/row-drag.md)                   |
+| 행       | 행 드래그앤드롭 재정렬 + 그리드 간 행 이동(`rowDragAcceptExternal`)        | [features/row-drag.md](./features/row-drag.md)                   |
 | 행       | 고정 행 + 전체 총계                                                        | [features/pinned-rows.md](./features/pinned-rows.md)             |
 | 행       | 행 상세 패널 (master-detail)                                               | [features/master-detail.md](./features/master-detail.md)         |
-| 성능     | 가상 스크롤 + batch 일괄 갱신                                              | [features/virtual-scroll.md](./features/virtual-scroll.md)       |
+| 행       | 전체 너비 행 (배너·구분선·요약 카드)                                       | [features/full-width.md](./features/full-width.md)               |
+| 행       | 행 이동 애니메이션 (정렬/필터 시 위치 전이)                                | [features/row-animation.md](./features/row-animation.md)         |
+| 성능     | 가상 스크롤 + 컬럼 가상화 + batch 일괄 갱신                                | [features/virtual-scroll.md](./features/virtual-scroll.md)       |
+| 국제화   | RTL (`dir="rtl"`) — 내비 반전·pinned 논리 인셋·scrollLeft 정규화           | [features/rtl.md](./features/rtl.md)                             |
 | 상태     | 상태 저장/복원 (localStorage)                                              | [features/state-persistence.md](./features/state-persistence.md) |
 | API      | 그리드 편의 API — 조회·모델 get/set·스크롤·로딩 (상용 그리드 매핑 표 포함) | [features/grid-api.md](./features/grid-api.md)                   |
 | 스타일   | 테마 오브젝트·프리셋 / 밀도 / 다크 모드 / 줄무늬 / 커스텀 클래스           | [features/theming.md](./features/theming.md)                     |
@@ -70,9 +73,10 @@
 
 ### 기여
 
-| 문서                           | 내용                                                   |
-| ------------------------------ | ------------------------------------------------------ |
-| [extending.md](./extending.md) | 새 기능 개발 시 가이드 문서 추가 규칙 (개발자·AI 공용) |
+| 문서                                 | 내용                                                                  |
+| ------------------------------------ | --------------------------------------------------------------------- |
+| [architecture.md](./architecture.md) | 커널/컨트롤러 모듈화 구조 — GridHost/GridInternals/피처/lazy/컨포먼스 |
+| [extending.md](./extending.md)       | 새 기능 개발 시 가이드 문서 추가 규칙 (개발자·AI 공용)                |
 
 ## 30초 요약
 

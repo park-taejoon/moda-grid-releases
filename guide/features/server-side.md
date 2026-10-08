@@ -8,13 +8,24 @@
 import type { ServerSideDataSource } from "@moda-grid/core";
 
 const dataSource: ServerSideDataSource<User> = {
-  async getRows({ startRow, endRow, sortModel, filterModel }) {
+  async getRows({
+    startRow,
+    endRow,
+    sortModel,
+    filterModel,
+    groupBy,
+    groupKeys,
+    pivotModel,
+  }) {
     const res = await fetch(
       `/api/rows?start=${startRow}&end=${endRow}` +
         `&sort=${encodeURIComponent(JSON.stringify(sortModel))}` +
-        `&filter=${encodeURIComponent(JSON.stringify(filterModel))}`,
+        `&filter=${encodeURIComponent(JSON.stringify(filterModel))}` +
+        `&groupBy=${encodeURIComponent(JSON.stringify(groupBy ?? []))}` +
+        `&groupKeys=${encodeURIComponent(JSON.stringify(groupKeys ?? []))}` +
+        `&pivot=${encodeURIComponent(JSON.stringify(pivotModel ?? null))}`,
     );
-    return res.json(); // { rows: TData[], lastRowIndex?: number }
+    return res.json(); // { rows: (TData|ServerSideGroupRow)[], lastRowIndex?, secondaryColumns? }
   },
 };
 
@@ -43,7 +54,74 @@ const grid = new GridCore({
   자동 폐기된다.
 - **미로드 행** — `rows`/`virtualRows`의 미로드 인덱스는 `undefined` —
   어댑터가 `.mg-skeleton-row`(컬럼별 shimmer 바)로 렌더링한다.
-- 로컬 페이징과 행 그룹화는 적용되지 않는다.
+- 로컬 페이징은 적용되지 않는다. 그룹화·피벗은 서버가 수행한다
+  (아래 서버사이드 그룹화/피벗 참조).
+
+## 서버사이드 그룹화
+
+`groupBy`가 설정되면(`setGroupBy`, groupPanel 드래그 등) 그리드는
+플랫 블록 대신 **레벨별 요청**으로 전환한다:
+
+- `groupBy` — 요청에 실리는 그룹 기준 필드 목록.
+- `groupKeys` — 요청하는 자식 레벨의 부모 그룹 키 경로. 빈 배열/생략이면
+  루트 레벨(최상위 그룹 목록)이다.
+- 요청 경로 깊이(`groupKeys.length`)가 `groupBy.length`보다 작으면
+  서버는 리프 대신 `ServerSideGroupRow`를 반환한다:
+
+```ts
+interface ServerSideGroupRow {
+  type: "group";
+  key: string; // 부모 경로에 붙는 세그먼트 (그룹 값 문자열)
+  field: string; // 그룹 기준 컬럼
+  value: unknown; // 표시용 값
+  childCount: number; // 펼쳤을 때의 자식 슬롯 수
+  aggregates?: Record<string, unknown>; // aggregationFn 컬럼에 표시
+}
+```
+
+```ts
+// 서버 측 의사코드
+getRows: async ({ groupBy = [], groupKeys = [], startRow, endRow, ... }) => {
+  if (groupKeys.length < groupBy.length) {
+    const field = groupBy[groupKeys.length];
+    // SELECT field, COUNT(*) ... GROUP BY field → 그룹 행 목록
+    return { rows: groupRows(field), lastRowIndex: groupCount };
+  }
+  // 리프 레벨 — groupKeys 경로를 WHERE로 적용해 자식 행 반환
+  return { rows: leafRowsWhere(groupKeys), lastRowIndex };
+};
+```
+
+- **펼침 = 지연 로드** — 그룹 행을 펼치면(`toggleGroupExpanded`/클릭)
+  `childCount`만큼 자식 슬롯이 스켈레톤으로 잡히고, 뷰포트에 걸리는
+  자식 블록이 `groupKeys=[...부모키]`로 지연 요청된다. 다시 접어도
+  자식 캐시는 유지된다.
+- **모델 변경 = 전체 폐기** — `groupBy`/피벗이 바뀌면 모든 레벨 캐시를
+  폐기하고 루트부터 다시 요청한다. 정렬/필터 변경 시에도 동일하다.
+- **`expandAllGroups`** — 이미 로드된 그룹 행만 펼친다 (미로드 깊이는
+  펼침 후 지연 로드된다). `collapseAllGroups`는 모든 펼침을 접는다.
+
+## 서버사이드 피벗
+
+`setPivot`/`pivotPanel`로 피벗을 구성하면 요청에 `pivotModel`이 실린다:
+
+```ts
+interface ServerSidePivotModel {
+  rows: readonly string[]; // 행 디멘션 필드
+  columns: readonly string[]; // 열 디멘션 필드
+  values: readonly { field: string; agg?: string }[]; // 측정값
+}
+```
+
+- 서버는 피벗 결과 행을 `rows`로, **생성 컬럼**을 응답의
+  `secondaryColumns: ColumnDef[]`로 반환한다 — 커널이 표시 컬럼을
+  자동 교체한다 (로컬 피벗의 컬럼 교체 경로와 동일).
+- 커스텀 집계 함수는 직렬화 불가라 `values[].agg`에는 내장 집계 키
+  (`"sum"`/`"avg"`/`"count"` 등)만 실린다.
+- 피벗 해제(`setPivot(null)`) 시 모델 변경으로 캐시가 폐기되고
+  플랫 요청으로 돌아간다.
+- 그룹화와 피벗은 동시에 켤 수 있다 — `groupBy`는 리프 레벨의 피벗 행
+  안에서만 의미를 가진다(실무에서는 둘 중 하나를 쓰는 것을 권장).
 
 ## 코어 API
 

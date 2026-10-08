@@ -108,3 +108,10 @@ grid.getSnapshot().sourceColumns; // 원본 컬럼(피벗 중에도 노출)
 
 세 API 모두 `setPivot` 위의 얇은 래퍼 — 이벤트/스냅샷 갱신/Undo가 아닌
 피벗 재계산 경로를 그대로 탄다.
+
+## 서버사이드 피벗
+
+`serverSide` 모드에서 피벗을 켜면 로컬 `buildPivot` 대신 서버가 피벗을
+수행한다 — 요청에 `pivotModel`이 실리고, 응답의 `secondaryColumns`가
+생성 컬럼으로 자동 교체된다. 상세는
+[server-side.md](./server-side.md#서버사이드-피벗) 참조.
