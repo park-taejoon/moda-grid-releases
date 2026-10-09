@@ -88,5 +88,29 @@ new GridCore({
   자식 행에서도 일치.
 - `displayRows` 길이가 가상 스크롤 `totalHeight`를 결정 — 접힘/펼침이
   스크롤에 즉시 반영.
-- 트리 모드에서는 `groupBy`와 행 드래그(`isRowDraggable() === false`)가
-  비활성화된다.
+- 트리 모드에서는 `groupBy`가 비활성화된다. 행 드래그는 3방향 트리
+  드롭으로 동작한다 — `row-drag.md`의 "트리 모드 행 드래그" 참조.
+
+## 행 드래그로 계층 편집 (`setParentId` / `canDropRow`)
+
+`rowDrag: true` 컬럼의 핸들로 노드를 드래그하면 대상 행 위/아래(형제
+순서) 또는 안쪽(자식으로)에 드롭할 수 있다. 자세한 규칙은
+[행 드래그앤드롭](./row-drag.md#트리-모드-행-드래그-3방향-드롭) 참조.
+
+```ts
+treeData: {
+  getParentId: (r) => r.parentId,
+  // flat 모드에서 부모를 바꾸는 드롭을 허용 — 새 부모를 행에 써넣는다
+  setParentId: (row, parent) => { row.parentId = parent?.id ?? null; },
+  // 거부 규칙 — false 또는 사유 문자열 (→ rowDropDenied 이벤트)
+  canDropRow: ({ position, newParentRow }) =>
+    position === "inside" && newParentRow == null
+      ? "최상위로는 이동할 수 없습니다"
+      : true,
+}
+```
+
+- flat 모드에서 `setParentId`가 없으면 같은 부모 내 순서 변경만
+  허용되고 부모 변경 드롭은 거부된다.
+- nested 모드(`childrenKey`)는 자식 배열을 직접 조작하므로
+  `setParentId` 없이 리파렌팅된다.

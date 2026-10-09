@@ -129,12 +129,21 @@ grid.getSelectionTsv({ formatted: false }); // 강제 원시값
 ## 어댑터 연결 방식 (커스텀 UI용)
 
 ```ts
+import { readClipboardText, writeClipboardText } from "@moda-grid/core";
+
 // 어댑터가 내부적으로 하는 일
-document.addEventListener("copy", ...);   // navigator.clipboard.writeText(grid.getSelectionTsv())
-// paste: const text = await navigator.clipboard.readText(); grid.pasteTsv(text);
+void writeClipboardText(grid.getSelectionTsv()); // Ctrl+C
+const text = await readClipboardText(); // Ctrl+V — 실패 시 null
+if (text != null) grid.pasteTsv(text);
 ```
 
-비-어댑터 환경(CDN 직접 렌더링)에서는 위 패턴을 그대로 구현하면 된다.
+- `writeClipboardText` — `navigator.clipboard.writeText`를 우선 시도하고,
+  iframe·권한 거부 등으로 실패하면 임시 textarea + `document.execCommand("copy")`
+  폴백으로 복사한다. 반환값은 성공 여부(throw하지 않음).
+- `readClipboardText` — Clipboard API로 읽고, 미지원·권한 거부 시 `null`을
+  반환한다(읽기는 보안상 폴백이 없다).
+
+비-어댑터 환경(CDN 직접 렌더링)에서도 이 헬퍼를 그대로 쓰면 된다 — `mountGrid`도 같은 경로를 쓴다.
 
 ## 클립보드 구분자 (`clipboardDelimiter`)
 

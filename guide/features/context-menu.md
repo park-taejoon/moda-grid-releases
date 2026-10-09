@@ -74,7 +74,7 @@ new GridCore({
 | `copy`                        | 선택 영역/활성 셀을 TSV로 클립보드에 복사                                    |
 | `copyHeaders`                 | 헤더 행 포함 복사                                                            |
 | `paste`                       | 클립보드 TSV를 우클릭한 셀에 붙여넣기                                        |
-| `insertAbove` / `insertBelow` | 우클릭한 행 위/아래에 빈 행 삽입 (`addRows` + I 마킹)                        |
+| `insertAbove` / `insertBelow` | 우클릭한 행 위/아래에 새 행 삽입 (`addRows` + I 마킹)                        |
 | `clear`                       | 선택 영역 내용 지우기 (`clearRange`)                                         |
 | `duplicateRow`                | 선택 행(없으면 우클릭 행) 복제 — `duplicateRowsByIds`, 원본 뒤에 I 마킹 삽입 |
 | `deleteRow`                   | 선택 행 삭제 — 다중 선택이면 라벨이 "선택한 N행 삭제"                        |
@@ -86,6 +86,20 @@ new GridCore({
 `defaultHeaderContextMenuItems(grid)`는 컬럼 숨기기·너비 자동 조정·
 그룹화/해제·오름차순/내림차순/정렬 해제·모든 필터 지우기·컬럼 고정/해제
 항목을 반환한다.
+
+### 행 삽입 기본값 — `newRow` 옵션
+
+`insertAbove`/`insertBelow`는 기본으로 빈 객체 `{}`를 넣는다.
+`externalFilter`나 필수 컬럼이 있으면 빈 행이 필터에 걸려 삽입이
+보이지 않을 수 있으므로, 두 번째 인자의 `newRow` 팩토리로 기본값을
+지정한다:
+
+```ts
+contextMenu: (grid) =>
+  defaultContextMenuItems<User>(grid, {
+    newRow: () => ({ id: nextId++, name: "", age: 30, active: true }),
+  }),
+```
 
 > 우클릭하면 코어가 해당 셀을 **활성 셀로 자동 지정**하므로 복사/지우기는
 > 우클릭한 셀을 기준으로 동작한다.

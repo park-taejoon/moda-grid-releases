@@ -329,9 +329,10 @@ Svelte는 `{#snippet editor}`.
   `GridOptions.rowClass`로 지정한 클래스는 `<td>`/`<tr>`에 합산되어
   조건부 스타일링이 가능하다 (코어 문서 "테마 시스템" 참고).
 
-**클립보드/이력**: `Ctrl/Cmd+C` → `grid.getSelectionTsv()` 결과를
-`navigator.clipboard.writeText`로 복사 (`Ctrl/Cmd+Shift+C`는 헤더 행 포함),
-`Ctrl/Cmd+V` → `readText()` 후 `grid.pasteTsv(text)`로 붙여넣기 (TSV).
+**클립보드/이력**: `Ctrl/Cmd+C` → `grid.getSelectionTsv()` 결과를 코어
+`writeClipboardText`로 복사 (`Ctrl/Cmd+Shift+C`는 헤더 행 포함) — Clipboard
+API 불가 환경은 `execCommand("copy")` 폴백, `Ctrl/Cmd+V` → `readClipboardText()`
+후 `grid.pasteTsv(text)`로 붙여넣기 (TSV, null이면 무시).
 `Ctrl/Cmd+Z` → `grid.undo()`, `Ctrl/Cmd+Y`·`Ctrl/Cmd+Shift+Z` →
 `grid.redo()`로 편집/붙여넣기 되돌리기. 입력 요소 내부에서는 기본 동작 유지.
 

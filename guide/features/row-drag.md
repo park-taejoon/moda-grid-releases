@@ -15,8 +15,9 @@
 - 드래그 중 행은 `.mg-row-dragging`(반투명), 드롭 갭 위치는
   `.mg-drop-before`/`.mg-drop-after` 파란 가이드 라인으로 표시.
 - `Escape` 또는 `dragend`로 취소.
-- 정렬·그룹화·트리·서버 모드에서는 핸들이 비활성(`.mg-disabled`)으로 표시
-  — 표시 순서가 rawData와 무관하기 때문이다.
+- 정렬·그룹화·서버 모드에서는 핸들이 비활성(`.mg-disabled`)으로 표시
+  — 표시 순서가 rawData와 무관하기 때문이다. **트리 모드는 예외**로
+  계층을 바꾸는 3방향 드롭이 지원된다 (아래 참조).
 
 ## 코어 API
 
@@ -81,6 +82,62 @@ source.on("externalRowRemove", (e) => {
 ```ts
 grid.canAcceptExternalRowDrop(); // 지금 외부 드래그를 받을 수 있는가
 grid.setRowDragAcceptExternal(true); // 런타임 토글 (prop 동기화 경로)
+```
+
+## 트리 모드 행 드래그 (3방향 드롭)
+
+`treeData` 모드에서는 행 드래그가 **계층 편집**으로 동작한다 — 어댑터가
+대상 행의 포인터 Y를 세 구간으로 나눠 위치를 결정한다:
+
+| 포인터 위치   | position   | 의미                              |
+| ------------- | ---------- | --------------------------------- |
+| 행 위쪽 25%   | `"before"` | 대상과 같은 부모의 바로 위 형제   |
+| 행 가운데 50% | `"inside"` | 대상의 자식으로 (리파렌팅, 막내)  |
+| 행 아래쪽 25% | `"after"`  | 대상과 같은 부모의 바로 아래 형제 |
+
+인디케이터: before/after는 경계선(`.mg-drop-before`/`.mg-drop-after`),
+inside는 행 전체 테두리(`.mg-drop-inside`), 거부된 위치는 빨간 스타일
+(`.mg-drop-denied`).
+
+```ts
+new GridCore({
+  columns, // rowDrag: true 컬럼 필요
+  data,
+  treeData: {
+    getParentId: (r) => r.parentId,
+    // flat 모드에서 부모가 바뀌는 드롭을 허용하려면 필수 — 없으면
+    // 부모 변경 드롭은 거부된다 (같은 부모 내 순서 변경은 가능)
+    setParentId: (r, parent) => {
+      r.parentId = parent ? parent.id : null;
+    },
+    // 개발자 가드 — false 또는 사유 문자열 반환 시 해당 위치 거부.
+    // 일반 사용자에게 "왜 안 되는지" 보여줄 때 문자열을 반환한다
+    canDropRow: ({ row, targetRow, position, newParentRow }) =>
+      position === "inside" && newParentRow?.locked
+        ? "잠긴 노드 아래로는 이동할 수 없습니다"
+        : true,
+  },
+});
+```
+
+- **nested 모드**(`childrenKey`)는 `setParentId` 없이도 리파렌팅된다 —
+  소스/대상의 자식 배열을 직접 조작한다.
+- 자기 자신 또는 자손 안으로의 드롭(사이클)은 항상 거부된다.
+- inside 드롭이 커밋되면 대상 노드는 자동으로 펼쳐진다.
+- 서버사이드 또는 정렬 중에는 트리 드래그도 비활성이다
+  (`grid.isTreeRowDraggable()`).
+
+```ts
+// 이동 성공 — 평면과 같은 rowReorder에 트리 정보가 추가된다
+grid.on("rowReorder", (e) => {
+  // { fromIndex, toIndex, row, position, newParentRow }
+});
+
+// 거부된 드롭 — 데이터 변경 없이 사유를 알린다
+grid.on("rowDropDenied", (e) => {
+  // { row, targetRow, position, newParentRow, reason }
+  toast(e.reason ?? "이 위치에는 놓을 수 없습니다");
+});
 ```
 
 ## 동작 규칙
