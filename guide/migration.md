@@ -70,36 +70,36 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 
 ## 이벤트 매핑
 
-| 레거시 `Events` 옵션            | moda-grid `events` prop / `grid.on`                                                                          |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `onClick`                       | `cellClick` — `{ row, rowIndex, column, columnIndex, value }`                                                |
-| `onDblClick`                    | `cellDblClick`                                                                                               |
-| `onEdit`                        | `afterEdit` — `{ row, column, oldValue, newValue }`                                                          |
-| `onSelectRow`                   | `selectionChange` — `{ selectedIds }`                                                                        |
-| 드래그 범위 선택 (MouseSelect)  | `selectionMode: "multi-cell"` — 셀 드래그/Shift+키로 범위 선택                                               |
-| `onSort`                        | `sortChange` — `{ sortState }`                                                                               |
-| `onFilter`                      | `filterChange` — `{ filters }`                                                                               |
-| `onRowMove`                     | `rowReorder` — `{ fromIndex, toIndex, row }`                                                                 |
-| `onRowAdd`                      | `rowAdd` — `{ rows, index }` (addRows/duplicateRows)                                                         |
-| `onRowDelete`                   | `rowDelete` — `{ ids }` (deleteRowsByIds — D 마킹 포함)                                                      |
-| `onDataLoad`                    | `dataLoad` — `{ rows }` (setData 교체 후)                                                                    |
-| `onEditStart` (진입 시점)       | `cellEditStart` — `{ row, rowIndex, column, columnIndex }`                                                   |
-| `onFocus` / `onFocusCell`       | `activeCellChange` — `{ row, rowIndex, column, columnIndex, previous }`                                      |
-| `onPaste`                       | `dataPaste` — `{ applied, skipped, errors, start }`                                                          |
-| `onChange` (모든 데이터 변경)   | `dataChange` — `{ source, edits? }` — 편집/붙여넣기/행 추가·삭제/undo·redo/setData 통합                      |
-| `onColResize`                   | `columnResize` — `{ field, width }` (드래그 중 연속 발행)                                                    |
-| `onColMove`                     | `columnMove` — `{ field, fromIndex, toIndex }`                                                               |
-| 컬럼 표시/숨김                  | `columnVisible` — `{ field, visible }`                                                                       |
-| `onPageChange`                  | `pageChange` — `{ pageIndex, pageSize }`                                                                     |
-| `onExpand` (그룹/트리 펼침)     | `rowExpand` — `{ key, expanded }`                                                                            |
-| 그룹화 기준 변경                | `groupChange` — `{ groupBy }`                                                                                |
-| 피벗 설정 변경                  | `pivotChange` — `{ pivot }` (해제 시 null)                                                                   |
-| `SetRowHeight`                  | `grid.setRowHeight(id, px)` + `rowResize` 이벤트                                                             |
-| `onSearchEnd` / 서버 조회 완료  | `serverRequest`/`serverResponse`/`serverError` — 서버 사이드 모드 블록 요청 생명주기 (`server-side.md` 참조) |
-| `findCheckedRow` / 선택 행 조회 | `grid.getSelectedRowData()` / `getSelectedRowIds()` — 선택 행 데이터/ID 배열                                 |
-| 체크박스 컬럼 체크 행 조회      | `grid.getCheckedRows(field?)` / `getCheckedRowIds(field?)` — `checkedValue` 기준, 선택과 별개                |
-| 체크 설정                       | `grid.setRowChecked(id, checked, field?)` / `setCheckedRowIds(ids, checked?)` — ID 기준, 값 매핑 자동        |
-| 조합 상태 감시                  | `grid.watch(selector, listener)` — 스냅샷 슬라이스 옵저버 (`events.md` 참조)                                 |
+| 레거시 `Events` 옵션            | moda-grid `events` prop / `grid.on`                                                                                                                                        |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `onClick`                       | `cellClick` — `{ row, rowIndex, column, columnIndex, value }`                                                                                                              |
+| `onDblClick`                    | `cellDblClick`                                                                                                                                                             |
+| `onEdit`                        | `afterEdit` — `{ row, column, oldValue, newValue, source }` (`source`로 유저 편집/API 쓰기 구분)                                                                           |
+| `onSelectRow`                   | `selectionChange` — `{ selectedIds }`                                                                                                                                      |
+| 드래그 범위 선택 (MouseSelect)  | `selectionMode: "multi-cell"` — 셀 드래그/Shift+키로 범위 선택                                                                                                             |
+| `onSort`                        | `sortChange` — `{ sortState }`                                                                                                                                             |
+| `onFilter`                      | `filterChange` — `{ filters }`                                                                                                                                             |
+| `onRowMove`                     | `rowReorder` — `{ fromIndex, toIndex, row }`                                                                                                                               |
+| `onRowAdd`                      | `rowAdd` — `{ rows, index }` (addRows/duplicateRows)                                                                                                                       |
+| `onRowDelete`                   | `rowDelete` — `{ ids }` (deleteRowsByIds — D 마킹 포함)                                                                                                                    |
+| `onDataLoad`                    | `dataLoad` — `{ rows }` (setData 교체 후)                                                                                                                                  |
+| `onEditStart` (진입 시점)       | `cellEditStart` — `{ row, rowIndex, column, columnIndex }`                                                                                                                 |
+| `onFocus` / `onFocusCell`       | `activeCellChange` — `{ row, rowIndex, column, columnIndex, previous }`                                                                                                    |
+| `onPaste`                       | `dataPaste` — `{ applied, skipped, errors, start }`                                                                                                                        |
+| `onChange` (모든 데이터 변경)   | `dataChange` — `{ source, edits? }` — 편집/붙여넣기/행 추가·삭제/undo·redo/setData 통합                                                                                    |
+| `onColResize`                   | `columnResize` — `{ field, width }` (드래그 중 연속 발행)                                                                                                                  |
+| `onColMove`                     | `columnMove` — `{ field, fromIndex, toIndex }`                                                                                                                             |
+| 컬럼 표시/숨김                  | `columnVisible` — `{ field, visible }`                                                                                                                                     |
+| `onPageChange`                  | `pageChange` — `{ pageIndex, pageSize }`                                                                                                                                   |
+| `onExpand` (그룹/트리 펼침)     | `rowExpand` — `{ key, expanded }`                                                                                                                                          |
+| 그룹화 기준 변경                | `groupChange` — `{ groupBy }`                                                                                                                                              |
+| 피벗 설정 변경                  | `pivotChange` — `{ pivot }` (해제 시 null)                                                                                                                                 |
+| `SetRowHeight`                  | `grid.setRowHeight(id, px)` + `rowResize` 이벤트                                                                                                                           |
+| `onSearchEnd` / 서버 조회 완료  | `serverRequest`/`serverResponse`/`serverError` — 서버 사이드 모드 블록 요청 생명주기 (`server-side.md` 참조)                                                               |
+| `findCheckedRow` / 선택 행 조회 | `grid.getSelectedRowData()` / `getSelectedRowIds()` — 선택 행 데이터/ID 배열                                                                                               |
+| 체크박스 컬럼 체크 행 조회      | `grid.getCheckedRows(field?)` / `getCheckedRowIds(field?)` — `checkedValue` 기준, 선택과 별개                                                                              |
+| 체크 설정                       | `grid.setRowChecked(id, checked, field?, opts?)` / `setCheckedRowIds(ids, checked?, field?, opts?)` — ID 기준, 값 매핑 자동. 이벤트 source는 `"api"`, `{silent:true}` 지원 |
+| 조합 상태 감시                  | `grid.watch(selector, listener)` — 스냅샷 슬라이스 옵저버 (`events.md` 참조)                                                                                               |
 
 ```tsx
 <DataGrid
@@ -197,7 +197,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `sheet.setValue(r, c, v)`                            | `grid.setCellValue(r, c, v)` — 검증·이력·이벤트 포함                                                                                                                                        |
 | `sheet.getRowData(r)` / 행 조회                      | `grid.getRowById(id)` — 숨김·필터 행 포함                                                                                                                                                   |
 | `sheet.getCellValue(r, c)`                           | `grid.getCellValueById(id, field)` — 행 객체·컬럼 없이 id+field로 직접 조회                                                                                                                 |
-| `sheet.setCellValue(r, c, v)`                        | `grid.setCellValueById(id, field, v)` — 검증·이력·이벤트 포함                                                                                                                               |
+| `sheet.setCellValue(r, c, v)`                        | `grid.setCellValueById(id, field, v)` — 검증·이력·이벤트 포함. `{silent:true}`로 이벤트·Undo 없는 무음 쓰기 가능                                                                            |
 | 첫/마지막·이웃 행 조회                               | `grid.getFirstRow()` / `getLastRow()` / `getNextRow(id)` / `getPrevRow(id)`                                                                                                                 |
 | 표시/전체 행 목록                                    | `grid.getDisplayedRows()` / `getAllRows()` — 순회 없이 배열로                                                                                                                               |
 | 조건 행 검색                                         | `grid.findRow` / `findRows` / `findRowIndex(predicate)`                                                                                                                                     |

@@ -68,6 +68,32 @@ grid.getCellValueById("42", "name"); // 값만
 grid.setCellValueById("42", "age", 40); // 쓰기 — 검증·Undo·afterEdit 동일
 ```
 
+### 무음 쓰기 (`silent`)
+
+프로그램이 값을 되돌리거나 동기화할 때 이벤트 루프를 피하고 싶다면
+`{ silent: true }`를 넘긴다 — `afterEdit`/`dataChange` 이벤트, Undo
+이력, cellFlash 없이 값과 행 상태(U/pristine 추적)만 갱신된다:
+
+```ts
+grid.setCellValueById("42", "age", 40, { silent: true });
+grid.setCellValue(0, 1, "x", { silent: true });
+grid.updateRow("42", { age: 40, name: "x" }, { silent: true });
+
+// 범위·체크박스 쓰기도 같은 옵션을 받는다
+grid.setRangeValues(range, values, { silent: true });
+grid.clearRange(range, { silent: true });
+grid.moveRange(src, target, { silent: true });
+grid.fillRange(src, dst, { series: true, silent: true });
+grid.setCellChecked(row, col, true, { silent: true });
+grid.setRowChecked("42", true, undefined, { silent: true });
+grid.setCheckedRowIds(["1", "3"], true, undefined, { silent: true });
+grid.toggleAllChecked(col, { silent: true });
+```
+
+유저 편집과 프로그램 쓰기를 리스너에서 구분하려면 silent 대신
+`afterEdit`/`dataChange` 이벤트의 `source` 필드를 본다 — 유저 편집은
+`"edit"`, API 쓰기는 `"api"`다 (`events.md` 참조).
+
 ## 포커스 단축
 
 `scrollToCell`/`scrollToRow` + `setActiveCell`을 한 번에.

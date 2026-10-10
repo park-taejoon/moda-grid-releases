@@ -12,7 +12,10 @@ grid.on("cellDblClick", (e) => {
   /* 편집 진입 직전 */
 });
 grid.on("afterEdit", (e) => {
-  // { row, rowIndex, column, oldValue, newValue } — 값이 실제로 바뀐 경우만
+  // { row, rowIndex, column, oldValue, newValue, source }
+  // — 값이 실제로 바뀐 경우만. source는 dataChange와 같은 유니온으로
+  //   유저 편집("edit")·프로그램 쓰기("api")·찾기-바꾸기("replace")를
+  //   구분한다 — 리스너에서 자기 쓰기 재진입을 막을 때 쓴다.
 });
 grid.on("selectionChange", (e) => {
   // { selectedIds: string[] }
@@ -98,7 +101,17 @@ grid.on("serverError", (e) => {
 ```
 
 - 어댑터의 셀 클릭/더블클릭이 `cellClick`/`cellDblClick`을 발행한다.
-- `afterEdit`은 `commitEditing`·체크박스 토글에서 실제 값 변경 시에만 발행.
+- `afterEdit`은 `commitEditing`·체크박스 토글·프로그램 쓰기에서 실제 값
+  변경 시에만 발행. `source`로 경로를 구분한다 — `commitEditing`과
+  `toggleCellChecked`/`toggleAllChecked`(유저 제스처)는 `"edit"`,
+  `setCellValue`/`setCellValueById`/`updateRow`/`setCellChecked`/
+  `setRowChecked`/`setCheckedRowIds`(API 쓰기)는 `"api"`,
+  찾기-바꾸기는 `"replace"`다.
+- `{ silent: true }`를 받는 쓰기 API(`setCellValue` 계열,
+  `setCellChecked`/`setRowChecked`/`setCheckedRowIds`/`toggleAllChecked`,
+  `setRangeValues`/`fillRange`/`moveRange`/`clearRange`)는 이 이벤트와
+  `dataChange`를 발행하지 않고 Undo에도 기록하지 않는다 — 단 U/pristine
+  행 상태 추적은 그대로 동작한다.
 - 반환값은 구독 해제 함수: `const off = grid.on("cellClick", cb); off();`
 
 ## 상태 옵저버 (`grid.watch`)

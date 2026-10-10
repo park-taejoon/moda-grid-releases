@@ -6,15 +6,15 @@
 
 핵심 소스 위치:
 
-| 역할                | 경로                                                        |
-| ------------------- | ----------------------------------------------------------- |
-| 공개 facade / 커널  | `packages/core/src/grid.ts` (`GridCore`)                    |
-| 계약 인터페이스     | `packages/core/src/kernel/host.ts`                          |
-| 내장 컨트롤러       | `packages/core/src/features/*.ts`                           |
-| 기능 팩토리         | `packages/core/src/features/index.ts`                       |
-| 전체 엔트리         | `packages/core/src/gridFull.ts` → `@moda-grid/core`         |
-| 슬림 엔트리         | `packages/core/src/slim.ts` → `@moda-grid/core/slim`        |
-| 5렌더러 공유 계약   | `packages/core/src/conformance.ts`                          |
+| 역할               | 경로                                                 |
+| ------------------ | ---------------------------------------------------- |
+| 공개 facade / 커널 | `packages/core/src/grid.ts` (`GridCore`)             |
+| 계약 인터페이스    | `packages/core/src/kernel/host.ts`                   |
+| 내장 컨트롤러      | `packages/core/src/features/*.ts`                    |
+| 기능 팩토리        | `packages/core/src/features/index.ts`                |
+| 전체 엔트리        | `packages/core/src/gridFull.ts` → `@moda-grid/core`  |
+| 슬림 엔트리        | `packages/core/src/slim.ts` → `@moda-grid/core/slim` |
+| 5렌더러 공유 계약  | `packages/core/src/conformance.ts`                   |
 
 ## 1. 전체 구조
 
@@ -58,13 +58,13 @@
 
 ```ts
 export interface GridController<TData extends object = RowData> {
-  readonly name: string;                        // 등록표 키와 동일해야 함
-  snapshotSlice?(): Partial<GridSnapshot<TData>>;  // getSnapshot 조립 기여분
-  exportState?(): object;                        // getState 영속화 조각
+  readonly name: string; // 등록표 키와 동일해야 함
+  snapshotSlice?(): Partial<GridSnapshot<TData>>; // getSnapshot 조립 기여분
+  exportState?(): object; // getState 영속화 조각
   importState?(state: Partial<GridPersistedState>): void;
-  reset?(): void;                                // resetView 시 초기화
-  dispose?(): void;                              // destroy 시 자원 해제
-  applyPipeline?(rows: TData[]): TData[];        // 커스텀 파이프라인 훅
+  reset?(): void; // resetView 시 초기화
+  dispose?(): void; // destroy 시 자원 해제
+  applyPipeline?(rows: TData[]): TData[]; // 커스텀 파이프라인 훅
 }
 ```
 
@@ -74,7 +74,7 @@ export interface GridController<TData extends object = RowData> {
 
 ```ts
 export interface GridFeature<TData extends object = RowData> {
-  readonly name: string;   // 생성 컨트롤러의 name과 동일해야 함
+  readonly name: string; // 생성 컨트롤러의 name과 동일해야 함
   create(
     host: GridHost<TData>,
     options: GridOptions<TData>,
@@ -111,9 +111,9 @@ export interface GridFeature<TData extends object = RowData> {
 
 ## 3. 소유권 규칙 — 무엇이 커널이고 무엇이 컨트롤러인가
 
-| 소유 | 내용 |
-| ---- | ---- |
-| 커널 | `rawData`/`visibleData`, 컬럼 배열, 옵션 해석, 행 파이프라인 순서, 스냅샷 조립, 이벤트 버스, 구독(`subscribe`), 공개 API facade, ID 해석 |
+| 소유     | 내용                                                                                                                                                  |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 커널     | `rawData`/`visibleData`, 컬럼 배열, 옵션 해석, 행 파이프라인 순서, 스냅샷 조립, 이벤트 버스, 구독(`subscribe`), 공개 API facade, ID 해석              |
 | 컨트롤러 | 기능 상태(`filters`, `sortModel`, 선택 범위, 편집 세션, 드래그 세션…), 기능 로직, 해당 기능의 파이프라인 단계(정렬 적용 등), 스냅샷 조각, 영속화 조각 |
 
 실무 규칙:
@@ -187,9 +187,7 @@ new GridCore({
   features: [
     ...allFeatures(),
     lazyFeature("pivot", () =>
-      import("@moda-grid/core/features/pivot.js").then((m) =>
-        m.pivotFeature(),
-      ),
+      import("@moda-grid/core/features/pivot.js").then((m) => m.pivotFeature()),
     ),
   ],
 });
@@ -296,12 +294,12 @@ runGridConformance("react", async (opts) => {
 
 ## 9. 테스트 전략
 
-| 층 | 대상 | 위치 |
-| -- | ---- | ---- |
-| 단위 | 순수 헬퍼·컨트롤러(커널 없이) | `packages/core/src/*.test.ts` |
-| 컨포먼스 | DOM 계약, 5렌더러 공유 | `conformance.ts` + 각 어댑터 `conformance.test.*` |
-| 어댑터 | 바인딩·반응형 스토어 | `packages/*/src/*.test.*` |
-| E2E | 실제 브라우저 데모 | `e2e/*.spec.ts` |
+| 층       | 대상                          | 위치                                              |
+| -------- | ----------------------------- | ------------------------------------------------- |
+| 단위     | 순수 헬퍼·컨트롤러(커널 없이) | `packages/core/src/*.test.ts`                     |
+| 컨포먼스 | DOM 계약, 5렌더러 공유        | `conformance.ts` + 각 어댑터 `conformance.test.*` |
+| 어댑터   | 바인딩·반응형 스토어          | `packages/*/src/*.test.*`                         |
+| E2E      | 실제 브라우저 데모            | `e2e/*.spec.ts`                                   |
 
 컨트롤러는 `GridHost`를 스텁으로 만들어 단독 인스턴스 테스트가 가능하고,
 파사드 레벨 검증은 `new GridCore({...})`로 한다.

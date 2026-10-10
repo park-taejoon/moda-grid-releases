@@ -14,15 +14,15 @@ grid.setDir("ltr"); // 런타임 전환 — snapshot.dir이 갱신된다
 
 ## 동작 계약
 
-| 영역 | RTL 동작 |
-| ---- | -------- |
-| 루트 | `dir="rtl"` 속성 — CSS 논리 속성·텍스트 방향이 자동 반전 |
-| 화살표 키 | `ArrowLeft`/`ArrowRight`는 **시각** 방향 — ArrowLeft가 다음 컬럼으로 이동 |
-| Ctrl+Arrow | 시각적 가장자리 — Ctrl+←는 화면 왼쪽 끝(논리 마지막 컬럼) |
-| Home/End·Tab | 논리 방향 유지 — Tab은 항상 다음 컬럼(인덱스 증가)으로 |
-| pinned 컬럼 | `pinned: "left"`는 inline-start — RTL에서는 **우측**에 고정 |
-| 컬럼 가상화 | `scrollLeft`는 논리 좌표로 정규화 — 음수 규약(최신)·양수-역방향(레거시) 모두 수용 |
-| 트리/그룹 인덴트 | `padding-inline-start` — 시작쪽(우측)으로 들여쓰기 |
+| 영역             | RTL 동작                                                                          |
+| ---------------- | --------------------------------------------------------------------------------- |
+| 루트             | `dir="rtl"` 속성 — CSS 논리 속성·텍스트 방향이 자동 반전                          |
+| 화살표 키        | `ArrowLeft`/`ArrowRight`는 **시각** 방향 — ArrowLeft가 다음 컬럼으로 이동         |
+| Ctrl+Arrow       | 시각적 가장자리 — Ctrl+←는 화면 왼쪽 끝(논리 마지막 컬럼)                         |
+| Home/End·Tab     | 논리 방향 유지 — Tab은 항상 다음 컬럼(인덱스 증가)으로                            |
+| pinned 컬럼      | `pinned: "left"`는 inline-start — RTL에서는 **우측**에 고정                       |
+| 컬럼 가상화      | `scrollLeft`는 논리 좌표로 정규화 — 음수 규약(최신)·양수-역방향(레거시) 모두 수용 |
+| 트리/그룹 인덴트 | `padding-inline-start` — 시작쪽(우측)으로 들여쓰기                                |
 
 ## scrollLeft 정규화
 
