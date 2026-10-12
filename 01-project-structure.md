@@ -2,18 +2,39 @@
 
 ```
 moda-grid/
-├── package.json            # 루트 스크립트, 공유 typescript
+├── package.json            # 루트 스크립트, 공유 typescript·eslint·prettier
 ├── pnpm-workspace.yaml     # packages/*, apps/* 워크스페이스 선언
 ├── tsconfig.base.json      # 모든 패키지가 상속하는 TS 공통 설정
+├── eslint.config.mjs       # 플랫 설정 — typescript-eslint + react-hooks
 ├── packages/
 │   ├── core/               # @moda-grid/core   — 순수 TS 핵심 로직
 │   │   └── src/
-│   │       ├── types.ts    #   ColumnDef, GridSnapshot, PageState, GridOptions …
-│   │       ├── grid.ts     #   GridCore 클래스 구현 (rawData/visibleData/subscribe/notify)
-│   │       ├── virtualScroll.ts # computeVirtualScroll() 순수 계산기
-│   │       ├── grid.test.ts#   vitest 테스트 (GridCore API)
-│   │       ├── virtualScroll.test.ts # 가상 스크롤 계산 + 통합 테스트
+│   │       ├── types/      #   도메인별 타입 선언 (columns/cells/data/
+│   │       │               #   dnd/events/menu/options/server/state)
+│   │       ├── types.ts    #   위 도메인 모듈의 export * 배럴 (공개 타입)
+│   │       ├── grid.ts     #   GridCore facade — 공개 API 위임만 수행
+│   │       ├── gridFull.ts #   features 미지정 시 allFeatures 주입 (호환)
+│   │       ├── slim.ts     #   슬림 엔트리 — bare 커널 + 기능 팩토리
+│   │       ├── kernel/     #   GridHost/GridFeature 규약, inert 스텁,
+│   │       │               #   measure/values/rowFlip/surface 헬퍼
+│   │       ├── features/   #   기능 컨트롤러 (columns/selection/editing/
+│   │       │               #   clipboard/sorting/filtering/grouping/
+│   │       │               #   pivot/serverSide/rowDrag/… 26종)
+│   │       ├── mount.ts    #   mountGrid — vanilla DOM 렌더러 엔트리
+│   │       ├── mount/      #   vanilla 렌더러 모듈 (ctx/dom/findBar/
+│   │       │               #   touchDnd/header/panels/body/bodyRows/
+│   │       │               #   cellEditor)
+│   │       ├── conformance.ts # 5렌더러 공유 DOM 계약 스펙
+│   │       ├── cellMerge.ts / aggregates.ts / cumulative.ts
+│   │       │               #   grid.ts에서 추출한 순수 계산
+│   │       ├── displayRows.ts # DisplayRow 합집합 판별·추출 헬퍼
+│   │       │               #   (5개 렌더러의 행 해석 공유)
+│   │       ├── virtualScroll.ts / virtualColumns.ts / filtering.ts /
+│   │       │   grouping.ts / pivot.ts / csv.ts / xlsx.ts / pdf.ts /
+│   │       │   formula.ts / format.ts / theme.ts / touch.ts /
+│   │       │   menuDefaults.ts / clipboardIO.ts / locale.ts
 │   │       ├── styles.css  #   공통 .mg-* 스타일 (단일 소스)
+│   │       ├── *.test.ts   #   vitest (기능별 + inert 충실도 + mount)
 │   │       └── index.ts
 │   ├── react/              # @moda-grid/react  — React 어댑터
 │   │   └── src/
@@ -42,8 +63,13 @@ moda-grid/
 │   ├── dev-react/          # Vite + React 데모 (포트 5173)
 │   ├── dev-vue/            # Vite + Vue 3 데모 (포트 5174)
 │   ├── dev-svelte/         # Vite + Svelte 5 데모 (포트 5175)
-│   └── dev-vue2/           # Vite + Vue 2.7 데모 (포트 5176)
-└── docs/
+│   ├── dev-vue2/           # Vite + Vue 2.7 데모 (포트 5176)
+│   ├── dev-vanilla/        # mountGrid 데모 (포트 5177)
+│   ├── demo-shared/        # 데모 공통 데이터·컬럼·체크리스트·셀렉트 옵션
+│   └── bench/              # grid.bench.ts 실행 앱
+├── e2e/                    # Playwright 스펙 (역할별 14개 + helpers.ts)
+├── scripts/                # dev/demo/deploy/release/pre-push 스크립트
+└── docs/                   # 사용자 문서 (guide/ 하위 가이드 포함)
 ```
 
 ## 패키지 의존 관계
@@ -55,10 +81,12 @@ moda-grid/
 @moda-grid/svelte   → @moda-grid/core (workspace:*), peer: svelte ^5
 @moda-grid/vue2     → @moda-grid/core (workspace:*), peer: vue ^2.7
 
-dev-react   → @moda-grid/react (workspace:*)
-dev-vue     → @moda-grid/vue   (workspace:*)
-dev-svelte  → @moda-grid/svelte(workspace:*)
-dev-vue2    → @moda-grid/vue2  (workspace:*), vue 2.7.16 고정
+demo-shared → @moda-grid/core (workspace:*)
+dev-react   → @moda-grid/react (workspace:*), @moda-grid/demo-shared
+dev-vue     → @moda-grid/vue   (workspace:*), @moda-grid/demo-shared
+dev-svelte  → @moda-grid/svelte(workspace:*), @moda-grid/demo-shared
+dev-vue2    → @moda-grid/vue2  (workspace:*), @moda-grid/demo-shared
+dev-vanilla → @moda-grid/core  (workspace:*), @moda-grid/demo-shared
 ```
 
 `workspace:*` 프로토콜로 선언되어 pnpm이 항상 로컬 패키지를 링크하고,

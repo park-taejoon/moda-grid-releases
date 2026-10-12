@@ -955,7 +955,14 @@ createGrid({
 
 ## 기능 추가 가이드
 
-1. `types.ts` — 스냅샷/옵션 타입에 필드 추가
-2. `grid.ts` — 내부 상태 필드 + `refresh()` 파이프라인 단계 추가 + 액션 메서드
-3. `grid.test.ts` — 테스트 추가 (`pnpm test`)
-4. 어댑터는 스냅샷에 포함되면 수정 없이 동작
+1. `types/<domain>.ts` — 옵션/스냅샷/상태 타입 추가 (`types.ts`는 배럴)
+2. `features/<name>.ts` — 기능 컨트롤러에 상태·로직·스냅샷/영속 조각 구현
+3. `features/index.ts` — `GridControllerMap` 키 + 팩토리 등록, 필요 시
+   `kernel/inert.ts` 스텁과 `inertFidelity.test.ts` 충실도 확인
+4. `grid.ts` — 필요 시 공개 API 위임 메서드 추가
+5. 코어 vitest + `conformance.ts` DOM 계약 추가 (5렌더러 공유)
+6. 5개 어댑터 — 동일 DOM 계약으로 렌더/이벤트 번역
+7. 데모 — `demo-shared` `BASE_FEATURES` + `apps/dev-*`에서 옵션 활성화
+8. e2e 해당 스펙 + `docs/guide/features/*.md` + migration 표
+
+전체 체크리스트와 커널/컨트롤러 계약은 `guide/architecture.md` 참조.

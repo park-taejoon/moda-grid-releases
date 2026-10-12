@@ -73,7 +73,8 @@ const { grid, state } = useGrid<User>({ columns, data: users });
 React 어댑터와 동일하다 (kebab-case로 전달): `columns` `data` `grid`
 `height` `row-height` `overscan` `resizable` `reorderable` `selectable`
 `selection-mode` `server-side` `tree-data` `column-controller`
-`row-checkboxes` `status-bar` `get-row-id` `class-name` `theme` `density`.
+`row-checkboxes` `status-bar` `get-row-id` `class-name` `theme` `density`
+`detail-height`.
 전체 목록: [react.md의 props 표](./react.md#props)와 동일.
 
 ## Composables
@@ -114,7 +115,8 @@ React 어댑터와 동일하다 (kebab-case로 전달): `columns` `data` `grid`
 - 슬롯이 없는 컬럼은 `getCellText()`(formatter 적용)로 렌더링한다.
 - `#detail` 슬롯 props: `{ row, rowIndex }` — 지정 시 각 행 첫 셀에 ▸ 토글이
   생기고 펼친 행 아래 전체 너비 상세 패널을 렌더링한다
-  ([master-detail](../features/master-detail.md)).
+  ([master-detail](../features/master-detail.md)). `detail-height` prop으로
+  패널 높이(px)를 고정할 수 있다 (미지정 시 내용에 맞춤).
 
 ## 스냅샷으로 보조 UI 만들기
 

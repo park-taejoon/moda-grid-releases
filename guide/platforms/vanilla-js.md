@@ -60,6 +60,23 @@
 </script>
 ```
 
+### 외부 GridCore 주입 (제어 모드)
+
+`grid` 옵션에 직접 만든 `GridCore`를 넘기면 mountGrid는 내부 생성 대신 그
+인스턴스를 렌더한다 — 어댑터의 `grid` prop과 같은 계약이다. 그리드 구성
+(컬럼·데이터·가상 스크롤·features 슬림 구성)은 주입한 인스턴스가 결정하고,
+`height`·`pager` 같은 DOM/패널 옵션과 `events`는 MountOptions 그대로 적용된다.
+소유권은 호출자에 남으므로 `destroy()`는 DOM·구독만 정리하고 그리드는
+계속 사용할 수 있다.
+
+```ts
+import { GridCore, mountGrid } from "@moda-grid/core";
+
+// 슬림 번들이면 @moda-grid/core/slim의 GridCore도 그대로 주입 가능
+const grid = new GridCore({ columns, data, treeData: { ... } });
+const mounted = mountGrid(el, { grid, height: 460, pager: true });
+```
+
 ### mountGrid가 렌더링하는 것
 
 - 헤더 클릭 정렬 (Shift = 다중 정렬), `filterable` 컬럼의 필터 행

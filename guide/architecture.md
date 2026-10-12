@@ -306,7 +306,8 @@ runGridConformance("react", async (opts) => {
 
 ## 10. 새 기능 추가 체크리스트
 
-1. 타입 — `types.ts`에 옵션/스냅샷/상태 필드 추가
+1. 타입 — `types/<domain>.ts`에 옵션/스냅샷/상태 필드 추가
+   (`types.ts`는 `export *` 배럴이라 경로는 그대로다)
 2. 컨트롤러 — `features/<name>.ts` (상태·로직·스냅샷/영속 조각)
 3. 팩토리 — `features/index.ts`에 `<name>Feature()` 추가 +
    `allFeatures()` 순서 반영, `GridControllerMap`에 키 추가
@@ -315,7 +316,9 @@ runGridConformance("react", async (opts) => {
    `index.ts`·`slim.ts` export 확인
 6. 5개 어댑터 — 동일 DOM 계약으로 렌더/이벤트 번역만
 7. 컨포먼스 — `runGridConformance`에 계약 추가
-8. 데모 — `apps/dev-*` FEATURES + 실제 옵션 활성화
+8. 데모 — `apps/demo-shared`의 `BASE_FEATURES`에 항목 추가 + 각
+   `apps/dev-*`에서 실제 옵션 활성화 (렌더러 전용 항목은 해당 앱의
+   FEATURES 뒤에만 붙인다)
 9. E2E — `e2e/` 해당 스펙
 10. 문서 — `docs/guide/features/*.md` + README 색인 + migration 표
 11. 검증 — `pnpm test && pnpm typecheck && pnpm build && pnpm build:apps`
