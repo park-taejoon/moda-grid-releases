@@ -29,6 +29,8 @@ moda-grid/
 │   │       │               #   grid.ts에서 추출한 순수 계산
 │   │       ├── displayRows.ts # DisplayRow 합집합 판별·추출 헬퍼
 │   │       │               #   (5개 렌더러의 행 해석 공유)
+│   │       ├── adapterDom.ts # 5개 렌더러 공용 DOM/제스처/키보드 계약
+│   │       │               #   (pin·드롭 수학·리사이즈·fill·keydown)
 │   │       ├── virtualScroll.ts / virtualColumns.ts / filtering.ts /
 │   │       │   grouping.ts / pivot.ts / csv.ts / xlsx.ts / pdf.ts /
 │   │       │   formula.ts / format.ts / theme.ts / touch.ts /

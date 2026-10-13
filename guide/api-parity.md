@@ -95,6 +95,12 @@
 - **Svelte** — `createGridStore` · `toGridStore` · `GridStore` · `CellContext`
 - **Vanilla** — `@moda-grid/core`가 직접 수출: `mountGrid` · `MountOptions` ·
   `MountedGrid` · `GridCore` · 전체 `types/` 표면
+- **공용 DOM 계약** — `adapterDom.ts`(`pinPartition`/`pinClasses`/
+  `pinStyleProps`/`resolveRowDrop`/`startColumnResize`/`startRowResize`/
+  `startFillDrag`/`resizeKeyDelta`/`trackPointerDrag`/`handleGridKeydown`/
+  `editorInputValue`/`cellPosFromPoint`/`dropRatioForY` 등)는 5개 렌더러
+  내부 구현이 공유하는 인프라 수출이다 — 어댑터 index가 재수출하지는 않고,
+  커스텀 렌더러/확장을 만드는 경우 코어에서 직접 import해 같은 계약을 재사용한다
 
 ## 알려진 차이 (갭 / 의도)
 
