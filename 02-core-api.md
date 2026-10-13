@@ -452,11 +452,13 @@ grid.importCsv(text, {
 
 **Copy** — `getSelectionTsv()`가 `selectedRange`(없으면 `activeCell`) 영역을
 TSV로 변환한다. 어댑터가 `Ctrl/Cmd+C`에서 `navigator.clipboard.writeText()`로
-저장한다. 숨김 컬럼 제외, 셀 내부 탭/줄바꿈은 공백으로 치환.
+저장한다. 숨김 컬럼 제외. 구분자·탭·줄바꿈·따옴표가 들어간 셀은 엑셀처럼
+`"`로 감싸고 내부 `"`는 `""`로 이스케이프한다.
 `{ includeHeaders: true }` 옵션(Ctrl+Shift+C)은 첫 줄에 헤더 행을 추가한다.
 
 **Paste** — `pasteTsv(tsv)`가 TSV를 파싱해 `activeCell`부터 오른쪽/아래로
-순차 쓰기한다:
+순차 쓰기한다. `"`로 감싼 필드는 엑셀 규칙으로 파싱한다(필드 안
+구분자·개행·`""` 이스케이프 보존):
 
 - `editable: false` 컬럼과 범위 밖 셀은 건너뜀 (`skipped`)
 - `cellEditor`/`filterType`이 `'number'`인 컬럼은 숫자로 변환 (변환 불가 시 에러 기록)
