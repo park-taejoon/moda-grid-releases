@@ -38,6 +38,8 @@ grid.getTreeMaxDepth(); // 최대 깊이 (루트=0)
 
 // 노드 검색 — 조건 행의 상위를 모두 펼치고 활성 셀로 이동
 grid.revealTreeRow((row) => row.name === "Frontend"); // 찾으면 true
+// 필터로 숨겨진 노드는 원본 트리를 탐색한다 — 조상을 펼치고
+// 가장 깊은 가시 조상으로 이동한다 (필터 자체는 해제하지 않는다)
 
 // 트리 소계 — 부모 노드의 자손 리프 집계 (aggregationFn 컬럼별)
 grid.getTreeAggregates(row); // { headcount: 16 } 또는 null (자식 없음)

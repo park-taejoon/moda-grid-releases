@@ -28,8 +28,8 @@
 | 카테고리      | prop/옵션                                                                                                                                                          |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 데이터/컬럼   | `columns` · `defaultColDef` · `data` · `getRowId`                                                                                                                  |
-| 레이아웃      | `height` · `rowHeight` · `overscan` · `virtualColumns` · `domLayout` · `autoPageSize` · `dir` · `headerHeight` · `autoRowHeight` · `striped`                       |
-| 선택          | `selectable` · `selectionMode` · `hiddenRowIds`                                                                                                                    |
+| 레이아웃      | `height` · `rowHeight` · `overscan` · `virtualColumns` · `domLayout` · `autoPageSize` · `dir` · `headerHeight` · `autoRowHeight` · `striped` · `getRowHeight`      |
+| 선택          | `selectable` · `selectionMode` · `hiddenRowIds` · `rangeTracking`                                                                                                  |
 | 편집/클립보드 | `editType` · `singleClickEdit` · `beforeEdit` · `beforePaste` · `beforeCopy` · `pasteExtend` · `copyFormatted` · `clipboardDelimiter` · `fillSeries` · `cellFlash` |
 | 모드          | `serverSide` · `appendScroll` · `treeData` · `pivot` · `groupSubtotals`                                                                                            |
 | 메뉴/훅       | `contextMenu` · `headerContextMenu` · `isRowSelectable` · `externalFilter` · `postSort` · `isFullWidthRow` · `animateRows`                                         |
@@ -41,14 +41,14 @@
 
 기능은 같고 선언 방식만 다르다. 컬럼 단위와 행 단위로 나뉜다.
 
-| 렌더 지점               | React                         | Vue 3 / Vue 2.7        | Svelte 5                | Vanilla `mountGrid`                                |
-| ----------------------- | ----------------------------- | ---------------------- | ----------------------- | -------------------------------------------------- |
-| 셀                      | `ReactColumnDef.renderCell`   | `#cell-{field}` 슬롯   | `cell` 스니펫 prop      | `ColumnDef.cellRenderer` (Node)                    |
-| 에디터                  | `ReactColumnDef.renderEditor` | `#editor-{field}` 슬롯 | `editor` 스니펫 prop    | `ColumnDef.editorRenderer` (Node)                  |
-| 헤더                    | `ReactColumnDef.renderHeader` | `#header-{field}` 슬롯 | `header` 스니펫 prop    | `ColumnDef.headerRenderer` (Node)                  |
-| 행 상세 (master-detail) | `detailRenderer` prop         | `#detail` 슬롯         | `detail` 스니펫 prop    | `detailRenderer` 옵션                              |
-| 전체 너비 행            | `renderFullRow` prop          | `#fullwidth` 슬롯      | `fullwidth` 스니펫 prop | `isFullWidthRow` + `GridOptions.fullWidthRenderer` |
-| 상세 행 높이            | `detailHeight` prop           | `detail-height` prop   | `detailHeight` prop     | `detailHeight` 옵션                                |
+| 렌더 지점               | React                         | Vue 3 / Vue 2.7               | Svelte 5                | Vanilla `mountGrid`                                |
+| ----------------------- | ----------------------------- | ----------------------------- | ----------------------- | -------------------------------------------------- |
+| 셀                      | `ReactColumnDef.renderCell`   | `#cell-{key ?? field}` 슬롯   | `cell` 스니펫 prop      | `ColumnDef.cellRenderer` (Node)                    |
+| 에디터                  | `ReactColumnDef.renderEditor` | `#editor-{key ?? field}` 슬롯 | `editor` 스니펫 prop    | `ColumnDef.editorRenderer` (Node)                  |
+| 헤더                    | `ReactColumnDef.renderHeader` | `#header-{key ?? field}` 슬롯 | `header` 스니펫 prop    | `ColumnDef.headerRenderer` (Node)                  |
+| 행 상세 (master-detail) | `detailRenderer` prop         | `#detail` 슬롯                | `detail` 스니펫 prop    | `detailRenderer` 옵션                              |
+| 전체 너비 행            | `renderFullRow` prop          | `#fullwidth` 슬롯             | `fullwidth` 스니펫 prop | `isFullWidthRow` + `GridOptions.fullWidthRenderer` |
+| 상세 행 높이            | `detailHeight` prop           | `detail-height` prop          | `detailHeight` prop     | `detailHeight` 옵션                                |
 
 코어 `ColumnDef`의 `cellRenderer`/`editorRenderer`/`headerRenderer`는 DOM
 `Node`를 반환하는 vanilla 전용 채널이다 — 어댑터는 각자 프레임워크 렌더 결과물
@@ -95,6 +95,11 @@
 - **Svelte** — `createGridStore` · `toGridStore` · `GridStore` · `CellContext`
 - **Vanilla** — `@moda-grid/core`가 직접 수출: `mountGrid` · `MountOptions` ·
   `MountedGrid` · `GridCore` · 전체 `types/` 표면
+- **차트 브릿지** — `@moda-grid/charts`(`sparklineColumn`/`selectionToChart`/
+  `chartMenuItem`/`openChartPanel`/`chartDetailRenderer`/`gridThemeToChartTheme`/
+  `syncChartTheme`)는 렌더러 무관 단일 수출면이다 — DOM/SVG 접착제라 5개
+  렌더러 모두 같은 API를 쓴다 (`@moda-chart/core` peer 필요,
+  가이드 `features/charts.md`)
 - **공용 DOM 계약** — `adapterDom.ts`(`pinPartition`/`pinClasses`/
   `pinStyleProps`/`describeCell`/`camelizeStyles`/`stylesToCssText`/
   `resolveRowDrop`/`startColumnResize`/`startRowResize`/

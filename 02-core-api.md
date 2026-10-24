@@ -843,10 +843,17 @@ const v = computeVirtualScroll({
 | ------------------------- | --------------------------------------------- |
 | `startIndex` / `endIndex` | DOM에 그릴 인덱스 범위 (`endIndex` 미포함)    |
 | `startOffset`             | 상단 스페이서 높이 (`startIndex * rowHeight`) |
+| `endOffset`               | 하단 스페이서 높이 (endIndex 이후 잔여 합)    |
 | `totalHeight`             | 전체 스크롤 높이 (`totalCount * rowHeight`)   |
+| `heights`                 | 렌더 슬라이스의 행별 px 높이 (가변 모드만)    |
 
 scrollTop은 `[0, totalHeight - viewportHeight]`로 클램프되고,
 `totalCount === 0` 또는 `rowHeight <= 0`이면 빈 범위를 반환한다.
+
+가변 높이 버전은 `buildRowHeightTable(count, heightAt)`로 누적
+오프셋 테이블을 만들고 `computeVariableVirtualScroll({ table,
+viewportHeight, scrollTop, overscan })`로 같은 출력 형태를 얻는다 —
+스크롤 위치 → 행 인덱스 해석이 이분 탐색이다.
 
 ### GridCore 통합
 
@@ -855,6 +862,7 @@ const grid = new GridCore<User>({
   columns,
   data,
   virtualScroll: { rowHeight: 40, viewportHeight: 600 }, // 활성화
+  // getRowHeight: (row, i) => row.isBanner ? 80 : 40, // 가변 높이
 });
 
 grid.subscribe(() => {

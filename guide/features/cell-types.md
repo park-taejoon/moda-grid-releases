@@ -39,19 +39,20 @@ const columns: ColumnDef<Product>[] = [
     cellOptions: { max: 100 },
   }, // 기본값 100
 
-  // HTML — 셀 값을 innerHTML로 렌더링 (아래 XSS 주의 참고)
+  // HTML — 포맷된 표시 텍스트를 innerHTML로 렌더링 (아래 XSS 주의 참고).
+  // formatter가 있으면 그 출력이 HTML이 된다 (스파크라인 브릿지가 이 경로를 쓴다)
   { field: "desc", header: "설명", cellType: "html" },
 ];
 ```
 
-| cellType      | 렌더링                 | cellOptions           |
-| ------------- | ---------------------- | --------------------- |
-| `text` (기본) | 문자열                 | —                     |
-| `image`       | `<img src={value}>`    | `alt(row)`            |
-| `button`      | `<button>`             | `onClick(row)`        |
-| `link`        | `<a href>`             | `href(row)`, `target` |
-| `progress`    | 진행 바 + % 텍스트     | `max` (기본값 100)    |
-| `html`        | `innerHTML` (raw HTML) | —                     |
+| cellType      | 렌더링                           | cellOptions           |
+| ------------- | -------------------------------- | --------------------- |
+| `text` (기본) | 문자열                           | —                     |
+| `image`       | `<img src={value}>`              | `alt(row)`            |
+| `button`      | `<button>`                       | `onClick(row)`        |
+| `link`        | `<a href>`                       | `href(row)`, `target` |
+| `progress`    | 진행 바 + % 텍스트               | `max` (기본값 100)    |
+| `html`        | `innerHTML` (포맷된 표시 텍스트) | —                     |
 
 > **⚠️ `html` 셀 타입은 XSS 주의**: 셀 값을 이스케이프 없이
 > `innerHTML`로 주입한다. `<script>`/인라인 이벤트가 그대로 실행되므로
@@ -63,7 +64,7 @@ const columns: ColumnDef<Product>[] = [
 - 프로그레스는 `aria-valuenow`/`aria-valuemax`를 포함한다.
 - 편집(`cellEditor`)과 병용 가능 — 편집 중에는 에디터가 렌더링된다.
 - 더 복잡한 렌더링은 어댑터 커스텀 셀(React `renderCell`, Vue
-  `#cell-{field}` 슬롯, Svelte `cell` snippet)을 사용한다.
+  `#cell-{key ?? field}` 슬롯, Svelte `cell` snippet)을 사용한다.
   vanilla `mountGrid`/CDN에서는 `ColumnDef.cellRenderer`를 사용한다:
 
 ```ts

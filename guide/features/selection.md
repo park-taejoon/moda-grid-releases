@@ -42,6 +42,25 @@
 활성 셀이 가상 스크롤 뷰포트 밖이면 코어가 `virtual.scrollTop`을 자동 보정해
 DOM 스크롤과 동기화한다 (scrollIntoView).
 
+## 범위 추적 — `rangeTracking`
+
+`multi-cell` 범위 선택이 정렬·필터·파이프라인 변경 뒤 무엇을 기억할지
+결정한다:
+
+| 값                | 동작                                                                           |
+| ----------------- | ------------------------------------------------------------------------------ |
+| `position` (기본) | 표시 좌표 유지 — 엑셀식 범위 선택. 정렬 후 같은 화면 위치가 선택된 상태가 된다 |
+| `identity`        | 행 ID + 컬럼 field로 추적 — 정렬/필터 후 범위가 같은 행·컬럼을 따라간다        |
+
+```tsx
+<DataGrid selectionMode="multi-cell" rangeTracking="identity" />
+```
+
+- 행 정체성은 `getRowId`(커스텀 ID → `id` 필드 → WeakMap 폴백)로 해석된다.
+- 끝점 행이 필터로 숨겨지면 범위는 일시적으로 가장 가까운 가시 위치로
+  표시되고, 원본 끝점 참조는 유지된다 — 필터 해제 시 같은 행으로 복원된다.
+- 런타임 전환은 `grid.setRangeTracking("position" | "identity")`.
+
 ## 코어 API
 
 ```ts
@@ -57,6 +76,7 @@ grid.navigateCell("down", true); // dir + extend(Shift)
 grid.selectAll(); // Ctrl+A와 동일
 grid.selectEntireRow();
 grid.selectEntireColumn(); // Shift+Space / Ctrl+Space
+grid.setRangeTracking("identity"); // 런타임 추적 모드 전환
 grid.fillDown();
 grid.fillRight(); // Ctrl+D / Ctrl+R — 선택 범위 채우기
 grid.cutSelectionTsv(); // Ctrl+X — TSV 반환 + 지우기

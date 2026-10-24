@@ -33,6 +33,10 @@ const columns: ColumnDef<Order>[] = [
 - 계산 컬럼은 **읽기 전용** — 편집(`startEditing`)과 붙여넣기 대상에서
   제외된다.
 - 평가 오류(문법·참조 실패)와 `NaN` 결과는 `null`로 표시된다.
+- 수식은 `new Function`으로 1회 컴파일된다 — strict CSP
+  (`unsafe-eval` 차단) 환경에서는 컴파일이 실패해 수식 셀이 `null`로
+  표시되고, 첫 실패 시 `console.warn`으로 원인이 진단된다 (그리드
+  자체는 정상 동작).
 - 값은 행에 저장되지 않고 매번 계산된다 — 기준 필드 편집 시 즉시 갱신.
 - `valueGetter`가 함께 있으면 valueGetter가 우선한다.
 

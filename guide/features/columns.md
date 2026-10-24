@@ -27,6 +27,45 @@
 정렬 등에 사용한다. `headerTooltip`은 헤더 셀의 `title` 속성으로
 렌더링되어 마우스 오버 시 브라우저 기본 툴팁이 표시된다.
 
+## 컬럼 식별자 (`key`)
+
+컬럼의 유일 식별자는 **`key ?? field`**다. `key`를 지정하면 `field`는
+값 추출(`row[field]`) 전용이 되고, 컬럼을 가리키는 모든 주소 공간이
+`key`를 쓴다:
+
+- 정렬/필터 모델(`SortSpec.columnKey`, `FilterMap` 키)
+- 셀 선택 ref·편집 ref·유효성 에러·플래시·노트의 컬럼 주소
+- 이벤트 페이로드(`columnResize`/`columnMove`/`columnVisible`의 `field`)
+- 레이아웃 영속화(`columnState[].id`)
+- DOM `data-mg-field` 속성, Vue `#cell-`/`#editor-`/`#header-` 슬롯명
+- `setColumnWidth`·`reorderColumn`·`getColumn` 등 컬럼 지정 API의 인자
+
+```ts
+columns: [
+  { field: "price", header: "가격" },
+  {
+    field: "price", // 같은 field 재사용 가능 — key로 구분
+    key: "priceKrw", // 이 컬럼의 식별자
+    header: "가격(원화)",
+    format: { type: "currency" },
+  },
+];
+```
+
+key가 없는 컬럼은 `key ?? field === field`라 기존 동작 그대로다.
+컬럼을 가리키는 API는 **key 우선 → field 폴백**으로 해석하므로,
+key가 없던 시절의 호출(`setSort("price")` 등)도 계속 동작한다 —
+단 field가 겹치면 첫 매치 컬럼만 가리키므로, 보조 컬럼을 조준하려면
+key를 써야 한다.
+
+반대로 **데이터 차원의 지정은 field 그대로**다 — `row` 값 추출,
+`valueSetter` 폴백 쓰기, `aggregates`/`grandTotals` 맵 키,
+`cumulative` 원본 지정, `formula` 변수명, groupBy/pivot 필드는
+컬럼 key가 아니라 데이터 field를 따른다.
+
+유효 키(`key ?? field`)가 중복되면 개발 모드에서 경고가 뜬다 — 중복
+상태에서는 첫 컬럼만 정렬/필터/이동 대상이 된다.
+
 ## 공통 기본값 (`defaultColDef`)
 
 모든 컬럼에 공통으로 적용할 속성을 한 번만 선언한다 (타사 그리드
@@ -171,12 +210,12 @@ grid.setHeaderHeight(80); // 런타임 변경 (null이면 기본값)
 필터 버튼·required 표시·headerCheckbox는 그대로 유지된다.
 아이콘·배지·버튼이 들어간 헤더를 만들 때 사용한다.
 
-| 프레임워크 | 확장점                                |
-| ---------- | ------------------------------------- |
-| React      | `ReactColumnDef.renderHeader(col)`    |
-| Vue / Vue2 | `#header-{field}` 슬롯 (`{ column }`) |
-| Svelte     | `{#snippet header({ column })}`       |
-| vanilla    | `ColumnDef.headerRenderer(params)`    |
+| 프레임워크 | 확장점                                       |
+| ---------- | -------------------------------------------- |
+| React      | `ReactColumnDef.renderHeader(col)`           |
+| Vue / Vue2 | `#header-{key ?? field}` 슬롯 (`{ column }`) |
+| Svelte     | `{#snippet header({ column })}`              |
+| vanilla    | `ColumnDef.headerRenderer(params)`           |
 
 ```tsx
 // React

@@ -161,8 +161,9 @@ grid.setCellFlash(true); // 런타임 토글
   칸에 치는 편집은 플래시하지 않는다(이미 시각적으로 명확하므로).
 - 바뀐 셀에 `.mg-cell-flash` 클래스가 **600ms** 동안 붙고 자동 해제된다.
   연속 변경이 들어오면 마지막 변경 기준으로 타이머가 리셋된다.
-- 스냅샷 `flashedCells`(ReadonlySet — `"rowId|field"` 키)로 커스텀 렌더러가
-  직접 소비할 수도 있다. 색상은 `--grid-accent`를 따라간다.
+- 스냅샷 `flashedCells`(ReadonlySet — `"rowId<0x01>field"` 키,
+  제어 문자 구분자)로 커스텀 렌더러가 직접 소비할 수도 있다.
+  색상은 `--grid-accent`를 따라간다.
 - 어댑터: React/Vue/Svelte `cellFlash` prop, vanilla은 `MountOptions.cellFlash`.
 
 ## 체크박스 편집기 (`cellEditor: "checkbox"`)
@@ -419,7 +420,7 @@ commit, cancel }`)를 제공한다. 어댑터별 연결:
 | 프레임워크 | 확장점                             |
 | ---------- | ---------------------------------- |
 | React      | `ReactColumnDef.renderEditor(ctx)` |
-| Vue / Vue2 | `#editor-{field}` 슬롯             |
+| Vue / Vue2 | `#editor-{key ?? field}` 슬롯      |
 | Svelte     | `{#snippet editor}`                |
 | vanilla    | `ColumnDef.editorRenderer(ctx)`    |
 

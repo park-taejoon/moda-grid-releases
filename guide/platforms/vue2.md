@@ -49,7 +49,7 @@ new Vue({ render: (h) => h(App) }).$mount("#app");
 
 ## Vue 3 어댑터와의 차이
 
-API(`useGrid`/`useGridState`/`DataGrid` + `cell-{field}`/`editor-{field}`
+API(`useGrid`/`useGridState`/`DataGrid` + `cell-{key ?? field}`/`editor-{key ?? field}`
 슬롯 + 가상 스크롤)는 Vue 3과 **동일**하다. 다른 점:
 
 - props 선언이 타입 기반이 아닌 **런타임 선언**(`PropType`) — Vue 2.7

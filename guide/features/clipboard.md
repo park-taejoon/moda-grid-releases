@@ -127,6 +127,9 @@ grid.getSelectionTsv({ formatted: false }); // 강제 원시값
 - Ctrl+C/Ctrl+X(`cutSelectionTsv`)에도 동일하게 적용된다.
 - 붙여넣기 대상 앱이 "화면 그대로"를 기대하는 경우(문서 작성 등)에 유용하고, 데이터 정합성이 필요하면 기본값(false)을 유지한다.
 - 복수 범위 선택 시에도 각 블록에 동일 규칙이 적용된다.
+- 포맷 경로가 컬럼 `getCopyText`를 먼저 본다 — 표시 텍스트가 마크업인
+  컬럼(`cellType:"html"`의 스파크라인 등)이 복사·내보내기에 데이터
+  텍스트를 실을 때 쓴다. `getCopyText`가 없으면 표시 텍스트 그대로.
 
 ## 어댑터 연결 방식 (커스텀 UI용)
 

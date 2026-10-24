@@ -90,7 +90,7 @@ React 어댑터와 동일하다 (kebab-case로 전달): `columns` `data` `grid`
 
 ## 커스텀 셀 / 에디터 슬롯
 
-각 `<td>`는 `cell-{field}` 동적 슬롯, 각 에디터는 `editor-{field}` 슬롯을
+각 `<td>`는 `cell-{key ?? field}` 동적 슬롯, 각 에디터는 `editor-{key ?? field}` 슬롯을
 노출한다:
 
 ```vue
@@ -111,7 +111,7 @@ React 어댑터와 동일하다 (kebab-case로 전달): `columns` `data` `grid`
 </DataGrid>
 ```
 
-- `#cell-{field}` 슬롯 props: `{ value, row, column }` — `value`는 원시 값.
+- `#cell-{key ?? field}` 슬롯 props: `{ value, row, column }` — `value`는 원시 값.
 - 슬롯이 없는 컬럼은 `getCellText()`(formatter 적용)로 렌더링한다.
 - `#detail` 슬롯 props: `{ row, rowIndex }` — 지정 시 각 행 첫 셀에 ▸ 토글이
   생기고 펼친 행 아래 전체 너비 상세 패널을 렌더링한다

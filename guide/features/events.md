@@ -63,13 +63,15 @@ grid.on("dataChange", (e) => {
 
 // UI 상태 이벤트 (타사 그리드 OnColResize/OnColMove/OnExpand 대응)
 grid.on("columnResize", (e) => {
-  // { field, width } — 드래그 리사이즈는 픽셀 단위 연속 발행
+  // { field, width } — field는 컬럼 식별자(key ?? field)
+  //   드래그 리사이즈는 픽셀 단위 연속 발행
 });
 grid.on("columnMove", (e) => {
-  // { field, fromIndex, toIndex } — 컬럼 드래그 재배치 후
+  // { field, fromIndex, toIndex } — field는 컬럼 식별자(key ?? field)
 });
 grid.on("columnVisible", (e) => {
-  // { field, visible } — setColumnVisible·컬럼 컨트롤러·헤더 메뉴
+  // { field, visible } — field는 컬럼 식별자(key ?? field)
+  //   setColumnVisible·컬럼 컨트롤러·헤더 메뉴
 });
 grid.on("pageChange", (e) => {
   // { pageIndex, pageSize } — 실제로 바뀔 때만 발행

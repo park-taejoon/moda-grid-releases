@@ -187,6 +187,7 @@ interface ServerSideGetRowsParams {
   endRow: number; // exclusive
   sortModel: SortSpec[]; // 다중 정렬 (priority 순)
   filterModel: Record<string, ColumnFilter>; // 컬럼 필터
+  searchText?: string; // 전역 검색어 (setSearch) — 빈 문자열이면 생략
 }
 // 반환: { rows: TData[]; lastRowIndex?: number }
 ```

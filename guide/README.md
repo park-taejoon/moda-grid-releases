@@ -71,6 +71,7 @@
 | API      | 그리드 편의 API — 조회·모델 get/set·스크롤·로딩 (상용 그리드 매핑 표 포함) | [features/grid-api.md](./features/grid-api.md)                   |
 | 스타일   | 테마 오브젝트·프리셋 / 밀도 / 다크 모드 / 줄무늬 / 커스텀 클래스           | [features/theming.md](./features/theming.md)                     |
 | 확장     | 기능 선택·커스텀 기능(플러그인)·슬림 엔트리(트리셰이킹)                    | [features/plugins.md](./features/plugins.md)                     |
+| 확장     | 차트 브릿지 — 스파크라인 셀·선택 영역 차트·상세 차트·테마 동기화           | [features/charts.md](./features/charts.md)                       |
 
 ### 기여
 

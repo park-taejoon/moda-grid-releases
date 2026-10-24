@@ -15,6 +15,31 @@ GridCore 통합 API로 구성된다.
 
 그룹화·트리 모드에서는 평탄화된 `displayRows` 기준으로 작동한다.
 
+## 가변 행 높이 — `getRowHeight`
+
+행별 높이를 선언하면 가변 높이 가상화가 활성화된다. 코어는 누적 오프셋
+테이블 + 이분 탐색으로 스크롤 위치 → 행 인덱스를 해석한다.
+
+```tsx
+<DataGrid
+  columns={columns}
+  data={rows}
+  height={480}
+  rowHeight={37} // 기본/폴백 높이
+  getRowHeight={(row, index) => (row.type === "banner" ? 80 : 37)}
+/>
+```
+
+- vanilla `mountGrid`는 `virtualScroll: { rowHeight, viewportHeight,
+getRowHeight }`로 같은 동작을 켠다 — `height`/`rowHeight` 단축과
+  함께 쓰면 `getRowHeight`는 병합된다.
+- 반환값이 없거나 1 미만·NaN이면 `rowHeight`로 대체된다.
+- 그룹/소계 등 리프가 아닌 표시 행에는 호출되지 않고 기본 높이가 적용된다.
+- `setRowHeight`(행 높이 드래그) 오버라이드는 `getRowHeight`보다 우선한다.
+- 스냅샷 `virtual`에 `heights`(렌더 슬라이스와 같은 순서의 px 배열)와
+  `endOffset`(하단 스페이서)이 추가된다 — 어댑터는 tr에 개별 높이를
+  적용해 스크롤 모델과 DOM을 일치시킨다.
+
 ## 코어 API
 
 ```ts

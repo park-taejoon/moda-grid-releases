@@ -76,7 +76,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `onDblClick`                    | `cellDblClick`                                                                                                                                                             |
 | `onEdit`                        | `afterEdit` — `{ row, column, oldValue, newValue, source }` (`source`로 유저 편집/API 쓰기 구분)                                                                           |
 | `onSelectRow`                   | `selectionChange` — `{ selectedIds }`                                                                                                                                      |
-| 드래그 범위 선택 (MouseSelect)  | `selectionMode: "multi-cell"` — 셀 드래그/Shift+키로 범위 선택                                                                                                             |
+| 드래그 범위 선택 (MouseSelect)  | `selectionMode: "multi-cell"` — 셀 드래그/Shift+키로 범위 선택, `rangeTracking: "identity"`로 정렬/필터 후 행 추적                                                         |
 | `onSort`                        | `sortChange` — `{ sortState }`                                                                                                                                             |
 | `onFilter`                      | `filterChange` — `{ filters }`                                                                                                                                             |
 | `onRowMove`                     | `rowReorder` — `{ fromIndex, toIndex, row }`                                                                                                                               |
@@ -125,7 +125,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `Text`(MultiLine)                  | `{ cellEditor: "textarea", multiLine: true }`                                        |
 | `Date`                             | `{ cellEditor: "date" }` + `format: {kind:"date"}`                                   |
 | `Image`/`Button`/`Link`/`Progress` | `{ cellType: "image"\|"button"\|"link"\|"progress" }`                                |
-| `Html`                             | `{ cellType: "html" }` — raw HTML, XSS 주의                                          |
+| `Html`                             | `{ cellType: "html" }` — 포맷된 표시 텍스트를 HTML로 렌더, XSS 주의                  |
 | `AutoSum`/`Formula`                | `{ formula: "price * qty" }` / `{ cumulative: "amount" }`                            |
 | 컬럼 이동 잠금                     | `movable: false` — `reorderable` 중에도 해당 컬럼 드래그 불가                        |
 | 읽기 전용                          | `{ editable: false }` — `mg-cell-readonly` 스타일 자동                               |
@@ -138,56 +138,57 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 
 ## 기능 매핑
 
-| 레거시 그리드 기능                   | moda-grid                                                                                                                                                |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 헤더 필터 (FilterMode)               | `filterable: true` + `filterToggle` prop                                                                                                                 |
-| AutoFilter (헤더 ▾ 필터)             | `headerFilters` prop — 조건식 + 값 체크리스트를 AND/OR로 결합하는 필터 빌더 드롭다운                                                                     |
-| 외부 조건 필터                       | `externalFilter(row)` 옵션/prop — 컬럼 필터와 별개로 행 제외                                                                                             |
-| 정렬 후처리                          | `postSort(rows)` 옵션/prop — 정렬된 표시 행을 제자리 재배치                                                                                              |
-| 다중 정렬                            | 헤더 클릭 + `Shift` 키 (자동)                                                                                                                            |
-| 행 번호 컬럼 (Seq)                   | `rowNumbers` prop                                                                                                                                        |
-| 트리 (TreeMode)                      | `treeData: { getParentId }` / `{ childrenKey }`                                                                                                          |
-| 소계 (SubSum)                        | `groupSubtotals: true` + `setGroupBy()`                                                                                                                  |
-| 피벗                                 | `pivot: { rows, columns, values }` / `pivotPanel` prop (드래그앤드랍 필드 패널) + `addPivotField`/`removePivotField`/`setPivotValueAgg`                  |
-| 고정 행 (Sum 머리글 등)              | `pinnedTopRows` / `pinnedBottomRows`                                                                                                                     |
-| 셀 병합 (MergeSheet)                 | `merge: "row"\|"col"\|"both"`                                                                                                                            |
-| Append Scroll                        | `appendScroll: { dataSource }`                                                                                                                           |
-| 가상 스크롤                          | `height` + `rowHeight` props                                                                                                                             |
-| 컬럼 가상화                          | `virtualColumns` 옵션/prop (`true` 또는 `{ overscan }`) — pinned 컬럼 항상 렌더, 숨김 구간은 `td.mg-col-spacer` 대체                                     |
-| RTL                                  | `dir: "rtl"` 옵션/prop + `grid.setDir()` — 화살표 내비 시각 방향 반전, pinned 컬럼 논리 인셋(inline-start/end), 컬럼 가상화 scrollLeft 자동 정규화       |
-| 페이지 크기 자동 (AutoPage)          | `autoPageSize` 옵션/prop — 뷰포트÷행 높이로 pageSize 계산, 리사이즈 재계산                                                                               |
-| 내용 높이 레이아웃                   | `domLayout: "autoHeight"` 옵션/prop — 내부 스크롤 없이 행 수만큼 높이                                                                                    |
-| 상태 저장                            | `grid.getState()` / `applyState()`                                                                                                                       |
-| Excel/PDF보내기                      | `exportToXlsx({styled})` / `exportToPdf()`                                                                                                               |
-| 컨텍스트 메뉴                        | `contextMenu` / `headerContextMenu` props (배열 또는 팩토리 함수)                                                                                        |
-| 기본 우클릭 메뉴                     | `defaultContextMenuItems` / `defaultHeaderContextMenuItems` 프리셋                                                                                       |
-| 다국어                               | `locale` prop (`enLocale` 프리셋)                                                                                                                        |
-| 채우기 핸들                          | 활성 셀 우하단 드래그 (자동, `fillRange` API)                                                                                                            |
-| 붙여넣기 행 확장 (EditExtend)        | `pasteExtend: true` 옵션                                                                                                                                 |
-| 찾기/바꾸기                          | `grid.findCells()` / `grid.replaceAll()`                                                                                                                 |
-| 그룹 패널 (GroupBar)                 | `groupPanel` prop — 그룹 칩 표시·해제 + **헤더 드래그로 그룹 추가**                                                                                      |
-| 행 숨기기 (`setRowHidden`)           | `grid.setRowHidden(ids, bool)` / `hiddenRowIds` prop                                                                                                     |
-| 헤더 높이 (`HeaderRowHeight`)        | `headerHeight` 옵션/prop — 멀티레벨 헤더는 행 수로 균등 분할                                                                                             |
-| 행 줄무늬 (`Alternate`)              | `striped` 옵션/prop + `grid.setStriped(bool)` — `--grid-stripe-bg` 변수                                                                                  |
-| 편집 진입 차단 (`OnBeforeEdit`)      | `beforeEdit` 옵션/prop — `false` 반환 시 편집 취소 (체크박스 토글 포함)                                                                                  |
-| 싱글클릭 편집 진입                   | `singleClickEdit` 옵션/prop — 클릭 한 번으로 편집 (cellType 셀 제외)                                                                                     |
-| 행 전체 편집 (`editType: "fullRow"`) | `editType: "fullRow"` 옵션/prop — 행의 모든 편집 셀 동시 편집, 커밋은 한 Undo 단위                                                                       |
-| 붙여넣기 전처리 (`OnBeforePaste`)    | `beforePaste` 옵션/prop — 문자열 반환 시 대체, `false` 시 취소                                                                                           |
-| 복사 전처리                          | `beforeCopy` 옵션/prop — 문자열 반환 시 대체 TSV, `false` 시 복사 취소 (cut 구분)                                                                        |
-| 클립보드 구분자                      | `clipboardDelimiter` 옵션/prop — 복사·붙여넣기 셀 구분자 변경 (기본 탭, 탭 폴백 유지)                                                                    |
-| 마스터-디테일 (DetailBand)           | `detailRenderer`(React/vanilla) · `#detail` 슬롯(Vue) · `detail` snippet(Svelte) + `toggleRowDetail`/`setDetailExpanded`                                 |
-| 전체 너비 행 (`isFullWidthRow`)      | `isFullWidthRow` 옵션/prop + `renderFullRow`(React) · `#fullwidth` 슬롯(Vue) · `fullwidth` 스니펫(Svelte) · `fullWidthRenderer`(vanilla)                 |
-| 행 애니메이션 (`animateRows`)        | `animateRows` 옵션/prop + `grid.setAnimateRows` — 정렬/필터 시 행 위치 FLIP 트랜지션                                                                     |
-| 로딩 오버레이 (로딩 이미지)          | `loading` 옵션/prop + `grid.setLoading(bool)` — 코어 상태 기반 오버레이, `snapshot.loading`으로 노출. vanilla `mounted.setLoading`은 코어로 위임         |
-| 자손 연쇄 선택 (TreeCheck)           | `treeData.selectsChildren: true` — 부모 체크박스가 자손 전체 선택/해제, 삼중 상태 표시                                                                   |
-| 종속 콤보 (Enum 체인)                | `editorOptions`에 함수 `(row) => string[]` — 다른 컬럼 값에 따라 행별 옵션 결정                                                                          |
-| 커스텀 에디터 (사용자 정의 편집기)   | `cellEditor: "custom"` + React `renderEditor` / Vue `#editor-{field}` / Svelte `editor` 스니펫 / vanilla `editorRenderer` — `ctx.setValue/commit/cancel` |
-| 검색 제외 컬럼                       | `searchable: false` 컬럼 옵션 — 전역 검색·찾기에서 제외. `getSearchText(row)`로 검색 텍스트 커스터마이즈                                                 |
-| 표시 문자열 복사                     | `copyFormatted` 옵션/prop 또는 `getSelectionTsv({ formatted: true })` — formatter/format 적용 텍스트                                                     |
-| 복수 범위 선택                       | Ctrl+드래그로 범위 추가 / `addCellRange` — 복사·삭제·집계는 모든 범위에 적용                                                                             |
-| 행 조건부 선택                       | `isRowSelectable(row)` 옵션/prop — 불가 행은 클릭·체크박스·전체선택 모두 제외                                                                            |
-| 자동 행 높이                         | `autoRowHeight` prop — multiLine 셀 기준                                                                                                                 |
-| 셀 노트 (Note)                       | `ColumnDef.note` — 코너 표시 + 툴팁                                                                                                                      |
+| 레거시 그리드 기능                   | moda-grid                                                                                                                                                       |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 헤더 필터 (FilterMode)               | `filterable: true` + `filterToggle` prop                                                                                                                        |
+| AutoFilter (헤더 ▾ 필터)             | `headerFilters` prop — 조건식 + 값 체크리스트를 AND/OR로 결합하는 필터 빌더 드롭다운                                                                            |
+| 외부 조건 필터                       | `externalFilter(row)` 옵션/prop — 컬럼 필터와 별개로 행 제외                                                                                                    |
+| 정렬 후처리                          | `postSort(rows)` 옵션/prop — 정렬된 표시 행을 제자리 재배치                                                                                                     |
+| 다중 정렬                            | 헤더 클릭 + `Shift` 키 (자동)                                                                                                                                   |
+| 행 번호 컬럼 (Seq)                   | `rowNumbers` prop                                                                                                                                               |
+| 트리 (TreeMode)                      | `treeData: { getParentId }` / `{ childrenKey }`                                                                                                                 |
+| 소계 (SubSum)                        | `groupSubtotals: true` + `setGroupBy()`                                                                                                                         |
+| 피벗                                 | `pivot: { rows, columns, values }` / `pivotPanel` prop (드래그앤드랍 필드 패널) + `addPivotField`/`removePivotField`/`setPivotValueAgg`                         |
+| 고정 행 (Sum 머리글 등)              | `pinnedTopRows` / `pinnedBottomRows`                                                                                                                            |
+| 셀 병합 (MergeSheet)                 | `merge: "row"\|"col"\|"both"`                                                                                                                                   |
+| Append Scroll                        | `appendScroll: { dataSource }`                                                                                                                                  |
+| 가상 스크롤                          | `height` + `rowHeight` props (가변 높이는 `getRowHeight` — 행별 px 반환, 오프셋 테이블+이분 탐색)                                                               |
+| 컬럼 가상화                          | `virtualColumns` 옵션/prop (`true` 또는 `{ overscan }`) — pinned 컬럼 항상 렌더, 숨김 구간은 `td.mg-col-spacer` 대체                                            |
+| RTL                                  | `dir: "rtl"` 옵션/prop + `grid.setDir()` — 화살표 내비 시각 방향 반전, pinned 컬럼 논리 인셋(inline-start/end), 컬럼 가상화 scrollLeft 자동 정규화              |
+| 페이지 크기 자동 (AutoPage)          | `autoPageSize` 옵션/prop — 뷰포트÷행 높이로 pageSize 계산, 리사이즈 재계산                                                                                      |
+| 내용 높이 레이아웃                   | `domLayout: "autoHeight"` 옵션/prop — 내부 스크롤 없이 행 수만큼 높이                                                                                           |
+| 상태 저장                            | `grid.getState()` / `applyState()`                                                                                                                              |
+| Excel/PDF보내기                      | `exportToXlsx({styled})` / `exportToPdf()`                                                                                                                      |
+| 컨텍스트 메뉴                        | `contextMenu` / `headerContextMenu` props (배열 또는 팩토리 함수)                                                                                               |
+| 기본 우클릭 메뉴                     | `defaultContextMenuItems` / `defaultHeaderContextMenuItems` 프리셋                                                                                              |
+| 다국어                               | `locale` prop (`enLocale` 프리셋)                                                                                                                               |
+| 채우기 핸들                          | 활성 셀 우하단 드래그 (자동, `fillRange` API)                                                                                                                   |
+| 붙여넣기 행 확장 (EditExtend)        | `pasteExtend: true` 옵션                                                                                                                                        |
+| 찾기/바꾸기                          | `grid.findCells()` / `grid.replaceAll()`                                                                                                                        |
+| 그룹 패널 (GroupBar)                 | `groupPanel` prop — 그룹 칩 표시·해제 + **헤더 드래그로 그룹 추가**                                                                                             |
+| 행 숨기기 (`setRowHidden`)           | `grid.setRowHidden(ids, bool)` / `hiddenRowIds` prop                                                                                                            |
+| 헤더 높이 (`HeaderRowHeight`)        | `headerHeight` 옵션/prop — 멀티레벨 헤더는 행 수로 균등 분할                                                                                                    |
+| 행 줄무늬 (`Alternate`)              | `striped` 옵션/prop + `grid.setStriped(bool)` — `--grid-stripe-bg` 변수                                                                                         |
+| 편집 진입 차단 (`OnBeforeEdit`)      | `beforeEdit` 옵션/prop — `false` 반환 시 편집 취소 (체크박스 토글 포함)                                                                                         |
+| 싱글클릭 편집 진입                   | `singleClickEdit` 옵션/prop — 클릭 한 번으로 편집 (cellType 셀 제외)                                                                                            |
+| 행 전체 편집 (`editType: "fullRow"`) | `editType: "fullRow"` 옵션/prop — 행의 모든 편집 셀 동시 편집, 커밋은 한 Undo 단위                                                                              |
+| 붙여넣기 전처리 (`OnBeforePaste`)    | `beforePaste` 옵션/prop — 문자열 반환 시 대체, `false` 시 취소                                                                                                  |
+| 복사 전처리                          | `beforeCopy` 옵션/prop — 문자열 반환 시 대체 TSV, `false` 시 복사 취소 (cut 구분)                                                                               |
+| 클립보드 구분자                      | `clipboardDelimiter` 옵션/prop — 복사·붙여넣기 셀 구분자 변경 (기본 탭, 탭 폴백 유지)                                                                           |
+| 마스터-디테일 (DetailBand)           | `detailRenderer`(React/vanilla) · `#detail` 슬롯(Vue) · `detail` snippet(Svelte) + `toggleRowDetail`/`setDetailExpanded`                                        |
+| 전체 너비 행 (`isFullWidthRow`)      | `isFullWidthRow` 옵션/prop + `renderFullRow`(React) · `#fullwidth` 슬롯(Vue) · `fullwidth` 스니펫(Svelte) · `fullWidthRenderer`(vanilla)                        |
+| 행 애니메이션 (`animateRows`)        | `animateRows` 옵션/prop + `grid.setAnimateRows` — 정렬/필터 시 행 위치 FLIP 트랜지션                                                                            |
+| 로딩 오버레이 (로딩 이미지)          | `loading` 옵션/prop + `grid.setLoading(bool)` — 코어 상태 기반 오버레이, `snapshot.loading`으로 노출. vanilla `mounted.setLoading`은 코어로 위임                |
+| 자손 연쇄 선택 (TreeCheck)           | `treeData.selectsChildren: true` — 부모 체크박스가 자손 전체 선택/해제, 삼중 상태 표시                                                                          |
+| 종속 콤보 (Enum 체인)                | `editorOptions`에 함수 `(row) => string[]` — 다른 컬럼 값에 따라 행별 옵션 결정                                                                                 |
+| 커스텀 에디터 (사용자 정의 편집기)   | `cellEditor: "custom"` + React `renderEditor` / Vue `#editor-{key ?? field}` / Svelte `editor` 스니펫 / vanilla `editorRenderer` — `ctx.setValue/commit/cancel` |
+| 검색 제외 컬럼                       | `searchable: false` 컬럼 옵션 — 전역 검색·찾기에서 제외. `getSearchText(row)`로 검색 텍스트 커스터마이즈                                                        |
+| 차트 연동 (통합 차트)                | `@moda-grid/charts` 브릿지 — `sparklineColumn`(스파크라인 셀) + `chartMenuItem`(선택 영역 차트 플로팅 패널) + `chartDetailRenderer` + `syncChartTheme`          |
+| 표시 문자열 복사                     | `copyFormatted` 옵션/prop 또는 `getSelectionTsv({ formatted: true })` — formatter/format 적용 텍스트. `getCopyText(value,row)`로 복사 전용 텍스트 오버라이드    |
+| 복수 범위 선택                       | Ctrl+드래그로 범위 추가 / `addCellRange` — 복사·삭제·집계는 모든 범위에 적용                                                                                    |
+| 행 조건부 선택                       | `isRowSelectable(row)` 옵션/prop — 불가 행은 클릭·체크박스·전체선택 모두 제외                                                                                   |
+| 자동 행 높이                         | `autoRowHeight` prop — multiLine 셀 기준                                                                                                                        |
+| 셀 노트 (Note)                       | `ColumnDef.note` — 코너 표시 + 툴팁                                                                                                                             |
 
 ## 주요 API 메서드 매핑
 
@@ -304,8 +305,8 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `sheet.directDown2Excel()`                           | `grid.exportToXlsx({ filename })`                                                                                                                                                           |
 | `sheet.dispose()`                                    | 컴포넌트 언마운트 (자동)                                                                                                                                                                    |
 | 행 조건부 스타일                                     | `GridOptions.rowStyle` / `ColumnDef.rowStyle` — CSS 문자열·맵·함수, `<tr>`에 병합                                                                                                           |
-| 셀 커스텀 렌더러                                     | React `renderCell` · Vue `#cell-{field}` 슬롯 · Svelte `cell` snippet · vanilla `cellRenderer`(DOM Node 반환)                                                                               |
-| 헤더 커스텀 렌더러                                   | React `renderHeader` · Vue `#header-{field}` 슬롯 · Svelte `header` snippet · vanilla `headerRenderer` — 정렬/필터 UI 유지                                                                  |
+| 셀 커스텀 렌더러                                     | React `renderCell` · Vue `#cell-{key ?? field}` 슬롯 · Svelte `cell` snippet · vanilla `cellRenderer`(DOM Node 반환)                                                                        |
+| 헤더 커스텀 렌더러                                   | React `renderHeader` · Vue `#header-{key ?? field}` 슬롯 · Svelte `header` snippet · vanilla `headerRenderer` — 정렬/필터 UI 유지                                                           |
 | 모바일/터치 지원                                     | 자동 — 롱프레스(550ms) 컨텍스트 메뉴 + 터치 커스텀 DnD(컬럼/행/피벗) + 리사이즈·fill 핸들 터치 + `pointer:coarse` 핸들 확대                                                                 |
 | 커스텀 집계 (`aggFunc` / 서브합계 함수)              | `aggregationFn`에 함수 전달 — `({ values, rows, field }) => unknown`. 내장은 `sum/avg/min/max/count/first/last`, 피벗 `agg`도 동일 규약                                                     |
 
