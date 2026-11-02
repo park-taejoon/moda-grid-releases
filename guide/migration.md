@@ -86,7 +86,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | `onEditStart` (진입 시점)       | `cellEditStart` — `{ row, rowIndex, column, columnIndex }`                                                                                                                 |
 | `onFocus` / `onFocusCell`       | `activeCellChange` — `{ row, rowIndex, column, columnIndex, previous }`                                                                                                    |
 | `onPaste`                       | `dataPaste` — `{ applied, skipped, errors, start }`                                                                                                                        |
-| `onChange` (모든 데이터 변경)   | `dataChange` — `{ source, edits? }` — 편집/붙여넣기/행 추가·삭제/undo·redo/setData 통합                                                                                    |
+| `onChange` (모든 데이터 변경)   | `dataChange` — `{ source, edits? }` — 편집/붙여넣기/행 추가·삭제/commitChanges/undo·redo/setData 통합                                                                      |
 | `onColResize`                   | `columnResize` — `{ field, width }` (드래그 중 연속 발행)                                                                                                                  |
 | `onColMove`                     | `columnMove` — `{ field, fromIndex, toIndex }`                                                                                                                             |
 | 컬럼 표시/숨김                  | `columnVisible` — `{ field, visible }`                                                                                                                                     |

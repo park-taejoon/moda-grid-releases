@@ -104,11 +104,14 @@
   `pinStyleProps`/`describeCell`/`camelizeStyles`/`stylesToCssText`/
   `resolveRowDrop`/`startColumnResize`/`startRowResize`/
   `startFillDrag`/`resizeKeyDelta`/`trackPointerDrag`/`handleGridKeydown`/
-  `editorInputValue`/`cellPosFromPoint`/`dropRatioForY` 등)는 5개 렌더러
+  `editorInputValue`/`cellPosFromPoint`/`dropRatioForY`/
+  `measureRowScrollPads`/`isRowSelectedInSnap` 등)는 5개 렌더러
   내부 구현이 공유하는 인프라 수출이다 — 어댑터 index가 재수출하지는 않고,
   커스텀 렌더러/확장을 만드는 경우 코어에서 직접 import해 같은 계약을 재사용한다.
   리프 셀의 클래스/스타일/title/병합 span은 `describeCell`이 단일 계산한다 —
-  새 셀 표현을 추가할 때는 5개 템플릿이 아니라 여기에 둔다
+  새 셀 표현을 추가할 때는 5개 템플릿이 아니라 여기에 둔다.
+  행 선택 판정은 `isRowSelectedInSnap(snap, rowId)` — 스냅샷의 반전
+  선택(대량 전체 선택 시 "전체 − 예외") 모드를 포함해 해석한다
 
 ## 알려진 차이 (갭 / 의도)
 

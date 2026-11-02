@@ -123,6 +123,9 @@ grid.setRowStatus("42", null); // 상태 해제
 
 // 선택 행 ID / 일괄 삭제 — getSelectedRowData의 ID 버전
 grid.getSelectedRowIds(); // ["1","4",...] (rawData 순서)
+// 선택 행 수 — 대량 전체 선택은 반전 모드로 저장돼 getSelectedRowIds()가
+// 10만+ ID를 열거하지 않고도 개수를 얻을 수 있다
+grid.getSelectedCount(); // 5000
 grid.deleteSelectedRows(); // 선택 행을 일괄 D 마킹 → 처리 행 수
 
 // checkbox 컬럼 ID 일괄 조작 — setRowChecked의 복수 버전

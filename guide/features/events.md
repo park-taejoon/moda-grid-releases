@@ -18,7 +18,10 @@ grid.on("afterEdit", (e) => {
   //   구분한다 — 리스너에서 자기 쓰기 재진입을 막을 때 쓴다.
 });
 grid.on("selectionChange", (e) => {
-  // { selectedIds: string[] }
+  // { selectedIds: string[], inverted?: boolean, deselectedIds?: string[] }
+  // — 대량 전체 선택은 반전(inverted) 모드로 전환돼 selectedIds가 빈 배열로
+  //   온다. 이 경우 "모든 선택 가능 행 − deselectedIds"가 선택 집합이며,
+  //   개수는 grid.getSelectedCount()로 얻는다.
 });
 grid.on("sortChange", (e) => {
   // { sortState: SortSpec[] } — 다중 정렬 조건 전체
@@ -42,6 +45,12 @@ grid.on("cellEditStart", (e) => {
   // { row, rowIndex, column, columnIndex } — 편집 진입 성공 직후
   // (beforeEdit를 통과하고 editingCell이 설정된 시점)
 });
+grid.on("editSessionLost", (e) => {
+  // { row, columnKey, editValues, reason } — 리패치(setData)·필터·행 삭제·
+  // 컬럼 제거로 열린 편집 세션이 끊겼을 때. editValues는 소실 시점의 보류
+  // 값(fullRow면 컬럼 전체 맵)으로 커밋되지 않고 폐기된다 — 경고 토스트나
+  // 재진입 유도에 쓴다. reason: "rowRemoved" | "rowHidden" | "columnRemoved"
+});
 grid.on("activeCellChange", (e) => {
   // { row, rowIndex, column, columnIndex, previous }
   // — 활성 셀 이동/해제 (타사 그리드 OnFocus 대응). 클릭·키보드
@@ -57,7 +66,9 @@ grid.on("dataChange", (e) => {
   // (타사 그리드 OnChange 대응). 자동 저장/dirty 표시에 개별 이벤트를
   // 모두 구독할 필요 없이 이 하나면 된다.
   //   source: "edit" | "api" | "paste" | "fill" | "move" | "replace"
-  //         | "clear" | "rowAdd" | "rowDelete" | "setData" | "undo" | "redo"
+  //         | "clear" | "rowAdd" | "rowDelete" | "commit" | "setData"
+  //         | "undo" | "redo"
+  //   ("commit"은 commitChanges — D 행 물리 제거 + I/U/D 마킹 소거 시)
   //   edits: 셀 단위 변경의 편집 레코드 (구조적 변경이면 없음)
 });
 
