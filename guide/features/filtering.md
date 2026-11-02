@@ -36,6 +36,11 @@ grid.resetView();
 
 필터/검색 변경 시 `pageIndex`는 0으로 리셋된다. 복수 컬럼 필터는 **AND** 결합.
 
+- `setFilter`/`setFilterModel`/`applyState`에 **비문자열 값**(숫자·불리언
+  등 — JSON 상태 복원이나 JS 직접 호출 경로)이 들어와도 `String()`으로
+  정규화해 평가한다 — 파이프라인이 `TypeError`로 중단되지 않고, `values`
+  체크리스트의 비문자열 항목도 셀 값의 문자열 표현과 정상 비교된다.
+
 ## 컬럼 옵션
 
 ```ts

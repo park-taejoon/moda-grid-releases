@@ -91,6 +91,11 @@ grid.isSelected(id);
 grid.toggleAllRows(); // 전체 토글 (헤더 체크박스)
 grid.isAllSelected();
 grid.isSomeSelected();
+grid.setRowSelected(id, bool); // 결정적 지정 — isRowSelectable 거부·미존재는 false
+grid.setRowSelection(ids); // 일괄 지정, null은 전체 해제
+grid.getSelectedRowIds(); // 선택 ID 열거 (명시 호출 시에만 O(n))
+grid.getSelectedRowData(); // 선택 행 데이터 (rawData 순서, 숨김 행 포함)
+grid.getSelectedCount(); // 선택 행 수 — 반전 모드에서도 O(n) 1패스로 정확
 ```
 
 ## 행 체크박스 (`rowCheckboxes` prop)
@@ -119,6 +124,34 @@ grid.setIsRowSelectable(fn); // 런타임 교체 (null로 해제)
   선택 시 `checked`가 된다.
 - 콜백이 나중에 바뀌어 선택 불가가 된 행이라도 **해제는 허용**한다
   (토글로 선택된 상태를 뺄 수 있다).
+
+## 대량 전체 선택 — 반전(Inverted) 선택 모델
+
+필터를 통과한 선택 가능 행이 **10,000개(`INVERTED_SELECT_ALL_THRESHOLD`)를
+초과**하면 `selectAllRows`/`toggleAllRows`는 ID를 일일이 나열하지 않고
+**반전 모드**로 전환한다 — "모든 선택 가능 행이 선택됨, 단 예외 집합은
+해제"로 표현해 수만~수십만 건에서 `Set<string>` 열거와 스냅샷 `Set` 복사
+비용을 제거한다.
+
+- **뷰 기반 의미** — 반전 모드는 "현재 선택 가능 집합 전체"를 가리키므로,
+  선택 후 필터를 바꿔 새로 포함된 행도 선택된 것으로 해석된다.
+  `getSelectedRowData()`는 이 의미를 따라 예외가 아닌 전체 행을 반환한다.
+- **예외 해제** — 반전 모드에서 행 체크박스 해제·`setRowSelected(id, false)`
+  는 ID를 `deselectedRowIds`에 기록한다. **아직 로드되지 않은 행**(서버사이드
+  페이징의 미수신 블록)도 존재 검증 없이 해제할 수 있다 — 서버 측
+  deselect 패턴과 호환된다.
+- **물리 삭제** — 행이 데이터에서 제거되면 두 표현 집합 모두에서 추적이
+  해제돼, 같은 ID로 재추가된 행이 유령 선택되지 않는다.
+- **나열 복귀** — `setRowSelection(ids)`·`clearSelection` 등 명시적 집합
+  지정은 항상 나열 모드로 대체한다.
+- **이벤트·개수** — 반전 모드의 `selectionChange`는
+  `{ selectedIds: [], inverted: true, deselectedIds }`를 보낸다
+  (전수 열거 생략). 개수는 `grid.getSelectedCount()` 또는
+  `snapshot.selectedRowCount`로 얻는다.
+- **커스텀 렌더러** — 스냅샷으로 행의 선택 여부를 판정할 때는
+  `selectedRowIds`를 직접 보지 말고 export된
+  `isRowSelectedInSnap(snapshot, rowId)`를 쓴다 — 두 표현 모드를 같은
+  계약으로 처리한다.
 
 ## 선택 영역 집계 (상태바)
 
@@ -149,7 +182,14 @@ snapshot.selectionAggregates = {
 ## 스냅샷 필드
 
 `snapshot.activeCell` / `snapshot.selectedRange` / `snapshot.selectedRanges` /
-`snapshot.selectionMode` / `snapshot.selectedRowIds` / `snapshot.selectionAggregates`.
+`snapshot.selectionMode` / `snapshot.selectedRowIds` /
+`snapshot.selectionInverted` (반전 모드 여부) / `snapshot.deselectedRowIds`
+(반전 모드의 예외 ID 집합) / `snapshot.selectedRowCount` (두 모드 공통의
+선택 행 수) / `snapshot.selectionAggregates`.
+
+- 반전 모드(`selectionInverted === true`)에서는 `selectedRowIds`가 비어
+  있고 `deselectedRowIds`가 해제 예외를 담는다 — 선택 판정은
+  `isRowSelectedInSnap`으로 한다.
 
 ### 복수 범위 선택
 

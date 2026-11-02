@@ -80,24 +80,26 @@ grid.subscribe(() => render(grid.getSnapshot()));
 
 `GridSnapshot` 필드:
 
-| 필드                                   | 설명                                                                                           |
-| -------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `columns` / `visibleColumns`           | 전체 / 표시 컬럼                                                                               |
-| `rows`                                 | `visibleData`와 동일한 최종 출력 행                                                            |
-| `totalRowCount` / `filteredRowCount`   | 필터 전 전체 수 / 페이징 전 수                                                                 |
-| `sort` / `sortState`                   | 첫 번째 정렬 조건(호환) / 다중 정렬 조건 `SortSpec[]`                                          |
-| `groupBy` / `expandedRowKeys`          | 그룹화 필드 목록 / 펼친 그룹 키 집합                                                           |
-| `displayRows`                          | 그룹화 시 평탄 렌더 목록 `DisplayRow[]` (아니면 `null`)                                        |
-| `searchText` / `filters`               | 전역 검색어 / 컬럼 필터 `Record<field, ColumnFilter>`                                          |
-| `filterRowVisible`                     | 필터 입력 행 표시 여부 (기본값 `true` — 숨겨도 필터 조건은 유지)                               |
-| `pageIndex` / `pageSize` / `pageCount` | 페이징 상태                                                                                    |
-| `selectedRowIds`                       | 선택된 행 ID 집합                                                                              |
-| `rowDrag`                              | 행 드래그 진행 상태 `{ draggingIndex, dropIndex }` (아니면 `null`)                             |
-| `pinnedTopRows` / `pinnedBottomRows`   | 상단/하단 고정 행 데이터 (`TData[]`)                                                           |
-| `grandTotals`                          | `aggregationFn` 컬럼의 전체 집계 (해당 컬럼 없으면 `null`)                                     |
-| `selectionAggregates`                  | 선택 범위 집계 `{ cells, rows, count, sum, avg, min, max }` (선택 없으면 `null`)               |
-| `headerGroups`                         | 상단 그룹 헤더 스팬 `HeaderGroupSpan[]` (`ColumnDef.group` 없으면 `null`)                      |
-| `loading`                              | 로딩 오버레이 표시 여부 (`setLoading`/`GridOptions.loading` 제어, `serverSide.loading`과 별개) |
+| 필드                                     | 설명                                                                                                                                |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `columns` / `visibleColumns`             | 전체 / 표시 컬럼                                                                                                                    |
+| `rows`                                   | `visibleData`와 동일한 최종 출력 행                                                                                                 |
+| `totalRowCount` / `filteredRowCount`     | 필터 전 전체 수 / 페이징 전 수                                                                                                      |
+| `sort` / `sortState`                     | 첫 번째 정렬 조건(호환) / 다중 정렬 조건 `SortSpec[]`                                                                               |
+| `groupBy` / `expandedRowKeys`            | 그룹화 필드 목록 / 펼친 그룹 키 집합                                                                                                |
+| `displayRows`                            | 그룹화 시 평탄 렌더 목록 `DisplayRow[]` (아니면 `null`)                                                                             |
+| `searchText` / `filters`                 | 전역 검색어 / 컬럼 필터 `Record<field, ColumnFilter>`                                                                               |
+| `filterRowVisible`                       | 필터 입력 행 표시 여부 (기본값 `true` — 숨겨도 필터 조건은 유지)                                                                    |
+| `pageIndex` / `pageSize` / `pageCount`   | 페이징 상태                                                                                                                         |
+| `selectedRowIds`                         | 선택된 행 ID 집합 — 반전 모드(`selectionInverted`)에서는 비어 있고 `deselectedRowIds`가 예외를 담는다. 판정은 `isRowSelectedInSnap` |
+| `selectionInverted` / `deselectedRowIds` | 대량 전체 선택의 반전 모델 — "모든 선택 가능 행 − 예외 ID". 10,000행 초과 시 `selectAllRows`가 자동 전환                            |
+| `selectedRowCount`                       | 선택 행 수 — 나열/반전 모드 공통으로 정확한 개수 (`getSelectedCount()`와 동일)                                                      |
+| `rowDrag`                                | 행 드래그 진행 상태 `{ draggingIndex, dropIndex }` (아니면 `null`)                                                                  |
+| `pinnedTopRows` / `pinnedBottomRows`     | 상단/하단 고정 행 데이터 (`TData[]`)                                                                                                |
+| `grandTotals`                            | `aggregationFn` 컬럼의 전체 집계 (해당 컬럼 없으면 `null`)                                                                          |
+| `selectionAggregates`                    | 선택 범위 집계 `{ cells, rows, count, sum, avg, min, max }` (선택 없으면 `null`)                                                    |
+| `headerGroups`                           | 상단 그룹 헤더 스팬 `HeaderGroupSpan[]` (`ColumnDef.group` 없으면 `null`)                                                           |
+| `loading`                                | 로딩 오버레이 표시 여부 (`setLoading`/`GridOptions.loading` 제어, `serverSide.loading`과 별개)                                      |
 
 ## 확장 API (어댑터·앱 공용)
 
@@ -180,6 +182,7 @@ grid.subscribe(() => render(grid.getSnapshot()));
 | `sumBy` / `avgBy` / `minBy` / `maxBy` / `countBy(field)`                              | 표시 행 기준 숫자 집계 단축 (필터·페이징 적용 결과)                                                            |
 | `setRowStatus(id, status)`                                                            | 행 상태 수동 지정 — `"I"/"U"/"D"` 마킹 또는 `null` 해제 (저장 전 상태 조정)                                    |
 | `getSelectedRowIds()` / `deleteSelectedRows()`                                        | 선택 행 ID 목록 / 선택 행 일괄 D 마킹 → 처리 수                                                                |
+| `getSelectedCount()`                                                                  | 선택 행 수 — 반전(Inverted) 선택 모드에서도 ID 열거 없이 조회                                                  |
 | `getCheckedRowIds(field?)` / `setCheckedRowIds(ids, checked?)`                        | checkbox 컬럼 체크 ID 일괄 조회/지정 — 값 매핑 자동                                                            |
 | `startEditingById(id, field)`                                                         | 행 ID+필드로 편집 진입 — `focusCell`+`startEditing` 합성                                                       |
 | `setColumnOrder(fields)`                                                              | 컬럼 순서 일괄 지정 — 나열 컬럼을 앞에, 나머지는 기존 순서 유지                                                |
@@ -694,6 +697,15 @@ editError: string | null;                     // 유효성 검사 에러
 3. `column.valueSetter`가 있으면 호출, 없으면 `row[field] = value`로
    rawData의 행 객체에 직접 기록 후 `notify()`로 파이프라인 재계산
 
+### 편집 세션 보호
+
+편집 세션은 표시 인덱스가 아닌 행 객체 + 컬럼 키로 추적된다 — `setData`
+리패치가 같은 Row ID의 새 객체로 행을 교체하면 세션과 보류 값이 재부착된다.
+행 삭제·필터 비표시·컬럼 제거로 복구 불가하면 세션이 종료되고
+`editSessionLost` 이벤트(`{row, columnKey, editValues, reason}`)가 발행된다 —
+보류 값은 폐기된다. 상세는
+[guide/features/editing.md](./guide/features/editing.md) 참고.
+
 ### 커스텀 편집기
 
 `cellEditor: 'custom'`이거나 어댑터의 에디터 확장점을 쓰는 경우
@@ -899,7 +911,11 @@ grid.subscribe(() => {
 ```
 
 `handleScroll`은 `startIndex`/`endIndex`가 변하지 않는 스크롤 이벤트를
-건너뛰므로, 픽셀 단위 스크롤마다 리렌더되지 않는다.
+건너뛰므로, 픽셀 단위 스크롤마다 리렌더되지 않는다. 가변 높이 모드에서
+높이 테이블이 재구축되면 첫 가시 행을 앵커로 오프셋 델타만큼 `scrollTop`을
+원자 보정한다(행 목록 자체가 바뀐 필터/정렬/`setData`는 미보정) —
+상세는 [guide/features/virtual-scroll.md](./guide/features/virtual-scroll.md)의
+스크롤 앵커링 참고.
 
 ## 테마 시스템 (CSS Variables)
 

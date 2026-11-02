@@ -54,6 +54,11 @@ const grid = new GridCore({
   자동 폐기된다.
 - **미로드 행** — `rows`/`virtualRows`의 미로드 인덱스는 `undefined` —
   어댑터가 `.mg-skeleton-row`(컬럼별 shimmer 바)로 렌더링한다.
+- **전체 선택과 미로드 행** — 대량 전체 선택은 반전(Inverted) 모델로
+  표현된다([selection.md](./selection.md) 참고). 반전 모드의
+  `setRowSelected(id, false)`는 **존재 검증을 하지 않으므로 아직 로드되지
+  않은 행의 ID도 예외로 해제**할 수 있다 — 클라이언트가 모르는 행을
+  서버 측에서 제외하는 deselect 패턴에 대응한다.
 - 로컬 페이징은 적용되지 않는다. 그룹화·피벗은 서버가 수행한다
   (아래 서버사이드 그룹화/피벗 참조).
 

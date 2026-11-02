@@ -96,7 +96,8 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 피벗 설정 변경                  | `pivotChange` — `{ pivot }` (해제 시 null)                                                                                                                                 |
 | `SetRowHeight`                  | `grid.setRowHeight(id, px)` + `rowResize` 이벤트                                                                                                                           |
 | `onSearchEnd` / 서버 조회 완료  | `serverRequest`/`serverResponse`/`serverError` — 서버 사이드 모드 블록 요청 생명주기 (`server-side.md` 참조)                                                               |
-| `findCheckedRow` / 선택 행 조회 | `grid.getSelectedRowData()` / `getSelectedRowIds()` — 선택 행 데이터/ID 배열                                                                                               |
+| `findCheckedRow` / 선택 행 조회 | `grid.getSelectedRowData()` / `getSelectedRowIds()` — 선택 행 데이터/ID 배열, `getSelectedCount()`로 개수만 조회                                                           |
+| 편집 세션 소실 감지             | `editSessionLost` 이벤트 — 리패치·필터·행 삭제로 편집 세션이 끊길 때 `{row, columnKey, editValues, reason}` 발행                                                           |
 | 체크박스 컬럼 체크 행 조회      | `grid.getCheckedRows(field?)` / `getCheckedRowIds(field?)` — `checkedValue` 기준, 선택과 별개                                                                              |
 | 체크 설정                       | `grid.setRowChecked(id, checked, field?, opts?)` / `setCheckedRowIds(ids, checked?, field?, opts?)` — ID 기준, 값 매핑 자동. 이벤트 source는 `"api"`, `{silent:true}` 지원 |
 | 조합 상태 감시                  | `grid.watch(selector, listener)` — 스냅샷 슬라이스 옵저버 (`events.md` 참조)                                                                                               |
@@ -295,6 +296,7 @@ const { grid, snapshot } = useGridCore({ columns, data });  // 제어 모드
 | 컬럼 조회                                            | `grid.getColumn(field)` / `getColumnIndex(field)`                                                                                                                                           |
 | 정렬·필터 모델 일괄 적용                             | `grid.getSortModel()`/`setSortModel(specs)` · `getFilterModel()`/`setFilterModel(map)` — getState보다 가벼운 조건만의 저장·복원                                                             |
 | 행 선택 일괄 지정                                    | `grid.setRowSelection(ids)` — isRowSelectable·없는 ID 자동 제외, null은 전체 해제                                                                                                           |
+| 선택 행 수 조회                                      | `grid.getSelectedCount()` — 대량 전체 선택(반전 모델)에서도 정확한 개수. 목록은 `getSelectedRowIds()`                                                                                       |
 | 수정분 flat 수집 (`GetSaveData`)                     | `grid.getModifiedRows()` → `{row, status}[]` (getChanges는 분리형 3배열)                                                                                                                    |
 | 강제 재계산 (`Refresh`)                              | `grid.refreshCells()` — 외부 제자리 수정·formatter 참조 상태 변경 후                                                                                                                        |
 | 다크 모드 / 테마                                     | `theme="dark"` prop/`mountGrid` 옵션 또는 `.grid-theme-dark` 클래스 — `--grid-*` CSS 변수로 커스텀 팔레트                                                                                   |

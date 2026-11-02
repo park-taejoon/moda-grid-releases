@@ -361,6 +361,7 @@ set=`values` 배열 포함 여부.
 | `grid.setCellRange({start,end})`            | 범위 선택 직접 지정                                                                 |
 | `rowCheckboxes` prop                        | 행 체크박스 컬럼 — 헤더 전체선택 (`toggleAllRows`/`isAllSelected`/`isSomeSelected`) |
 | `snapshot.selectedRowIds` / `selectedRange` | 선택 상태                                                                           |
+| `grid.getSelectedCount()`                   | 선택 행 수 — 대량 전체 선택은 반전(Inverted) 모델로 저장돼 ID 열거 없이 개수 조회   |
 | `snapshot.selectionAggregates`              | 선택 범위 집계 `{cells,rows,count,sum,avg,min,max}` — `statusBar` prop으로 표시     |
 
 ### 가상 스크롤
